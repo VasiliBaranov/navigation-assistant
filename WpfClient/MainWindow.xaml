@@ -1,8 +1,26 @@
 ﻿<Window x:Class="WpfClient.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="392" Width="525">
     <Grid>
-        
+        <Grid HorizontalAlignment="Stretch" Name="grid1" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Label Content="Root folder" Height="38" HorizontalAlignment="Left" Name="rootFolderLabel" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0"/>
+            <TextBox Height="38" HorizontalAlignment="Stretch" Name="rootFolderTextBox" VerticalAlignment="Top" Grid.Row="0" Grid.Column="1"/>
+            <Label Content="Match" Height="38" HorizontalAlignment="Left" Name="matchLabel" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0"/>
+            <TextBox Height="38" HorizontalAlignment="Stretch" Name="matchTextBox" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
+            <Label Content="Results:" Height="38" HorizontalAlignment="Left" Name="resultsLabel" VerticalAlignment="Top" Grid.Row="2" Grid.Column="0" />
+            <TextBox HorizontalAlignment="Stretch" Name="resultsTextBox" VerticalAlignment="Stretch" IsReadOnly="True" Grid.Row="2" Grid.Column="1"/>
+            <Button Content="Search" Height="38" HorizontalAlignment="Left" Name="searchButton" VerticalAlignment="Top" Width="123" Click="searchButton_Click" Grid.Row="3" Grid.Column="0"/>
+        </Grid>
     </Grid>
 </Window>
