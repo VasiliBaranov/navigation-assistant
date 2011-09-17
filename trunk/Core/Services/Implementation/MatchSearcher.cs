@@ -35,7 +35,7 @@ namespace Core.Services.Implementation
                 return null;
             }
 
-            string template = string.Join(".*", substrings);
+            string template = string.Join(".*", substrings.ToArray());
             template = string.Format(CultureInfo.InvariantCulture, ".*{0}.*", template);
 
             Regex matchRegex = new Regex(template, RegexOptions.IgnoreCase);
