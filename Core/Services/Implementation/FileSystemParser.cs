@@ -14,7 +14,7 @@ namespace Core.Services.Implementation
                 return new List<FileSystemItem>();
             }
 
-            string[] folders = Directory.GetDirectories(rootPath, "*", SearchOption.AllDirectories);
+            List<string> folders = Utilities.GetFoldersRecursively(rootPath);
 
             List<FileSystemItem> result = folders.Select(GetFileSystemInfo).ToList();
             result.Add(GetFileSystemInfo(rootPath));
