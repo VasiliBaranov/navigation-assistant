@@ -27,7 +27,7 @@ namespace WpfClient
             List<MatchedFileSystemItem> matches = _navigationAssistant.GetFolders(rootFolderTextBox.Text, matchTextBox.Text);
 
             IEnumerable<string> resultLines = matches.Select(m => m.ItemPath);
-            string result = string.Join(Environment.NewLine, resultLines);
+            string result = string.Join(Environment.NewLine, resultLines.ToArray());
 
             resultsTextBox.Text = result;
         }
