@@ -70,5 +70,10 @@ namespace WindowsExplorerClient
                 _notifyIcon.Visible = visible;
             }
         }
+
+        private void HandleLostFocus(object sender, RoutedEventArgs e)
+        {
+            
+        }
     }
 }
