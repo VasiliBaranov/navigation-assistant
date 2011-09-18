@@ -18,11 +18,12 @@ namespace WindowsExplorerClient
 
             // initialise code here
             _notifyIcon = new System.Windows.Forms.NotifyIcon();
-            _notifyIcon.BalloonTipText = "The app has been minimised. Click the tray icon to show.";
-            _notifyIcon.BalloonTipTitle = "The App";
-            _notifyIcon.Text = "The App";
+            _notifyIcon.BalloonTipText = "The app has been minimized. Click the tray icon to show.";
+            _notifyIcon.BalloonTipTitle = "Navigation Assistant";
+            _notifyIcon.Text = "Navigation Assistant";
             _notifyIcon.Icon = Properties.Resources.TrayIcon;
             _notifyIcon.Click += NotifyIconClick;
+            _notifyIcon.Visible = true;
         }
 
         private void HandleClose(object sender, CancelEventArgs args)
@@ -33,13 +34,11 @@ namespace WindowsExplorerClient
 
         private void HandleStateChanged(object sender, EventArgs args)
         {
+            //Actually, currently this handler is redundand, as we support just normal state,
+            //but it's left for generality.
             if (WindowState == WindowState.Minimized)
             {
                 Hide();
-                if (_notifyIcon != null)
-                {
-                    _notifyIcon.ShowBalloonTip(2000);
-                }
             }
             else
             {
@@ -47,33 +46,16 @@ namespace WindowsExplorerClient
             }
         }
 
-        private void HandleIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs args)
-        {
-            CheckTrayIcon();
-        }
-
         private void NotifyIconClick(object sender, EventArgs e)
         {
-            Show();
             WindowState = _storedWindowState;
+            Show();
+            Activate();
         }
 
-        private void CheckTrayIcon()
+        private void HandleDeactivated(object sender, EventArgs e)
         {
-            ShowTrayIcon(!IsVisible);
-        }
-
-        private void ShowTrayIcon(bool visible)
-        {
-            if (_notifyIcon != null)
-            {
-                _notifyIcon.Visible = visible;
-            }
-        }
-
-        private void HandleLostFocus(object sender, RoutedEventArgs e)
-        {
-            
+            Hide();
         }
     }
 }

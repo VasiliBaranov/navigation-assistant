@@ -3,13 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:WindowsExplorerClient"
         Title="Navigation Assistant" SizeToContent="WidthAndHeight"
-        Closing="HandleClose" StateChanged="HandleStateChanged" 
-        IsVisibleChanged="HandleIsVisibleChanged" LostFocus="HandleLostFocus" ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen">
+        ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen"
+        Closing="HandleClose" StateChanged="HandleStateChanged" Deactivated="HandleDeactivated">
     <Window.Resources>
         <local:ViewModel x:Key="ViewModel"/>
     </Window.Resources>
     <StackPanel DataContext="{StaticResource ViewModel}" Width="Auto" Height="Auto" VerticalAlignment="Top">
-        <TextBox x:Name="SearchText" HorizontalAlignment="Left" Width="Auto" MinWidth="300" Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox x:Name="SearchText" HorizontalAlignment="Stretch" Width="Auto" MinWidth="300" Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}" />
         <ListBox x:Name="MatchesList" HorizontalAlignment="Left" Width="Auto" MinWidth="300" Height="Auto" ItemsSource="{Binding Path=Matches}" IsSynchronizedWithCurrentItem="True" >
             <ListBox.ItemTemplate>
                 <DataTemplate> 
