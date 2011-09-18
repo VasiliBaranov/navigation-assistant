@@ -34,7 +34,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -44,9 +43,11 @@
     <Compile Include="Model\FileSystemItem.cs" />
     <Compile Include="Model\MatchedFileSystemItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ICacheSerializer.cs" />
     <Compile Include="Services\IFileSystemParser.cs" />
     <Compile Include="Services\IMatchSearcher.cs" />
     <Compile Include="Services\Implementation\CachedFileSystemParser.cs" />
+    <Compile Include="Services\Implementation\CacheSerializer.cs" />
     <Compile Include="Services\Implementation\FileSystemParser.cs" />
     <Compile Include="Services\Implementation\MatchSearcher.cs" />
     <Compile Include="Services\Implementation\NavigationAssistant.cs" />

@@ -14,15 +14,15 @@ namespace Core.Services.Implementation
             _matchSearcher = matchSearcher;
         }
 
-        public List<MatchedFileSystemItem> GetFolders(string rootPath, string match)
+        public List<MatchedFileSystemItem> GetFolderMatches(List<string> rootFolders, string searchText)
         {
-            if (string.IsNullOrEmpty(rootPath) || string.IsNullOrEmpty(match))
+            if (Utilities.IsNullOrEmpty(rootFolders) || string.IsNullOrEmpty(searchText))
             {
                 return new List<MatchedFileSystemItem>();
             }
 
-            List<FileSystemItem> folders = _fileSystemParser.GetFolders(rootPath);
-            List<MatchedFileSystemItem> matchedFolders = _matchSearcher.GetMatches(folders, match);
+            List<FileSystemItem> folders = _fileSystemParser.GetFolders(rootFolders);
+            List<MatchedFileSystemItem> matchedFolders = _matchSearcher.GetMatches(folders, searchText);
 
             return matchedFolders;
         }

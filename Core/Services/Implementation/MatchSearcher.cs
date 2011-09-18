@@ -8,14 +8,14 @@ namespace Core.Services.Implementation
 {
     public class MatchSearcher : IMatchSearcher
     {
-        public List<MatchedFileSystemItem> GetMatches(List<FileSystemItem> items, string match)
+        public List<MatchedFileSystemItem> GetMatches(List<FileSystemItem> items, string searchText)
         {
-            if (Utilities.IsNullOrEmpty(items) || string.IsNullOrEmpty(match))
+            if (Utilities.IsNullOrEmpty(items) || string.IsNullOrEmpty(searchText))
             {
                 return new List<MatchedFileSystemItem>();
             }
 
-            Regex matchRegex = GetMatchRegex(match);
+            Regex matchRegex = GetMatchRegex(searchText);
 
             List<MatchedFileSystemItem> matches =
                 items
