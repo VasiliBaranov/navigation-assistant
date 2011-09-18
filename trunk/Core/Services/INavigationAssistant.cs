@@ -5,6 +5,6 @@ namespace Core.Services
 {
     public interface INavigationAssistant
     {
-        List<MatchedFileSystemItem> GetFolders(string rootPath, string match);
+        List<MatchedFileSystemItem> GetFolderMatches(List<string> rootFolders, string searchText);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Core.Model;
 using System.Linq;
@@ -7,24 +8,29 @@ namespace Core.Services.Implementation
 {
     public class FileSystemParser : IFileSystemParser
     {
-        public List<FileSystemItem> GetFolders(string rootPath)
+        public List<FileSystemItem> GetFolders(List<string> rootFolders)
         {
-            if (string.IsNullOrEmpty(rootPath))
+            if (Utilities.IsNullOrEmpty(rootFolders))
             {
-                return new List<FileSystemItem>();
+                throw new ArgumentNullException("rootFolders");
             }
 
-            List<string> folders = Utilities.GetFoldersRecursively(rootPath);
+            List<string> folders = new List<string>();
+
+            foreach (string rootFolder in rootFolders)
+            {
+                folders.AddRange(Utilities.GetFoldersRecursively(rootFolder));
+                folders.Add(rootFolder);
+            }
 
             List<FileSystemItem> result = folders.Select(GetFileSystemInfo).ToList();
-            result.Add(GetFileSystemInfo(rootPath));
 
             return result;
         }
 
         private static FileSystemItem GetFileSystemInfo(string path)
         {
-            return new FileSystemItem { ItemName = Path.GetFileName(path), ItemPath = path };
+            return new FileSystemItem(Path.GetFileName(path), path);
         }
     }
 }

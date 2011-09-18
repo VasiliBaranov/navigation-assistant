@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Core
 {
@@ -78,6 +79,15 @@ namespace Core
             {
                 GetFoldersRecursively(subfolder, folders);
             }
+        }
+
+        public static List<string> GetHardDriveRootFolders()
+        {
+            return
+                DriveInfo.GetDrives()
+                .Where(d => d.DriveType == DriveType.Fixed && d.IsReady)
+                .Select(d => d.RootDirectory.FullName)
+                .ToList();
         }
     }
 }

@@ -24,7 +24,7 @@ namespace WpfClient
 
         private void searchButton_Click(object sender, RoutedEventArgs e)
         {
-            List<MatchedFileSystemItem> matches = _navigationAssistant.GetFolders(rootFolderTextBox.Text, matchTextBox.Text);
+            List<MatchedFileSystemItem> matches = _navigationAssistant.GetFolderMatches(new List<string>{rootFolderTextBox.Text}, matchTextBox.Text);
 
             IEnumerable<string> resultLines = matches.Select(m => m.ItemPath);
             string result = string.Join(Environment.NewLine, resultLines.ToArray());
