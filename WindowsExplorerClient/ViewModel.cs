@@ -21,9 +21,11 @@ namespace WindowsExplorerClient
 
         private readonly Timer _delayTimer;
 
-        private ObservableCollection<string> _matches = new ObservableCollection<string> { InitialMatchesMessage };
+        private ObservableCollection<MatchModel> _matches = new ObservableCollection<MatchModel> { new MatchModel(InitialMatchesMessage, null) };
 
         private string _searchText;
+
+        private MatchModel _selectedMatch;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -54,7 +56,7 @@ namespace WindowsExplorerClient
 
         private void HandleDelayElapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            _matches = new ObservableCollection<string>(GetMatchRepresentations(_searchText));
+            _matches = new ObservableCollection<MatchModel>(GetMatchRepresentations(_searchText));
 
             PropertyChanged(this, new PropertyChangedEventArgs("Matches"));
             PropertyChanged(this, new PropertyChangedEventArgs("SearchText"));
@@ -83,7 +85,7 @@ namespace WindowsExplorerClient
             }
         }
 
-        public ObservableCollection<string> Matches
+        public ObservableCollection<MatchModel> Matches
         {
             get
             {
@@ -91,19 +93,41 @@ namespace WindowsExplorerClient
             }
         }
 
+        public MatchModel SelectedMatch
+        {
+            get
+            {
+                return _selectedMatch;
+            }
+            set
+            {
+                _selectedMatch = value;
+                PropertyChanged(this, new PropertyChangedEventArgs("SelectedMatch"));
+            }
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public void Navigate()
+        {
+            _navigationAssistant.NavigateTo(SelectedMatch.Path);
+        }
+
         #endregion
 
         #region Non Public Methods
 
-        private List<string> GetMatchRepresentations(string searchText)
+        private List<MatchModel> GetMatchRepresentations(string searchText)
         {
             List<MatchedFileSystemItem> folderMatches = _navigationAssistant.GetFolderMatches(_rootFolders, searchText);
             if (Utilities.IsNullOrEmpty(folderMatches))
             {
-                return new List<string>{NoMatchesFound};
+                return new List<MatchModel> { new MatchModel(NoMatchesFound, null) };
             }
 
-            List<string> matchRepresentations = folderMatches
+            List<MatchModel> matchRepresentations = folderMatches
                 .Take(MaxMatchesToDisplay)
                 .OrderBy(m=>m.ItemPath.Length)
                 .Select(GetMatchRepresentation)
@@ -111,15 +135,17 @@ namespace WindowsExplorerClient
 
             if(folderMatches.Count > MaxMatchesToDisplay)
             {
-                matchRepresentations.Add(TooManyMatchesText);
+                matchRepresentations.Add(new MatchModel(TooManyMatchesText, null));
             }
 
             return matchRepresentations;
         }
 
-        private string GetMatchRepresentation(MatchedFileSystemItem match)
+        private MatchModel GetMatchRepresentation(MatchedFileSystemItem match)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0} -> {1}", match.ItemName, match.ItemPath);
+            string text = string.Format(CultureInfo.InvariantCulture, "{0} -> {1}", match.ItemName, match.ItemPath);
+
+            return new MatchModel(text, match.ItemPath);
         }
 
         #endregion

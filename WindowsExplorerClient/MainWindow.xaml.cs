@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Input;
 
 namespace WindowsExplorerClient
 {
@@ -48,14 +49,45 @@ namespace WindowsExplorerClient
 
         private void NotifyIconClick(object sender, EventArgs e)
         {
+            ActivateFromTray();
+        }
+
+        private void HandleDeactivated(object sender, EventArgs e)
+        {
+            DeactivateToTray();
+        }
+
+        private void ActivateFromTray()
+        {
             WindowState = _storedWindowState;
             Show();
             Activate();
         }
 
-        private void HandleDeactivated(object sender, EventArgs e)
+        private void DeactivateToTray()
         {
             Hide();
+
+            //It's better to set the text to empty here, not in activated,
+            //as the Matches list reset (thorugh ViewModel) is invisible then.
+            SearchText.Text = string.Empty;
+        }
+
+        private void HandleActivated(object sender, EventArgs e)
+        {
+            //Can not use FocusManager.FocusedElement="{Binding ElementName=SearchText}" in XAML,
+            //as it will work just for the first loading
+            SearchText.Focus();
+        }
+
+        private void HandleMatchesListKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                ViewModel viewModel = Resources["ViewModel"] as ViewModel;
+                viewModel.Navigate();
+                DeactivateToTray();
+            }
         }
     }
 }
