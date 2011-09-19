@@ -56,10 +56,10 @@ namespace WindowsExplorerClient
 
         private void HandleDelayElapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            _matches = new ObservableCollection<MatchModel>(GetMatchRepresentations(_searchText));
+            Matches = new ObservableCollection<MatchModel>(GetMatchRepresentations(_searchText));
+            SelectedMatch = Matches[0];
 
-            PropertyChanged(this, new PropertyChangedEventArgs("Matches"));
-            PropertyChanged(this, new PropertyChangedEventArgs("SearchText"));
+            OnPropertyChanged("SearchText");
         }
 
         #endregion
@@ -91,6 +91,11 @@ namespace WindowsExplorerClient
             {
                 return _matches;
             }
+            set
+            {
+                _matches = value;
+                OnPropertyChanged("Matches");
+            }
         }
 
         public MatchModel SelectedMatch
@@ -101,8 +106,19 @@ namespace WindowsExplorerClient
             }
             set
             {
+                if(_selectedMatch != null)
+                {
+                    _selectedMatch.IsFocused = false;
+                }
+
                 _selectedMatch = value;
-                PropertyChanged(this, new PropertyChangedEventArgs("SelectedMatch"));
+
+                if (_selectedMatch != null)
+                {
+                    _selectedMatch.IsFocused = true;
+                }
+
+                OnPropertyChanged("SelectedMatch");
             }
         }
 
@@ -110,17 +126,71 @@ namespace WindowsExplorerClient
 
         #region Public Methods
 
+        public bool CanNavigate()
+        {
+            return !string.IsNullOrEmpty(SelectedMatch.Path);
+        }
+
         public void Navigate()
         {
             _navigationAssistant.NavigateTo(SelectedMatch.Path);
+        }
+
+        public void MoveSelectionUp()
+        {
+            if (Utilities.IsNullOrEmpty(Matches))
+            {
+                return;
+            }
+
+            int selectionIndex = Matches.IndexOf(SelectedMatch);
+            selectionIndex--;
+
+            if (selectionIndex < 0)
+            {
+                selectionIndex = Matches.Count - 1;
+            }
+
+            SelectedMatch = Matches[selectionIndex];
+        }
+
+        public void MoveSelectionDown()
+        {
+            if (Utilities.IsNullOrEmpty(Matches))
+            {
+                return;
+            }
+
+            int selectionIndex = Matches.IndexOf(SelectedMatch);
+            selectionIndex++;
+
+            if (selectionIndex == Matches.Count)
+            {
+                selectionIndex = 0;
+            }
+
+            SelectedMatch = Matches[selectionIndex];
         }
 
         #endregion
 
         #region Non Public Methods
 
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
         private List<MatchModel> GetMatchRepresentations(string searchText)
         {
+            if (string.IsNullOrEmpty(searchText))
+            {
+                return new List<MatchModel> { new MatchModel(InitialMatchesMessage, null) };
+            }
+
             List<MatchedFileSystemItem> folderMatches = _navigationAssistant.GetFolderMatches(_rootFolders, searchText);
             if (Utilities.IsNullOrEmpty(folderMatches))
             {
