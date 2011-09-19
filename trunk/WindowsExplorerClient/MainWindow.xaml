@@ -4,16 +4,18 @@
         xmlns:local="clr-namespace:WindowsExplorerClient"
         Title="Navigation Assistant" SizeToContent="WidthAndHeight"
         ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen"
-        Closing="HandleClose" StateChanged="HandleStateChanged" Deactivated="HandleDeactivated">
+        Closing="HandleClose" StateChanged="HandleStateChanged" Deactivated="HandleDeactivated" Activated="HandleActivated">
     <Window.Resources>
         <local:ViewModel x:Key="ViewModel"/>
     </Window.Resources>
     <StackPanel DataContext="{StaticResource ViewModel}" Width="Auto" Height="Auto" VerticalAlignment="Top">
         <TextBox x:Name="SearchText" HorizontalAlignment="Stretch" Width="Auto" MinWidth="300" Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}" />
-        <ListBox x:Name="MatchesList" HorizontalAlignment="Left" Width="Auto" MinWidth="300" Height="Auto" ItemsSource="{Binding Path=Matches}" IsSynchronizedWithCurrentItem="True" >
+        <ListBox x:Name="MatchesList" HorizontalAlignment="Left" Width="Auto" MinWidth="300" Height="Auto" 
+                 ItemsSource="{Binding Path=Matches}" SelectedItem="{Binding Path=SelectedMatch, Mode=TwoWay}"
+                 IsSynchronizedWithCurrentItem="True" KeyDown="HandleMatchesListKeyDown">
             <ListBox.ItemTemplate>
-                <DataTemplate> 
-                    <Label HorizontalAlignment="Left" Width="Auto" Content="{Binding Path=.}" />
+                <DataTemplate>
+                    <Label HorizontalAlignment="Left" Width="Auto" Content="{Binding Path=Text}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
