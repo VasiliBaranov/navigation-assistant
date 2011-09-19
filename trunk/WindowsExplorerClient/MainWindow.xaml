@@ -8,14 +8,15 @@
     <Window.Resources>
         <local:ViewModel x:Key="ViewModel"/>
     </Window.Resources>
-    <StackPanel DataContext="{StaticResource ViewModel}" Width="Auto" Height="Auto" VerticalAlignment="Top">
+    <StackPanel DataContext="{StaticResource ViewModel}" Width="Auto" Height="Auto" VerticalAlignment="Top" PreviewKeyDown="HandlePreviewKeyDown">
         <TextBox x:Name="SearchText" HorizontalAlignment="Stretch" Width="Auto" MinWidth="300" Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}" />
         <ListBox x:Name="MatchesList" HorizontalAlignment="Left" Width="Auto" MinWidth="300" Height="Auto" 
                  ItemsSource="{Binding Path=Matches}" SelectedItem="{Binding Path=SelectedMatch, Mode=TwoWay}"
-                 IsSynchronizedWithCurrentItem="True" KeyDown="HandleMatchesListKeyDown">
+                 IsSynchronizedWithCurrentItem="True">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Label HorizontalAlignment="Left" Width="Auto" Content="{Binding Path=Text}" />
+                    <Label HorizontalAlignment="Left" Width="Auto" Content="{Binding Path=Text}"
+                           MouseUp="HandleMatchesListMouseUp" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

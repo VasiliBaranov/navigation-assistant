@@ -73,6 +73,22 @@ namespace WindowsExplorerClient
             SearchText.Text = string.Empty;
         }
 
+        private void Navigate()
+        {
+            ViewModel viewModel = GetViewModel();
+
+            if (viewModel.CanNavigate())
+            {
+                viewModel.Navigate();
+                DeactivateToTray();
+            }
+        }
+
+        private ViewModel GetViewModel()
+        {
+            return Resources["ViewModel"] as ViewModel;
+        }
+
         private void HandleActivated(object sender, EventArgs e)
         {
             //Can not use FocusManager.FocusedElement="{Binding ElementName=SearchText}" in XAML,
@@ -80,14 +96,32 @@ namespace WindowsExplorerClient
             SearchText.Focus();
         }
 
-        private void HandleMatchesListKeyDown(object sender, KeyEventArgs e)
+        //Use PreviewKeyDown, not KeyDown, as TextBox (which is always focused by design) consumes all the arrow keys 
+        //(which we would like to handle).
+        private void HandlePreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Return)
             {
-                ViewModel viewModel = Resources["ViewModel"] as ViewModel;
-                viewModel.Navigate();
-                DeactivateToTray();
+                Navigate();
             }
+            //We would like to support navigation in the matches list,
+            //but always preserve focus in the search text box, so we manually handle key up/down strokes,
+            //instead of moving focus to the matches list.
+            else if(e.Key == Key.Up)
+            {
+                ViewModel viewModel = GetViewModel();
+                viewModel.MoveSelectionUp();
+            }
+            else if (e.Key == Key.Down)
+            {
+                ViewModel viewModel = GetViewModel();
+                viewModel.MoveSelectionDown();
+            }
+        }
+
+        private void HandleMatchesListMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            Navigate();
         }
     }
 }
