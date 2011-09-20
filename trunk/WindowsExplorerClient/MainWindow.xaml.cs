@@ -135,13 +135,6 @@ namespace WindowsExplorerClient
             }
         }
 
-        private void HandleActivated(object sender, EventArgs e)
-        {
-            //Can not use FocusManager.FocusedElement="{Binding ElementName=SearchText}" in XAML,
-            //as it will work just for the first loading
-            SearchText.Focus();
-        }
-
         //Use PreviewKeyDown, not KeyDown, as TextBox (which is always focused by design) consumes all the arrow keys 
         //(which we would like to handle).
         private void HandlePreviewKeyDown(object sender, KeyEventArgs e)
