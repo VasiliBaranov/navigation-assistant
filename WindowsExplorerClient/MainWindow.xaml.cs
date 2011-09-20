@@ -1,30 +1,48 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
+using Core.HookManager;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace WindowsExplorerClient
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
-        private System.Windows.Forms.NotifyIcon _notifyIcon;
+        private NotifyIcon _notifyIcon;
         private WindowState _storedWindowState = WindowState.Normal;
+
+        private ViewModel CurrentViewModel
+        {
+            get { return Resources["ViewModel"] as ViewModel; }
+        }
 
         public MainWindow()
         {
             InitializeComponent();
 
-            // initialise code here
-            _notifyIcon = new System.Windows.Forms.NotifyIcon();
+            _notifyIcon = new NotifyIcon();
             _notifyIcon.BalloonTipText = "The app has been minimized. Click the tray icon to show.";
             _notifyIcon.BalloonTipTitle = "Navigation Assistant";
             _notifyIcon.Text = "Navigation Assistant";
             _notifyIcon.Icon = Properties.Resources.TrayIcon;
             _notifyIcon.Click += NotifyIconClick;
             _notifyIcon.Visible = true;
+
+            HookManager.KeyDown += HandleGlobalKeyDown;
+        }
+
+        private void HandleGlobalKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            bool correctCombinationClicked = e.Control && e.Shift && e.KeyCode == Keys.N;
+            if (correctCombinationClicked)
+            {
+                ActivateFromTray();
+            }
         }
 
         private void HandleClose(object sender, CancelEventArgs args)
@@ -59,6 +77,7 @@ namespace WindowsExplorerClient
 
         private void ActivateFromTray()
         {
+            CurrentViewModel.UpdateHostWindow();
             WindowState = _storedWindowState;
             Show();
             Activate();
@@ -75,18 +94,11 @@ namespace WindowsExplorerClient
 
         private void Navigate()
         {
-            ViewModel viewModel = GetViewModel();
-
-            if (viewModel.CanNavigate())
+            if (CurrentViewModel.CanNavigate())
             {
-                viewModel.Navigate();
+                CurrentViewModel.Navigate();
                 DeactivateToTray();
             }
-        }
-
-        private ViewModel GetViewModel()
-        {
-            return Resources["ViewModel"] as ViewModel;
         }
 
         private void HandleActivated(object sender, EventArgs e)
@@ -109,13 +121,11 @@ namespace WindowsExplorerClient
             //instead of moving focus to the matches list.
             else if(e.Key == Key.Up)
             {
-                ViewModel viewModel = GetViewModel();
-                viewModel.MoveSelectionUp();
+                CurrentViewModel.MoveSelectionUp();
             }
             else if (e.Key == Key.Down)
             {
-                ViewModel viewModel = GetViewModel();
-                viewModel.MoveSelectionDown();
+                CurrentViewModel.MoveSelectionDown();
             }
         }
 

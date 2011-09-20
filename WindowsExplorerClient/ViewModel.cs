@@ -122,18 +122,20 @@ namespace WindowsExplorerClient
             }
         }
 
+        public ApplicationWindow HostWindow { get; set; }
+
         #endregion
 
         #region Public Methods
 
         public bool CanNavigate()
         {
-            return !string.IsNullOrEmpty(SelectedMatch.Path);
+            return !string.IsNullOrEmpty(SelectedMatch.Path) && HostWindow != null;
         }
 
         public void Navigate()
         {
-            _navigationAssistant.NavigateTo(SelectedMatch.Path);
+            _navigationAssistant.NavigateTo(SelectedMatch.Path, HostWindow);
         }
 
         public void MoveSelectionUp()
@@ -170,6 +172,11 @@ namespace WindowsExplorerClient
             }
 
             SelectedMatch = Matches[selectionIndex];
+        }
+
+        public void UpdateHostWindow()
+        {
+            HostWindow = _navigationAssistant.GetActiveWindow();
         }
 
         #endregion

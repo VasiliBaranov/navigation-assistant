@@ -95,9 +95,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="TrayIcon.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="TrayIcon.ico" />
   </ItemGroup>
   <ItemGroup>

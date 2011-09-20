@@ -7,6 +7,8 @@ namespace Core.Services
     {
         List<MatchedFileSystemItem> GetFolderMatches(List<string> rootFolders, string searchText);
 
-        void NavigateTo(string path);
+        void NavigateTo(string path, ApplicationWindow hostWindow);
+
+        ApplicationWindow GetActiveWindow();
     }
 }
