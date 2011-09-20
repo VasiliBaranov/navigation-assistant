@@ -111,6 +111,7 @@ namespace WindowsExplorerClient
         private void ActivateFromTray()
         {
             CurrentViewModel.UpdateHostWindow();
+
             WindowState = _storedWindowState;
             Show();
             Activate();
@@ -149,6 +150,7 @@ namespace WindowsExplorerClient
             {
                 Navigate();
             }
+
             //We would like to support navigation in the matches list,
             //but always preserve focus in the search text box, so we manually handle key up/down strokes,
             //instead of moving focus to the matches list.
