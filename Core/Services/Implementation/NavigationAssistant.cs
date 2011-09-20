@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
 using Core.Model;
 using SHDocVw;
 using System.Linq;
@@ -13,6 +11,8 @@ namespace Core.Services.Implementation
 {
     public class NavigationAssistant : INavigationAssistant
     {
+        private const int MaxWaitSeconds = 10;
+
         private readonly IFileSystemParser _fileSystemParser;
         private readonly IMatchSearcher _matchSearcher;
 
@@ -25,9 +25,6 @@ namespace Core.Services.Implementation
         // Declare external functions.
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
-
-        [DllImport("user32.dll")]
-        private static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
 
         [DllImport("user32.dll", SetLastError = true)]
         private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
@@ -47,69 +44,9 @@ namespace Core.Services.Implementation
 
         public void NavigateTo(string path, ApplicationWindow hostWindow)
         {
-            InternetExplorer windowsExplorer = GetWindowsExplorer(hostWindow);
+            InternetExplorer windowsExplorer = GetWindowsExplorer(hostWindow) ?? CreateNewExplorer();
 
-            if (windowsExplorer != null)
-            {
-                windowsExplorer.Navigate("file:///" + Path.GetFullPath(path));
-            }
-            else
-            {
-                //Open new explorer; see http://support.microsoft.com/kb/130510
-                //Process.Start("explorer.exe", "/n,/root," + "file:///" + Path.GetFullPath(path));
-
-                List<InternetExplorer> initialExplorers = GetAllExplorers();
-
-                //Can not use the method above as in this case subsequent calls to Navigate methods of the window 
-                //will throw exceptions (probably as the root is non-standard).
-                Process process = Process.Start("explorer.exe");
-
-                //The process above exits as soon as it starts new windows explorer window,
-                //so we have to search for the actual explorer window again.
-                //Note that actually all of the explorer windows are hosted inside a default explorer process (started at windows start),
-                //so we can not even iterate over processes.
-
-                List<InternetExplorer> newExplorers = GetAllExplorers();
-
-                //Wait
-                TimeSpan maxExecutionTime = new TimeSpan(0, 0, 10);
-                TimeSpan executionTime;
-
-                Stopwatch stopwatch = new Stopwatch();
-                stopwatch.Start();
-
-                while (newExplorers.Count <= initialExplorers.Count)
-                {
-                    newExplorers = GetAllExplorers();
-                    executionTime = stopwatch.Elapsed;
-
-                    if (executionTime > maxExecutionTime)
-                    {
-                        break;
-                    }
-                }
-
-                IEnumerable<int> initialHandles = initialExplorers.Select(ie => ie.HWND);
-                IEnumerable<int> newHandles = newExplorers.Select(ie => ie.HWND);
-
-                List<int> addedHandles = newHandles.Except(initialHandles).ToList();
-
-                if (addedHandles.Count == 0)
-                {
-                    throw new InvalidOperationException("Windows explorer could not be created");
-                }
-
-                if (addedHandles.Count > 1)
-                {
-                    throw new InvalidOperationException("Can not determine the created explorer");
-                }
-
-                int createdWindowHandle = addedHandles[0];
-
-                InternetExplorer createdWindow = newExplorers.First(e => e.HWND == createdWindowHandle);
-
-                createdWindow.Navigate("file:///" + Path.GetFullPath(path));
-            }
+            windowsExplorer.Navigate("file:///" + Path.GetFullPath(path));
         }
 
         public ApplicationWindow GetActiveWindow()
@@ -117,12 +54,79 @@ namespace Core.Services.Implementation
             // Obtain the handle of the active window.
             IntPtr handle = GetForegroundWindow();
 
-            // Update the controls.
-            int chars = 256;
-            StringBuilder buff = new StringBuilder(chars);
-            GetWindowText(handle, buff, chars);
-
             return new ApplicationWindow(handle);
+        }
+
+        private InternetExplorer CreateNewExplorer()
+        {
+            //We could open a new explorer at the correct location according to http://support.microsoft.com/kb/130510
+            //Process.Start("explorer.exe", "/n,/root," + "file:///" + Path.GetFullPath(path));
+            //But it's impossible to use this method, as in this case subsequent calls to Navigate methods of the explorer window 
+            //will throw exceptions (probably as the root is non-standard).
+
+            List<InternetExplorer> initialExplorers = GetAllExplorers();
+
+            //This process will exit as soon as it starts a new windows explorer window,
+            //so we have to search for the actual explorer window.
+            //Note that actually all of the explorer windows are hosted inside a default explorer process (started at windows start),
+            //so we can not even iterate over processes.
+            Process.Start("explorer.exe");
+
+            List<InternetExplorer> newExplorers = GetNewExplorers(initialExplorers);
+
+            InternetExplorer createdExplorer = GetCreatedExplorer(initialExplorers, newExplorers);
+
+            return createdExplorer;
+        }
+
+        private InternetExplorer GetCreatedExplorer(List<InternetExplorer> initialExplorers, List<InternetExplorer> newExplorers)
+        {
+            IEnumerable<int> initialHandles = initialExplorers.Select(ie => ie.HWND);
+            IEnumerable<int> newHandles = newExplorers.Select(ie => ie.HWND);
+
+            List<int> addedHandles = newHandles.Except(initialHandles).ToList();
+
+            if (addedHandles.Count == 0)
+            {
+                throw new InvalidOperationException("Windows explorer could not be created");
+            }
+
+            if (addedHandles.Count > 1)
+            {
+                throw new InvalidOperationException("Can not determine the created explorer");
+            }
+
+            int createdWindowHandle = addedHandles[0];
+
+            InternetExplorer createdExplorer = newExplorers.First(e => e.HWND == createdWindowHandle);
+
+            return createdExplorer;
+        }
+
+        private List<InternetExplorer> GetNewExplorers(List<InternetExplorer> initialExplorers)
+        {
+            List<InternetExplorer> newExplorers = GetAllExplorers();
+
+            //Wait
+            TimeSpan maxExecutionTime = new TimeSpan(0, 0, MaxWaitSeconds);
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            while (newExplorers.Count <= initialExplorers.Count)
+            {
+                newExplorers = GetAllExplorers();
+                TimeSpan executionTime = stopwatch.Elapsed;
+
+                if (executionTime > maxExecutionTime)
+                {
+                    break;
+                }
+            }
+
+            stopwatch.Stop();
+
+            return newExplorers;
         }
 
         private InternetExplorer GetWindowsExplorer(ApplicationWindow expectedWindow)
