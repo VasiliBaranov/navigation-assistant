@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:WindowsExplorerClient"
         Title="Navigation Assistant" SizeToContent="WidthAndHeight" Topmost="True"
         ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen"
-        Closing="HandleClose" StateChanged="HandleStateChanged" Deactivated="HandleDeactivated"
+        Closing="HandleClose" Deactivated="HandleDeactivated"
         FocusManager.FocusedElement="{Binding ElementName=SearchText}">
     <Window.Resources>
         <local:ViewModel x:Key="ViewModel"/>
@@ -15,10 +15,10 @@
                  Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"/>
         <ListBox x:Name="MatchesList" HorizontalAlignment="Left" Width="Auto" MinWidth="300" Height="Auto" 
                  ItemsSource="{Binding Path=Matches}" SelectedItem="{Binding Path=SelectedMatch, Mode=TwoWay}"
-                 IsSynchronizedWithCurrentItem="True">
+                 IsSynchronizedWithCurrentItem="True" MouseUp="HandleMatchesListMouseUp">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Label HorizontalAlignment="Left" Width="Auto" Content="{Binding Path=Text}" MouseDown="HandleMatchesListMouseUp"/>
+                    <Label HorizontalAlignment="Left" Width="Auto" Content="{Binding Path=Text}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

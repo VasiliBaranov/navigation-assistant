@@ -15,7 +15,6 @@ namespace WindowsExplorerClient
     public partial class MainWindow
     {
         private NotifyIcon _notifyIcon;
-        private WindowState _storedWindowState = WindowState.Normal;
 
         private bool _isCtrlPressed;
         private bool _isShiftPressed;
@@ -111,24 +110,10 @@ namespace WindowsExplorerClient
             _notifyIcon.Dispose();
             _notifyIcon = null;
 
-            if (hk.Registered)
-            {
-                hk.Unregister();
-            }
-        }
-
-        private void HandleStateChanged(object sender, EventArgs args)
-        {
-            //Actually, currently this handler is redundand, as we support just normal state,
-            //but it's left for generality.
-            if (WindowState == WindowState.Minimized)
-            {
-                Hide();
-            }
-            else
-            {
-                _storedWindowState = WindowState;
-            }
+            //if (hk.Registered)
+            //{
+            //    hk.Unregister();
+            //}
         }
 
         private void NotifyIconClick(object sender, EventArgs e)
@@ -145,7 +130,7 @@ namespace WindowsExplorerClient
         {
             CurrentViewModel.UpdateHostWindow();
 
-            WindowState = _storedWindowState;
+            //Both calls are necessary, as visibility and being a foreground window are independent
             Show();
             Activate();
         }
@@ -190,6 +175,9 @@ namespace WindowsExplorerClient
             }
         }
 
+        //We can not subscribe to ListItem (Label) events, as list items are aligned to the left
+        //(to determine the width of the listbox correctly) and shorter labels do not occupy the entire line.
+        //Also, we can not subscribe to MouseDown, as SelectedItem is changed just between MouseDown and MouseUp.
         private void HandleMatchesListMouseUp(object sender, MouseButtonEventArgs e)
         {
             Navigate();
