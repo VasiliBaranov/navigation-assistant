@@ -55,6 +55,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="FocusExtension.cs" />
+    <Compile Include="Hotkey.cs" />
     <Compile Include="MatchModel.cs" />
     <Compile Include="ViewModel.cs" />
     <Page Include="MainWindow.xaml">
