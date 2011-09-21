@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using Core.GlobalHotKeys;
 using Core.HookManager;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
@@ -18,6 +19,8 @@ namespace WindowsExplorerClient
 
         private bool _isCtrlPressed;
         private bool _isShiftPressed;
+
+        private Hotkey hk;
 
         private ViewModel CurrentViewModel
         {
@@ -39,7 +42,32 @@ namespace WindowsExplorerClient
             HookManager.KeyDown += HandleGlobalKeyDown;
             HookManager.KeyPress += HandleGlobalKeyPress;
             HookManager.KeyUp += HandleGlobalKeyUp;
+
+            //RegisterGlobalHotKeys();
         }
+
+        //private void RegisterGlobalHotKeys()
+        //{
+        //    hk = new Hotkey();
+        //    hk.KeyCode = Keys.U;
+        //    hk.Control = true;
+        //    hk.Shift = true;
+        //    hk.Pressed += hk_Pressed;
+
+        //    if (!hk.GetCanRegister(this))
+        //    {
+        //        throw new InvalidOperationException("Can not register a global hotkey.");
+        //    }
+        //    else
+        //    {
+        //        bool success = hk.Register(System.Windows.Application.Current.MainWindow);
+        //    }
+        //}
+
+        //private void hk_Pressed(object sender, HandledEventArgs e)
+        //{
+        //    ActivateFromTray();
+        //}
 
         private void HandleGlobalKeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
         {
@@ -82,6 +110,11 @@ namespace WindowsExplorerClient
         {
             _notifyIcon.Dispose();
             _notifyIcon = null;
+
+            if (hk.Registered)
+            {
+                hk.Unregister();
+            }
         }
 
         private void HandleStateChanged(object sender, EventArgs args)
