@@ -158,7 +158,7 @@ namespace WindowsExplorerClient
         //Also, we can not subscribe to MouseDown, as SelectedItem is changed just between MouseDown and MouseUp.
         private void HandleMatchesListMouseUp(object sender, MouseButtonEventArgs e)
         {
-            //Navigate();
+            Navigate();
         }
 
         //Use PreviewKeyDown, not KeyDown, as TextBox (which is always focused by design) consumes all the arrow keys 

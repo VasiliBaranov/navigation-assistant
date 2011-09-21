@@ -8,14 +8,30 @@
         FocusManager.FocusedElement="{Binding ElementName=SearchText}">
     <Window.Resources>
         <local:ViewModel x:Key="ViewModel"/>
+        <!--Technique taken from 
+        http://stackoverflow.com/questions/698830/wpf-listbox-change-selected-and-unfocused-style-to-not-be-grayed-out.
+        Other techniques, e.g. from 
+        http://vbcity.com/blogs/xtab/archive/2009/06/28/background-color-for-wpf-listbox-selected-item.aspx or
+        http://wildermuth.com/2007/4/17/Changing_the_Selected_Style_of_ListBox_s_in_XAML
+        do not work, as item selection is not updated when clicking not on Label text (but inside a line).-->
+        <Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem">
+            <Style.Resources>
+                <!--SelectedItem with focus-->
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightBlue" Opacity=".4"/>
+                <!--SelectedItem without focus-->
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="LightBlue" Opacity=".4"/>
+            </Style.Resources>
+        </Style>
     </Window.Resources>
     <StackPanel DataContext="{StaticResource ViewModel}" Width="Auto" Height="Auto" VerticalAlignment="Top" 
                 KeyDown="HandlePanelKeyDown">
         <TextBox x:Name="SearchText" HorizontalAlignment="Stretch" Width="Auto" MinWidth="300" 
-                 Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}" PreviewKeyDown="HandleSearchTextPreviewKeyDown"/>
+                 Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"
+                 PreviewKeyDown="HandleSearchTextPreviewKeyDown"/>
         <ListBox x:Name="MatchesList" HorizontalAlignment="Left" Width="Auto" MinWidth="300" Height="Auto" 
                  ItemsSource="{Binding Path=Matches}" SelectedItem="{Binding Path=SelectedMatch}"
-                 IsSynchronizedWithCurrentItem="True" MouseUp="HandleMatchesListMouseUp">
+                 IsSynchronizedWithCurrentItem="True" MouseUp="HandleMatchesListMouseUp"
+                 ItemContainerStyle="{StaticResource ListBoxItemStyle}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Label HorizontalAlignment="Left" Width="Auto" Content="{Binding Path=Text}" />
