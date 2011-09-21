@@ -10,11 +10,11 @@
         <local:ViewModel x:Key="ViewModel"/>
     </Window.Resources>
     <StackPanel DataContext="{StaticResource ViewModel}" Width="Auto" Height="Auto" VerticalAlignment="Top" 
-                PreviewKeyDown="HandlePreviewKeyDown">
+                KeyDown="HandlePanelKeyDown">
         <TextBox x:Name="SearchText" HorizontalAlignment="Stretch" Width="Auto" MinWidth="300" 
-                 Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                 Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}" PreviewKeyDown="HandleSearchTextPreviewKeyDown"/>
         <ListBox x:Name="MatchesList" HorizontalAlignment="Left" Width="Auto" MinWidth="300" Height="Auto" 
-                 ItemsSource="{Binding Path=Matches}" SelectedItem="{Binding Path=SelectedMatch, Mode=TwoWay}"
+                 ItemsSource="{Binding Path=Matches}" SelectedItem="{Binding Path=SelectedMatch}"
                  IsSynchronizedWithCurrentItem="True" MouseUp="HandleMatchesListMouseUp">
             <ListBox.ItemTemplate>
                 <DataTemplate>
