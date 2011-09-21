@@ -106,7 +106,7 @@ namespace WindowsExplorerClient
             }
             set
             {
-                if(_selectedMatch != null)
+                if (_selectedMatch != null)
                 {
                     _selectedMatch.IsFocused = false;
                 }

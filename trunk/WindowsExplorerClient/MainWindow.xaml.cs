@@ -153,19 +153,28 @@ namespace WindowsExplorerClient
             }
         }
 
+        //We can not subscribe to ListItem (Label) events, as list items are aligned to the left
+        //(to determine the width of the listbox correctly) and shorter labels do not occupy the entire line.
+        //Also, we can not subscribe to MouseDown, as SelectedItem is changed just between MouseDown and MouseUp.
+        private void HandleMatchesListMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            //Navigate();
+        }
+
         //Use PreviewKeyDown, not KeyDown, as TextBox (which is always focused by design) consumes all the arrow keys 
         //(which we would like to handle).
-        private void HandlePreviewKeyDown(object sender, KeyEventArgs e)
+        private void HandleSearchTextPreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Return)
-            {
-                Navigate();
-            }
-
             //We would like to support navigation in the matches list,
-            //but always preserve focus in the search text box, so we manually handle key up/down strokes,
+            //when focus is in the search text box, so we manually handle key up/down strokes,
             //instead of moving focus to the matches list.
-            else if(e.Key == Key.Up)
+
+            //Also, you can not use this handler over the entire panel, because if focus were in the ListBox,
+            //the following handlers sequence would occur:
+            //manual selection change in the preview key down handler, 
+            //attempt to change selection by the ListBox in the key down handler.
+            //It causes incorrect ListBox behaviour, as selection in its handler is different from the initial state.
+            if(e.Key == Key.Up)
             {
                 CurrentViewModel.MoveSelectionUp();
             }
@@ -175,12 +184,13 @@ namespace WindowsExplorerClient
             }
         }
 
-        //We can not subscribe to ListItem (Label) events, as list items are aligned to the left
-        //(to determine the width of the listbox correctly) and shorter labels do not occupy the entire line.
-        //Also, we can not subscribe to MouseDown, as SelectedItem is changed just between MouseDown and MouseUp.
-        private void HandleMatchesListMouseUp(object sender, MouseButtonEventArgs e)
+        private void HandlePanelKeyDown(object sender, KeyEventArgs e)
         {
-            Navigate();
+            if (e.Key == Key.Return)
+            {
+                Navigate();
+                return;
+            }
         }
     }
 }
