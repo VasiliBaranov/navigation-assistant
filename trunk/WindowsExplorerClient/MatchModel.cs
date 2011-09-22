@@ -1,4 +1,10 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Media;
 
 namespace WindowsExplorerClient
 {
@@ -28,6 +34,19 @@ namespace WindowsExplorerClient
             {
                 _text = value;
                 OnPropertyChanged("Text");
+            }
+        }
+
+        public TextBlock TextBlock
+        {
+            get
+            {
+                TextBlock textBlock = new TextBlock();
+                textBlock.HorizontalAlignment = HorizontalAlignment.Left;
+                textBlock.Inlines.Add(new Run("asd"){TextDecorations = TextDecorations.Underline, Foreground = Brushes.Blue});
+                textBlock.Inlines.Add(new Run(_text));
+
+                return textBlock;
             }
         }
 

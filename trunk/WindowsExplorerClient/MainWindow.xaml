@@ -34,7 +34,7 @@
                  ItemContainerStyle="{StaticResource ListBoxItemStyle}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Label HorizontalAlignment="Left" Width="Auto" Content="{Binding Path=Text}" />
+                    <Label HorizontalAlignment="Left" Width="Auto" Content="{Binding Path=TextBlock}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
