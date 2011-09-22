@@ -10,7 +10,7 @@ namespace Core.Services.Implementation
     {
         public List<MatchedFileSystemItem> GetMatches(List<FileSystemItem> items, string searchText)
         {
-            if (Utilities.IsNullOrEmpty(items) || string.IsNullOrEmpty(searchText))
+            if (Utilities.Utilities.IsNullOrEmpty(items) || string.IsNullOrEmpty(searchText))
             {
                 return new List<MatchedFileSystemItem>();
             }
@@ -28,9 +28,9 @@ namespace Core.Services.Implementation
 
         private static Regex GetMatchRegex(string match)
         {
-            List<string> substrings = Utilities.SplitStringByUpperChars(match);
+            List<string> substrings = Utilities.Utilities.SplitStringByUpperChars(match);
 
-            if (Utilities.IsNullOrEmpty(substrings))
+            if (Utilities.Utilities.IsNullOrEmpty(substrings))
             {
                 return null;
             }
