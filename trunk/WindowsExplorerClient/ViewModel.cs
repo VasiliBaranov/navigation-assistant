@@ -46,7 +46,7 @@ namespace WindowsExplorerClient
         public ViewModel()
         {
             IFileSystemParser fileSystemParser = new CachedFileSystemParser(new FileSystemParser(), new CacheSerializer(@"e:\temp\Cache.txt"));
-            _navigationAssistant = new NavigationAssistant(fileSystemParser, new MatchSearcher());
+            _navigationAssistant = new NavigationAssistant(fileSystemParser, new MatchSearcher(), new WindowsExplorerManager());
 
             _delayTimer = new Timer();
             _delayTimer.AutoReset = false;

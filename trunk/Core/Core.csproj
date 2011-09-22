@@ -54,6 +54,8 @@
     <Compile Include="Model\ApplicationWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ICacheSerializer.cs" />
+    <Compile Include="Services\IExplorer.cs" />
+    <Compile Include="Services\IExplorerManager.cs" />
     <Compile Include="Services\IFileSystemParser.cs" />
     <Compile Include="Services\IMatchSearcher.cs" />
     <Compile Include="Services\Implementation\CachedFileSystemParser.cs" />
@@ -61,6 +63,8 @@
     <Compile Include="Services\Implementation\FileSystemParser.cs" />
     <Compile Include="Services\Implementation\MatchSearcher.cs" />
     <Compile Include="Services\Implementation\NavigationAssistant.cs" />
+    <Compile Include="Services\Implementation\WindowsExplorer.cs" />
+    <Compile Include="Services\Implementation\WindowsExplorerManager.cs" />
     <Compile Include="Services\INavigationAssistant.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
