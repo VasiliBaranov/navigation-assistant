@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using Core.Model;
+using Core.Utilities;
 
 namespace Core.Services.Implementation
 {
     public class TotalCommanderManager : IExplorerManager
     {
         private readonly string _totalCommanderPath;
-
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
         public TotalCommanderManager(string totalCommanderPath)
         {
@@ -21,7 +18,7 @@ namespace Core.Services.Implementation
         public bool IsExplorer(ApplicationWindow hostWindow)
         {
             uint hostProcessId;
-            GetWindowThreadProcessId(hostWindow.Handle, out hostProcessId);
+            WinApi.GetWindowThreadProcessId(hostWindow.Handle, out hostProcessId);
 
             Process hostProcess = Process.GetProcessById((int)hostProcessId);
             string executablePath = hostProcess.MainModule.FileName;

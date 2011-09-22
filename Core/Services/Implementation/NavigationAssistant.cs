@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using Core.Model;
+using Core.Utilities;
 
 namespace Core.Services.Implementation
 {
@@ -17,10 +17,6 @@ namespace Core.Services.Implementation
             _matchSearcher = matchSearcher;
             _explorerManager = explorerManager;
         }
-
-        // Declare external functions.
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
 
         public List<MatchedFileSystemItem> GetFolderMatches(List<string> rootFolders, string searchText)
         {
@@ -47,7 +43,7 @@ namespace Core.Services.Implementation
         public ApplicationWindow GetActiveWindow()
         {
             // Obtain the handle of the active window.
-            IntPtr handle = GetForegroundWindow();
+            IntPtr handle = WinApi.GetForegroundWindow();
 
             return new ApplicationWindow(handle);
         }
