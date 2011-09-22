@@ -69,6 +69,7 @@
     <Compile Include="Services\Implementation\WindowsExplorerManager.cs" />
     <Compile Include="Services\INavigationAssistant.cs" />
     <Compile Include="Utilities\Utilities.cs" />
+    <Compile Include="Utilities\WinApi.cs" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="SHDocVw">
