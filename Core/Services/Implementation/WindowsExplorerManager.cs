@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Core.Model;
 using SHDocVw;
 
@@ -13,10 +12,7 @@ namespace Core.Services.Implementation
     {
         private const int MaxWaitSeconds = 10;
 
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
-        public bool IsWindowExplorer(ApplicationWindow hostWindow)
+        public bool IsExplorer(ApplicationWindow hostWindow)
         {
             InternetExplorer windowsExplorer = GetWindowsExplorer(hostWindow);
             return windowsExplorer != null;
@@ -120,9 +116,6 @@ namespace Core.Services.Implementation
         private bool IsExpectedWindow(InternetExplorer actualWindow, ApplicationWindow expectedWindow)
         {
             IntPtr actualHandle = new IntPtr(actualWindow.HWND);
-            uint currentProcessId;
-            GetWindowThreadProcessId(actualHandle, out currentProcessId);
-
             bool windowHandleIsCorrect = expectedWindow != null && actualHandle == expectedWindow.Handle;
 
             return windowHandleIsCorrect;

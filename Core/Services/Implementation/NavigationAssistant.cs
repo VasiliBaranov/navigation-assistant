@@ -24,7 +24,7 @@ namespace Core.Services.Implementation
 
         public List<MatchedFileSystemItem> GetFolderMatches(List<string> rootFolders, string searchText)
         {
-            if (Utilities.IsNullOrEmpty(rootFolders) || string.IsNullOrEmpty(searchText))
+            if (Utilities.Utilities.IsNullOrEmpty(rootFolders) || string.IsNullOrEmpty(searchText))
             {
                 return new List<MatchedFileSystemItem>();
             }
@@ -37,7 +37,7 @@ namespace Core.Services.Implementation
 
         public void NavigateTo(string path, ApplicationWindow hostWindow)
         {
-            IExplorer explorer = _explorerManager.IsWindowExplorer(hostWindow)
+            IExplorer explorer = _explorerManager.IsExplorer(hostWindow)
                                      ? _explorerManager.GetExplorer(hostWindow)
                                      : _explorerManager.CreateExplorer();
 
