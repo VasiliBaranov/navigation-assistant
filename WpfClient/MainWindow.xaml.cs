@@ -19,7 +19,7 @@ namespace WpfClient
         {
             InitializeComponent();
 
-            _navigationAssistant = new NavigationAssistant(new FileSystemParser(), new MatchSearcher());
+            _navigationAssistant = new NavigationAssistant(new FileSystemParser(), new MatchSearcher(), new WindowsExplorerManager());
         }
 
         private void searchButton_Click(object sender, RoutedEventArgs e)
