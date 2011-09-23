@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 using Core.Model;
+using Core.Utilities;
 
 namespace Core.Services.Implementation
 {
@@ -47,7 +48,7 @@ namespace Core.Services.Implementation
 
         public List<FileSystemItem> GetFolders(List<string> rootFolders)
         {
-            if (Utilities.Utilities.IsNullOrEmpty(rootFolders))
+            if (Utility.IsNullOrEmpty(rootFolders))
             {
                 throw new ArgumentNullException("rootFolders");
             }
@@ -97,7 +98,7 @@ namespace Core.Services.Implementation
 
         private void UpdateCache()
         {
-            List<string> rootFolders = Utilities.Utilities.GetHardDriveRootFolders();
+            List<string> rootFolders = Utility.GetHardDriveRootFolders();
             List<FileSystemItem> folders = _fileSystemParser.GetFolders(rootFolders);
 
             lock (_cacheSync)

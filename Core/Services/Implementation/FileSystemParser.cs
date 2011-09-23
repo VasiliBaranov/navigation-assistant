@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Core.Model;
 using System.Linq;
+using Core.Utilities;
 
 namespace Core.Services.Implementation
 {
@@ -10,7 +11,7 @@ namespace Core.Services.Implementation
     {
         public List<FileSystemItem> GetFolders(List<string> rootFolders)
         {
-            if (Utilities.Utilities.IsNullOrEmpty(rootFolders))
+            if (Utility.IsNullOrEmpty(rootFolders))
             {
                 throw new ArgumentNullException("rootFolders");
             }
@@ -19,7 +20,7 @@ namespace Core.Services.Implementation
 
             foreach (string rootFolder in rootFolders)
             {
-                folders.AddRange(Utilities.Utilities.GetFoldersRecursively(rootFolder));
+                folders.AddRange(Utility.GetFoldersRecursively(rootFolder));
                 folders.Add(rootFolder);
             }
 

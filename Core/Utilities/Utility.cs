@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Core.Utilities
 {
-    public static class Utilities
+    public static class Utility
     {
         public static List<string> SplitStringByUpperChars(string input)
         {

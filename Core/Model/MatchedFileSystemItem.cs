@@ -2,17 +2,18 @@
 {
     public class MatchedFileSystemItem : FileSystemItem
     {
-        //Add matched name
+        public MatchString MatchedItemName { get; set; }
 
         public MatchedFileSystemItem()
         {
             
         }
 
-        public MatchedFileSystemItem(FileSystemItem fileSystemItem)
+        public MatchedFileSystemItem(FileSystemItem fileSystemItem, MatchString matchedString)
         {
             ItemName = fileSystemItem.ItemName;
             ItemPath = fileSystemItem.ItemPath;
+            MatchedItemName = matchedString;
         }
     }
 }
