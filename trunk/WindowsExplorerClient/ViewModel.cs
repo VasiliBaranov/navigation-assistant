@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
-using Core;
+using System.Windows.Threading;
 using Core.Model;
 using Core.Services;
 using Core.Services.Implementation;
 using System.Linq;
 using Core.Utilities;
-using Timer = System.Timers.Timer;
 
 namespace WindowsExplorerClient
 {
@@ -20,9 +20,9 @@ namespace WindowsExplorerClient
 
         private readonly INavigationAssistant _navigationAssistant;
 
-        private readonly Timer _delayTimer;
+        private readonly DispatcherTimer _delayTimer;
 
-        private ObservableCollection<MatchModel> _matches = new ObservableCollection<MatchModel> { new MatchModel(InitialMatchesMessage, null) };
+        private ObservableCollection<MatchModel> _matches;
 
         private string _searchText;
 
@@ -50,16 +50,18 @@ namespace WindowsExplorerClient
             //_navigationAssistant = new NavigationAssistant(fileSystemParser, new MatchSearcher(), new WindowsExplorerManager());
             _navigationAssistant = new NavigationAssistant(fileSystemParser, new MatchSearcher(), new TotalCommanderManager(@"d:\Program Files\Total Commander\TOTALCMD.EXE"));
 
-            _delayTimer = new Timer();
-            _delayTimer.AutoReset = false;
-            _delayTimer.Interval = DelayInMilliseconds;
-            _delayTimer.Elapsed += HandleDelayElapsed;
+            _delayTimer = new DispatcherTimer();
+            _delayTimer.Interval = TimeSpan.FromMilliseconds(DelayInMilliseconds);
+            _delayTimer.Tick += HandleDelayElapsed;
+
+            _matches = new ObservableCollection<MatchModel> {GetMatchModel(InitialMatchesMessage)};
         }
 
-        private void HandleDelayElapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void HandleDelayElapsed(object sender, EventArgs e)
         {
             Matches = new ObservableCollection<MatchModel>(GetMatchRepresentations(_searchText));
             SelectedMatch = Matches[0];
+            _delayTimer.Stop(); //Would like to handle tick just once
 
             OnPropertyChanged("SearchText");
         }
@@ -142,7 +144,7 @@ namespace WindowsExplorerClient
 
         public void MoveSelectionUp()
         {
-            if (Utilities.IsNullOrEmpty(Matches))
+            if (Utility.IsNullOrEmpty(Matches))
             {
                 return;
             }
@@ -160,7 +162,7 @@ namespace WindowsExplorerClient
 
         public void MoveSelectionDown()
         {
-            if (Utilities.IsNullOrEmpty(Matches))
+            if (Utility.IsNullOrEmpty(Matches))
             {
                 return;
             }
@@ -197,13 +199,13 @@ namespace WindowsExplorerClient
         {
             if (string.IsNullOrEmpty(searchText))
             {
-                return new List<MatchModel> { new MatchModel(InitialMatchesMessage, null) };
+                return new List<MatchModel> { GetMatchModel(InitialMatchesMessage) };
             }
 
             List<MatchedFileSystemItem> folderMatches = _navigationAssistant.GetFolderMatches(_rootFolders, searchText);
-            if (Utilities.IsNullOrEmpty(folderMatches))
+            if (Utility.IsNullOrEmpty(folderMatches))
             {
-                return new List<MatchModel> { new MatchModel(NoMatchesFound, null) };
+                return new List<MatchModel> { GetMatchModel(NoMatchesFound) };
             }
 
             List<MatchModel> matchRepresentations = folderMatches
@@ -212,9 +214,9 @@ namespace WindowsExplorerClient
                 .Select(GetMatchRepresentation)
                 .ToList();
 
-            if(folderMatches.Count > MaxMatchesToDisplay)
+            if (folderMatches.Count > MaxMatchesToDisplay)
             {
-                matchRepresentations.Add(new MatchModel(TooManyMatchesText, null));
+                matchRepresentations.Add(GetMatchModel(TooManyMatchesText));
             }
 
             return matchRepresentations;
@@ -222,9 +224,20 @@ namespace WindowsExplorerClient
 
         private MatchModel GetMatchRepresentation(MatchedFileSystemItem match)
         {
-            string text = string.Format(CultureInfo.InvariantCulture, "{0} -> {1}", match.ItemName, match.ItemPath);
+            //Clone the matched item name
+            MatchString matchedItemName = new MatchString(match.MatchedItemName);
+            string path = string.Format(CultureInfo.InvariantCulture, " -> {0}", match.ItemPath);
+            matchedItemName.Add(new MatchSubstring(path, false));
 
-            return new MatchModel(text, match.ItemPath);
+            return new MatchModel(matchedItemName, match.ItemPath);
+        }
+
+        private MatchModel GetMatchModel(string text)
+        {
+            MatchSubstring substring = new MatchSubstring(text, false);
+            List<MatchSubstring> substrings = new List<MatchSubstring>{substring};
+
+            return new MatchModel(new MatchString(substrings), null);
         }
 
         #endregion

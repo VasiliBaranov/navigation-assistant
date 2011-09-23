@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using Core.Model;
 
 namespace WindowsExplorerClient
 {
@@ -12,28 +11,35 @@ namespace WindowsExplorerClient
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private string _text;
+        private MatchString _matchedText;
+
+        private TextBlock _textBlock;
 
         private string _path;
 
         private bool _isFocused;
 
-        public MatchModel(string text, string path)
+        public MatchModel(MatchString matchedText, string path)
         {
-            _text = text;
+            _matchedText = matchedText;
             _path = path;
+
+            _textBlock = GetTextBlock(_matchedText);
         }
 
-        public string Text
+        public MatchString MatchedText
         {
             get
             {
-                return _text;
+                return _matchedText;
             }
             set
             {
-                _text = value;
-                OnPropertyChanged("Text");
+                _matchedText = value;
+                _textBlock = GetTextBlock(_matchedText);
+
+                OnPropertyChanged("MatchedText");
+                OnPropertyChanged("TextBlock");
             }
         }
 
@@ -41,12 +47,7 @@ namespace WindowsExplorerClient
         {
             get
             {
-                TextBlock textBlock = new TextBlock();
-                textBlock.HorizontalAlignment = HorizontalAlignment.Left;
-                textBlock.Inlines.Add(new Run("asd"){TextDecorations = TextDecorations.Underline, Foreground = Brushes.Blue});
-                textBlock.Inlines.Add(new Run(_text));
-
-                return textBlock;
+                return _textBlock;
             }
         }
 
@@ -82,6 +83,26 @@ namespace WindowsExplorerClient
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        private TextBlock GetTextBlock(MatchString matchedText)
+        {
+            TextBlock textBlock = new TextBlock();
+            textBlock.HorizontalAlignment = HorizontalAlignment.Left;
+
+            foreach (MatchSubstring matchSubstring in matchedText)
+            {
+                Run substringControl = new Run(matchSubstring.Value);
+                if (matchSubstring.IsMatched)
+                {
+                    substringControl.TextDecorations = TextDecorations.Underline;
+                    substringControl.Foreground = Brushes.Blue;
+                }
+
+                textBlock.Inlines.Add(substringControl);
+            }
+
+            return textBlock;
         }
     }
 }
