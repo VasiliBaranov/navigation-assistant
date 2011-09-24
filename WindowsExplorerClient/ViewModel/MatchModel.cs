@@ -5,7 +5,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using Core.Model;
 
-namespace WindowsExplorerClient
+namespace WindowsExplorerClient.ViewModel
 {
     public class MatchModel : INotifyPropertyChanged
     {

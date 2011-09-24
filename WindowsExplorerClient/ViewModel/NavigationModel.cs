@@ -10,9 +10,9 @@ using Core.Services.Implementation;
 using System.Linq;
 using Core.Utilities;
 
-namespace WindowsExplorerClient
+namespace WindowsExplorerClient.ViewModel
 {
-    public class ViewModel : INotifyPropertyChanged
+    public class NavigationModel : INotifyPropertyChanged
     {
         #region Fields
 
@@ -44,7 +44,7 @@ namespace WindowsExplorerClient
 
         #region Constructors
 
-        public ViewModel()
+        public NavigationModel()
         {
             IFileSystemParser fileSystemParser = new CachedFileSystemParser(new FileSystemParser(), new CacheSerializer(@"e:\temp\Cache.txt"));
             //_navigationAssistant = new NavigationAssistant(fileSystemParser, new MatchSearcher(), new WindowsExplorerManager());

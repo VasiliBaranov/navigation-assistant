@@ -1,10 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Core.GlobalHotKeys;
 using Core.HookManager;
+using WindowsExplorerClient.ViewModel;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace WindowsExplorerClient
@@ -21,9 +21,9 @@ namespace WindowsExplorerClient
 
         private Hotkey hk;
 
-        private ViewModel CurrentViewModel
+        private NavigationModel CurrentNavigationModel
         {
-            get { return Resources["ViewModel"] as ViewModel; }
+            get { return Resources["NavigationModel"] as NavigationModel; }
         }
 
         public MainWindow()
@@ -128,7 +128,7 @@ namespace WindowsExplorerClient
 
         private void ActivateFromTray()
         {
-            CurrentViewModel.UpdateHostWindow();
+            CurrentNavigationModel.UpdateHostWindow();
 
             //Both calls are necessary, as visibility and being a foreground window are independent
             Show();
@@ -140,15 +140,15 @@ namespace WindowsExplorerClient
             Hide();
 
             //It's better to set the text to empty here, not in activated,
-            //as the Matches list reset (thorugh ViewModel) is invisible then.
+            //as the Matches list reset (thorugh NavigationModel) is invisible then.
             SearchText.Text = string.Empty;
         }
 
         private void Navigate()
         {
-            if (CurrentViewModel.CanNavigate())
+            if (CurrentNavigationModel.CanNavigate())
             {
-                CurrentViewModel.Navigate();
+                CurrentNavigationModel.Navigate();
                 DeactivateToTray();
             }
         }
@@ -176,11 +176,11 @@ namespace WindowsExplorerClient
             //It causes incorrect ListBox behaviour, as selection in its handler is different from the initial state.
             if(e.Key == Key.Up)
             {
-                CurrentViewModel.MoveSelectionUp();
+                CurrentNavigationModel.MoveSelectionUp();
             }
             else if (e.Key == Key.Down)
             {
-                CurrentViewModel.MoveSelectionDown();
+                CurrentNavigationModel.MoveSelectionDown();
             }
         }
 

@@ -56,8 +56,8 @@
     </ApplicationDefinition>
     <Compile Include="FocusExtension.cs" />
     <Compile Include="Hotkey.cs" />
-    <Compile Include="MatchModel.cs" />
-    <Compile Include="ViewModel.cs" />
+    <Compile Include="ViewModel\MatchModel.cs" />
+    <Compile Include="ViewModel\NavigationModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
