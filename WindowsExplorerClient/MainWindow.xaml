@@ -1,13 +1,14 @@
 ﻿<Window x:Class="WindowsExplorerClient.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:WindowsExplorerClient.ViewModel"
+        xmlns:ViewModel="clr-namespace:WindowsExplorerClient.ViewModel"
+        xmlns:local="clr-namespace:WindowsExplorerClient" 
         Title="Navigation Assistant" SizeToContent="WidthAndHeight" Topmost="True"
         ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen"
         Closing="HandleClose" Deactivated="HandleDeactivated"
         FocusManager.FocusedElement="{Binding ElementName=SearchText}">
     <Window.Resources>
-        <local:NavigationModel x:Key="NavigationModel"/>
+        <ViewModel:NavigationModel x:Key="NavigationModel"/>
         <!--Technique taken from 
         http://stackoverflow.com/questions/698830/wpf-listbox-change-selected-and-unfocused-style-to-not-be-grayed-out.
         Other techniques, e.g. from 
@@ -27,11 +28,14 @@
                 KeyDown="HandlePanelKeyDown">
         <TextBox x:Name="SearchText" HorizontalAlignment="Stretch" Width="Auto" MinWidth="300" 
                  Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"
-                 PreviewKeyDown="HandleSearchTextPreviewKeyDown"/>
+                 PreviewKeyDown="HandleSearchTextPreviewKeyDown"
+                 local:SizeObserver.Observe="True"
+                 local:SizeObserver.ObservedHeight="{Binding Path=SearchTextBoxHeight, Mode=OneWayToSource}" />
         <ListBox x:Name="MatchesList" HorizontalAlignment="Left" Width="Auto" MinWidth="300" Height="Auto" 
                  ItemsSource="{Binding Path=Matches}" SelectedItem="{Binding Path=SelectedMatch}"
                  IsSynchronizedWithCurrentItem="True" MouseUp="HandleMatchesListMouseUp"
-                 ItemContainerStyle="{StaticResource ListBoxItemStyle}">
+                 ItemContainerStyle="{StaticResource ListBoxItemStyle}"
+                 MaxHeight="{Binding Path=MaxMatchesListHeight, Mode=OneWay}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Label HorizontalAlignment="Left" Width="Auto" Content="{Binding Path=TextBlock}" />

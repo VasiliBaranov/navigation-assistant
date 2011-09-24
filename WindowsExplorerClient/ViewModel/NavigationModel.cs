@@ -15,13 +15,25 @@ namespace WindowsExplorerClient.ViewModel
 {
     public class NavigationModel : INotifyPropertyChanged
     {
-        #region Fields
+        #region Supplemetary Fields
 
         private readonly INavigationAssistant _navigationAssistant;
 
         private readonly IMatchModelMapper _matchModelMapper;
 
+        private readonly IPresentationService _presentationService;
+
         private readonly DispatcherTimer _delayTimer;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private const int DelayInMilliseconds = 200;
+
+        private readonly List<string> _rootFolders = new List<string> { "E:\\" };
+
+        #endregion
+
+        #region Data Fields
 
         private ObservableCollection<MatchModel> _matches;
 
@@ -29,11 +41,7 @@ namespace WindowsExplorerClient.ViewModel
 
         private MatchModel _selectedMatch;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private const int DelayInMilliseconds = 200;
-
-        private readonly List<string> _rootFolders = new List<string> { "E:\\" };
+        private double _searchTextBoxHeight;
 
         #endregion
 
@@ -46,6 +54,8 @@ namespace WindowsExplorerClient.ViewModel
             _navigationAssistant = new NavigationAssistant(fileSystemParser, new MatchSearcher(), new TotalCommanderManager(@"d:\Program Files\Total Commander\TOTALCMD.EXE"));
 
             _matchModelMapper = new MatchModelMapper();
+
+            _presentationService = new PresentationService();
 
             _delayTimer = new DispatcherTimer();
             _delayTimer.Interval = TimeSpan.FromMilliseconds(DelayInMilliseconds);
@@ -94,6 +104,10 @@ namespace WindowsExplorerClient.ViewModel
             }
             set
             {
+                //Before rendering matches we would like to update MaxMatchesListHeight,
+                //which depends on the current window position.
+                OnPropertyChanged("MaxMatchesListHeight");
+
                 _matches = value;
                 OnPropertyChanged("Matches");
             }
@@ -123,6 +137,28 @@ namespace WindowsExplorerClient.ViewModel
             }
         }
 
+        public double SearchTextBoxHeight
+        {
+            get
+            {
+                return _searchTextBoxHeight;
+            }
+            set
+            {
+                _searchTextBoxHeight = value;
+                OnPropertyChanged("SearchTextBoxHeight");
+            }
+        }
+
+        public double MaxMatchesListHeight
+        {
+            get
+            {
+                //Assume that search text control is positioned at the top of the current window (almost true).
+                return _presentationService.GetMaxMatchesListHeight(0, _searchTextBoxHeight);
+            }
+        }
+
         public ApplicationWindow HostWindow { get; set; }
 
         #endregion
@@ -141,38 +177,20 @@ namespace WindowsExplorerClient.ViewModel
 
         public void MoveSelectionUp()
         {
-            if (Utility.IsNullOrEmpty(Matches))
+            MatchModel selectedMatch = _presentationService.MoveSelectionUp(Matches, SelectedMatch);
+            if (selectedMatch != null)
             {
-                return;
+                SelectedMatch = selectedMatch;
             }
-
-            int selectionIndex = Matches.IndexOf(SelectedMatch);
-            selectionIndex--;
-
-            if (selectionIndex < 0)
-            {
-                selectionIndex = Matches.Count - 1;
-            }
-
-            SelectedMatch = Matches[selectionIndex];
         }
 
         public void MoveSelectionDown()
         {
-            if (Utility.IsNullOrEmpty(Matches))
+            MatchModel selectedMatch = _presentationService.MoveSelectionDown(Matches, SelectedMatch);
+            if (selectedMatch != null)
             {
-                return;
+                SelectedMatch = selectedMatch;
             }
-
-            int selectionIndex = Matches.IndexOf(SelectedMatch);
-            selectionIndex++;
-
-            if (selectionIndex == Matches.Count)
-            {
-                selectionIndex = 0;
-            }
-
-            SelectedMatch = Matches[selectionIndex];
         }
 
         public void UpdateHostWindow()

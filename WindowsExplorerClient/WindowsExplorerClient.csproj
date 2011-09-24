@@ -58,6 +58,9 @@
     <Compile Include="Hotkey.cs" />
     <Compile Include="PresentationServices\IMatchModelMapper.cs" />
     <Compile Include="PresentationServices\Implementations\MatchModelMapper.cs" />
+    <Compile Include="PresentationServices\Implementations\PresentationService.cs" />
+    <Compile Include="PresentationServices\IPresentationService.cs" />
+    <Compile Include="SizeObserver.cs" />
     <Compile Include="ViewModel\MatchModel.cs" />
     <Compile Include="ViewModel\NavigationModel.cs" />
     <Page Include="MainWindow.xaml">
