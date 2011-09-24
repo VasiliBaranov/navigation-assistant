@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Windows;
 
-namespace WindowsExplorerClient
+namespace WindowsExplorerClient.Utilities
 {
+    //Declares an attached property to bind ActualSize to ViewModel.
     //Code taken from http://stackoverflow.com/questions/1083224/pushing-read-only-gui-properties-back-into-viewmodel
     public static class SizeObserver
     {

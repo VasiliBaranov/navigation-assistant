@@ -2,8 +2,8 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Windows.Input;
-using Core.GlobalHotKeys;
 using Core.HookManager;
+using WindowsExplorerClient.Utilities;
 using WindowsExplorerClient.ViewModel;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 

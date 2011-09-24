@@ -11,8 +11,6 @@ namespace WindowsExplorerClient.PresentationServices.Implementations
 {
     public class PresentationService : IPresentationService
     {
-        private const double MaxScreenFillingRatio = 0.7;
-
         public MatchModel MoveSelectionUp(ObservableCollection<MatchModel> matches, MatchModel selectedMatch)
         {
             if (Utility.IsNullOrEmpty(matches))
@@ -55,14 +53,14 @@ namespace WindowsExplorerClient.PresentationServices.Implementations
             double windowTopPosition = currentWindow.Top;
 
             //Need to do some hacks to handle multiple monitors.
-            //For single monitor System.Windows.SystemParameters.WorkArea or System.Windows.SystemParameters.PrimaryScreenHeight
-            //would have been sufficient
+            //For a single monitor System.Windows.SystemParameters.WorkArea or System.Windows.SystemParameters.PrimaryScreenHeight
+            //would have been sufficient (as they return primary monitor parameters).
             //See http://stackoverflow.com/questions/254197/how-can-i-get-the-active-screen-dimensions
             Screen screen = GetScreen(currentWindow);
             double screenHeight = screen.WorkingArea.Height;
 
             double availableHeight = screenHeight - windowTopPosition - searchTextBoxTop - searchTextBoxHeight;
-            return availableHeight*MaxScreenFillingRatio;
+            return availableHeight * Constants.MaxScreenFillingRatio;
         }
 
         private static Screen GetScreen(Window window)

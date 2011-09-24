@@ -14,8 +14,6 @@ namespace WindowsExplorerClient.PresentationServices.Implementations
 {
     public class MatchModelMapper : IMatchModelMapper
     {
-        private const int MaxMatchesToDisplay = 20;
-
         public List<MatchModel> GetMatchModels(List<MatchedFileSystemItem> folderMatches)
         {
             if (Utility.IsNullOrEmpty(folderMatches))
@@ -24,12 +22,12 @@ namespace WindowsExplorerClient.PresentationServices.Implementations
             }
 
             List<MatchModel> matchRepresentations = folderMatches
-                .Take(MaxMatchesToDisplay)
+                .Take(Constants.MaxMatchesToDisplay)
                 .OrderBy(m => m.ItemPath.Length)
                 .Select(GetMatchModel)
                 .ToList();
 
-            if (folderMatches.Count > MaxMatchesToDisplay)
+            if (folderMatches.Count > Constants.MaxMatchesToDisplay)
             {
                 matchRepresentations.Add(new MatchModel(this, Resources.TooManyMatchesText));
             }

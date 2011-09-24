@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace WindowsExplorerClient
+namespace WindowsExplorerClient.Utilities
 {
     //This attached property allows to set focus on controls from view model,
     //e.g. <TextBox local:FocusExtension.IsFocused="{Binding IsUserNameFocused}" />

@@ -54,13 +54,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="FocusExtension.cs" />
-    <Compile Include="Hotkey.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Utilities\FocusExtension.cs" />
+    <Compile Include="Utilities\Hotkey.cs" />
     <Compile Include="PresentationServices\IMatchModelMapper.cs" />
     <Compile Include="PresentationServices\Implementations\MatchModelMapper.cs" />
     <Compile Include="PresentationServices\Implementations\PresentationService.cs" />
     <Compile Include="PresentationServices\IPresentationService.cs" />
-    <Compile Include="SizeObserver.cs" />
+    <Compile Include="Utilities\SizeObserver.cs" />
     <Compile Include="ViewModel\MatchModel.cs" />
     <Compile Include="ViewModel\NavigationModel.cs" />
     <Page Include="MainWindow.xaml">

@@ -61,7 +61,7 @@ namespace WindowsExplorerClient.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please type folder name.
+        ///   Looks up a localized string similar to Please type a folder name.
         /// </summary>
         internal static string InitialMatchesMessage {
             get {
