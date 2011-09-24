@@ -1,9 +1,10 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Media;
 using Core.Model;
+using WindowsExplorerClient.PresentationServices;
 
 namespace WindowsExplorerClient.ViewModel
 {
@@ -19,10 +20,25 @@ namespace WindowsExplorerClient.ViewModel
 
         private bool _isFocused;
 
-        public MatchModel(MatchString matchedText, string path)
+        private readonly IMatchModelMapper _matchModelMapper;
+
+        public MatchModel(IMatchModelMapper matchModelMapper, MatchString matchedText, string path)
         {
             _matchedText = matchedText;
             _path = path;
+            _matchModelMapper = matchModelMapper;
+
+            _textBlock = GetTextBlock(_matchedText);
+        }
+
+        public MatchModel(IMatchModelMapper matchModelMapper, string text)
+        {
+            _path = null;
+            _matchModelMapper = matchModelMapper;
+
+            MatchSubstring substring = new MatchSubstring(text, false);
+            List<MatchSubstring> substrings = new List<MatchSubstring> { substring };
+            _matchedText = new MatchString(substrings);
 
             _textBlock = GetTextBlock(_matchedText);
         }
@@ -87,22 +103,7 @@ namespace WindowsExplorerClient.ViewModel
 
         private TextBlock GetTextBlock(MatchString matchedText)
         {
-            TextBlock textBlock = new TextBlock();
-            textBlock.HorizontalAlignment = HorizontalAlignment.Left;
-
-            foreach (MatchSubstring matchSubstring in matchedText)
-            {
-                Run substringControl = new Run(matchSubstring.Value);
-                if (matchSubstring.IsMatched)
-                {
-                    substringControl.TextDecorations = TextDecorations.Underline;
-                    substringControl.Foreground = Brushes.Blue;
-                }
-
-                textBlock.Inlines.Add(substringControl);
-            }
-
-            return textBlock;
+            return _matchModelMapper.GetTextBlock(matchedText, TextDecorations.Underline, Brushes.Blue);
         }
     }
 }

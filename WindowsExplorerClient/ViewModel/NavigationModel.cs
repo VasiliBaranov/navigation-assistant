@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Globalization;
 using System.Windows.Threading;
 using Core.Model;
 using Core.Services;
 using Core.Services.Implementation;
-using System.Linq;
 using Core.Utilities;
+using WindowsExplorerClient.PresentationServices;
+using WindowsExplorerClient.PresentationServices.Implementations;
+using WindowsExplorerClient.Properties;
 
 namespace WindowsExplorerClient.ViewModel
 {
@@ -16,9 +16,9 @@ namespace WindowsExplorerClient.ViewModel
     {
         #region Fields
 
-        private readonly List<string> _rootFolders = new List<string> {"E:\\"};
-
         private readonly INavigationAssistant _navigationAssistant;
+
+        private readonly IMatchModelMapper _matchModelMapper;
 
         private readonly DispatcherTimer _delayTimer;
 
@@ -32,14 +32,6 @@ namespace WindowsExplorerClient.ViewModel
 
         private const int DelayInMilliseconds = 200;
 
-        private const int MaxMatchesToDisplay = 20;
-
-        private const string TooManyMatchesText = "Too many matches...";
-
-        private const string NoMatchesFound = "No matches found";
-
-        private const string InitialMatchesMessage = "Please type folder name";
-
         #endregion
 
         #region Constructors
@@ -50,16 +42,18 @@ namespace WindowsExplorerClient.ViewModel
             //_navigationAssistant = new NavigationAssistant(fileSystemParser, new MatchSearcher(), new WindowsExplorerManager());
             _navigationAssistant = new NavigationAssistant(fileSystemParser, new MatchSearcher(), new TotalCommanderManager(@"d:\Program Files\Total Commander\TOTALCMD.EXE"));
 
+            _matchModelMapper = new MatchModelMapper(_navigationAssistant);
+
             _delayTimer = new DispatcherTimer();
             _delayTimer.Interval = TimeSpan.FromMilliseconds(DelayInMilliseconds);
             _delayTimer.Tick += HandleDelayElapsed;
 
-            _matches = new ObservableCollection<MatchModel> {GetMatchModel(InitialMatchesMessage)};
+            _matches = new ObservableCollection<MatchModel> { new MatchModel(_matchModelMapper, Resources.InitialMatchesMessage) };
         }
 
         private void HandleDelayElapsed(object sender, EventArgs e)
         {
-            Matches = new ObservableCollection<MatchModel>(GetMatchRepresentations(_searchText));
+            Matches = new ObservableCollection<MatchModel>(_matchModelMapper.GetMatchModels(_searchText));
             SelectedMatch = Matches[0];
             _delayTimer.Stop(); //Would like to handle tick just once
 
@@ -193,51 +187,6 @@ namespace WindowsExplorerClient.ViewModel
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
-        }
-
-        private List<MatchModel> GetMatchRepresentations(string searchText)
-        {
-            if (string.IsNullOrEmpty(searchText))
-            {
-                return new List<MatchModel> { GetMatchModel(InitialMatchesMessage) };
-            }
-
-            List<MatchedFileSystemItem> folderMatches = _navigationAssistant.GetFolderMatches(_rootFolders, searchText);
-            if (Utility.IsNullOrEmpty(folderMatches))
-            {
-                return new List<MatchModel> { GetMatchModel(NoMatchesFound) };
-            }
-
-            List<MatchModel> matchRepresentations = folderMatches
-                .Take(MaxMatchesToDisplay)
-                .OrderBy(m=>m.ItemPath.Length)
-                .Select(GetMatchRepresentation)
-                .ToList();
-
-            if (folderMatches.Count > MaxMatchesToDisplay)
-            {
-                matchRepresentations.Add(GetMatchModel(TooManyMatchesText));
-            }
-
-            return matchRepresentations;
-        }
-
-        private MatchModel GetMatchRepresentation(MatchedFileSystemItem match)
-        {
-            //Clone the matched item name
-            MatchString matchedItemName = new MatchString(match.MatchedItemName);
-            string path = string.Format(CultureInfo.InvariantCulture, " -> {0}", match.ItemPath);
-            matchedItemName.Add(new MatchSubstring(path, false));
-
-            return new MatchModel(matchedItemName, match.ItemPath);
-        }
-
-        private MatchModel GetMatchModel(string text)
-        {
-            MatchSubstring substring = new MatchSubstring(text, false);
-            List<MatchSubstring> substrings = new List<MatchSubstring>{substring};
-
-            return new MatchModel(new MatchString(substrings), null);
         }
 
         #endregion
