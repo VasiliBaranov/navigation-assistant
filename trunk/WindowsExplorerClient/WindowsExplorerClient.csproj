@@ -56,6 +56,8 @@
     </ApplicationDefinition>
     <Compile Include="FocusExtension.cs" />
     <Compile Include="Hotkey.cs" />
+    <Compile Include="PresentationServices\IMatchModelMapper.cs" />
+    <Compile Include="PresentationServices\Implementations\MatchModelMapper.cs" />
     <Compile Include="ViewModel\MatchModel.cs" />
     <Compile Include="ViewModel\NavigationModel.cs" />
     <Page Include="MainWindow.xaml">

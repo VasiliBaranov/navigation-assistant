@@ -60,6 +60,33 @@ namespace WindowsExplorerClient.Properties {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to Please type folder name.
+        /// </summary>
+        internal static string InitialMatchesMessage {
+            get {
+                return ResourceManager.GetString("InitialMatchesMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No matches found.
+        /// </summary>
+        internal static string NoMatchesFound {
+            get {
+                return ResourceManager.GetString("NoMatchesFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Too many matches....
+        /// </summary>
+        internal static string TooManyMatchesText {
+            get {
+                return ResourceManager.GetString("TooManyMatchesText", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Icon TrayIcon {
             get {
                 object obj = ResourceManager.GetObject("TrayIcon", resourceCulture);
