@@ -1,13 +1,13 @@
 ﻿<Window x:Class="WindowsExplorerClient.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:WindowsExplorerClient"
+        xmlns:local="clr-namespace:WindowsExplorerClient" xmlns:ViewModel="clr-namespace:WindowsExplorerClient.ViewModel"
         Title="Navigation Assistant" SizeToContent="WidthAndHeight" Topmost="True"
         ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen"
         Closing="HandleClose" Deactivated="HandleDeactivated"
         FocusManager.FocusedElement="{Binding ElementName=SearchText}">
     <Window.Resources>
-        <local:ViewModel x:Key="ViewModel"/>
+        <ViewModel:NavigationModel x:Key="NavigationModel"/>
         <!--Technique taken from 
         http://stackoverflow.com/questions/698830/wpf-listbox-change-selected-and-unfocused-style-to-not-be-grayed-out.
         Other techniques, e.g. from 
@@ -23,7 +23,7 @@
             </Style.Resources>
         </Style>
     </Window.Resources>
-    <StackPanel DataContext="{StaticResource ViewModel}" Width="Auto" Height="Auto" VerticalAlignment="Top" 
+    <StackPanel DataContext="{StaticResource NavigationModel}" Width="Auto" Height="Auto" VerticalAlignment="Top" 
                 KeyDown="HandlePanelKeyDown">
         <TextBox x:Name="SearchText" HorizontalAlignment="Stretch" Width="Auto" MinWidth="300" 
                  Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"
