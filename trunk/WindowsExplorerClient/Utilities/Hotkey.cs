@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 using System.Runtime.InteropServices;
 using Application = System.Windows.Forms.Application;
 
-namespace Core.GlobalHotKeys
+namespace WindowsExplorerClient.Utilities
 {
     public class Hotkey : IMessageFilter
     {
