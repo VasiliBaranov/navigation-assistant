@@ -9,7 +9,7 @@ namespace WindowsExplorerClient.PresentationServices
 {
     public interface IMatchModelMapper
     {
-        List<MatchModel> GetMatchModels(string searchText);
+        List<MatchModel> GetMatchModels(List<MatchedFileSystemItem> folderMatches);
 
         MatchModel GetMatchModel(MatchedFileSystemItem match);
 

@@ -6,7 +6,6 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using Core.Model;
-using Core.Services;
 using Core.Utilities;
 using WindowsExplorerClient.Properties;
 using WindowsExplorerClient.ViewModel;
@@ -15,28 +14,13 @@ namespace WindowsExplorerClient.PresentationServices.Implementations
 {
     public class MatchModelMapper : IMatchModelMapper
     {
-        private readonly List<string> _rootFolders = new List<string> { "E:\\" };
-
         private const int MaxMatchesToDisplay = 20;
 
-        private readonly INavigationAssistant _navigationAssistant;
-
-        public MatchModelMapper(INavigationAssistant navigationAssistant)
+        public List<MatchModel> GetMatchModels(List<MatchedFileSystemItem> folderMatches)
         {
-            _navigationAssistant = navigationAssistant;
-        }
-
-        public List<MatchModel> GetMatchModels(string searchText)
-        {
-            if (string.IsNullOrEmpty(searchText))
-            {
-                return new List<MatchModel> { new MatchModel(this, Resources.InitialMatchesMessage) };
-            }
-
-            List<MatchedFileSystemItem> folderMatches = _navigationAssistant.GetFolderMatches(_rootFolders, searchText);
             if (Utility.IsNullOrEmpty(folderMatches))
             {
-                return new List<MatchModel> { new MatchModel(this, Resources.NoMatchesFound) };
+                return new List<MatchModel> {new MatchModel(this, Resources.NoMatchesFound)};
             }
 
             List<MatchModel> matchRepresentations = folderMatches

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Threading;
@@ -32,6 +33,8 @@ namespace WindowsExplorerClient.ViewModel
 
         private const int DelayInMilliseconds = 200;
 
+        private readonly List<string> _rootFolders = new List<string> { "E:\\" };
+
         #endregion
 
         #region Constructors
@@ -42,7 +45,7 @@ namespace WindowsExplorerClient.ViewModel
             //_navigationAssistant = new NavigationAssistant(fileSystemParser, new MatchSearcher(), new WindowsExplorerManager());
             _navigationAssistant = new NavigationAssistant(fileSystemParser, new MatchSearcher(), new TotalCommanderManager(@"d:\Program Files\Total Commander\TOTALCMD.EXE"));
 
-            _matchModelMapper = new MatchModelMapper(_navigationAssistant);
+            _matchModelMapper = new MatchModelMapper();
 
             _delayTimer = new DispatcherTimer();
             _delayTimer.Interval = TimeSpan.FromMilliseconds(DelayInMilliseconds);
@@ -53,7 +56,7 @@ namespace WindowsExplorerClient.ViewModel
 
         private void HandleDelayElapsed(object sender, EventArgs e)
         {
-            Matches = new ObservableCollection<MatchModel>(_matchModelMapper.GetMatchModels(_searchText));
+            Matches = GetMatchModels(_searchText);
             SelectedMatch = Matches[0];
             _delayTimer.Stop(); //Would like to handle tick just once
 
@@ -187,6 +190,22 @@ namespace WindowsExplorerClient.ViewModel
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        private ObservableCollection<MatchModel> GetMatchModels(string searchText)
+        {
+            if (string.IsNullOrEmpty(searchText))
+            {
+                return new ObservableCollection<MatchModel>
+                           {
+                               new MatchModel(_matchModelMapper, Resources.InitialMatchesMessage)
+                           };
+            }
+
+            List<MatchedFileSystemItem> folderMatches = _navigationAssistant.GetFolderMatches(_rootFolders, searchText);
+
+            List<MatchModel> matchModels = _matchModelMapper.GetMatchModels(folderMatches);
+            return new ObservableCollection<MatchModel>(matchModels);
         }
 
         #endregion
