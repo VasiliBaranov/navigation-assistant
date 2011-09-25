@@ -6,7 +6,7 @@
         Title="Navigation Assistant" SizeToContent="WidthAndHeight" Topmost="True"
         ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen"
         Closing="HandleClose" Deactivated="HandleDeactivated"
-        FocusManager.FocusedElement="{Binding ElementName=SearchText}">
+        FocusManager.FocusedElement="{Binding ElementName=SearchTextBox}">
     <Window.Resources>
         <ViewModel:NavigationModel x:Key="NavigationModel"/>
         <!--Technique taken from 
@@ -26,19 +26,22 @@
     </Window.Resources>
     <StackPanel DataContext="{StaticResource NavigationModel}" Width="Auto" Height="Auto" VerticalAlignment="Top" 
                 KeyDown="HandlePanelKeyDown">
-        <TextBox x:Name="SearchText" HorizontalAlignment="Stretch" Width="Auto" MinWidth="300" 
+        <TextBox x:Name="SearchTextBox" HorizontalAlignment="Stretch" Width="Auto" MinWidth="300" 
                  Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"
                  PreviewKeyDown="HandleSearchTextPreviewKeyDown"
                  Utilities:SizeObserver.Observe="True"
                  Utilities:SizeObserver.ObservedHeight="{Binding Path=SearchTextBoxHeight, Mode=OneWayToSource}" />
-        <ListBox x:Name="MatchesList" HorizontalAlignment="Left" Width="Auto" MinWidth="300" Height="Auto" 
+        <ListBox x:Name="MatchesListBox" HorizontalAlignment="Left"
                  ItemsSource="{Binding Path=Matches}" SelectedItem="{Binding Path=SelectedMatch}"
                  IsSynchronizedWithCurrentItem="True" MouseUp="HandleMatchesListMouseUp"
                  ItemContainerStyle="{StaticResource ListBoxItemStyle}"
-                 MaxHeight="{Binding Path=MaxMatchesListHeight, Mode=OneWay}">
+                 Height="Auto" MaxHeight="{Binding Path=MaxMatchesListBoxHeight, Mode=OneWay}"
+                 Width="Auto" MinWidth="300"
+                 Utilities:SizeObserver.Observe="True"
+                 Utilities:SizeObserver.ObservedWidth="{Binding Path=MatchesListBoxActualWidth, Mode=OneWayToSource}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Label HorizontalAlignment="Left" Width="Auto" Content="{Binding Path=TextBlock}" />
+                    <Label HorizontalAlignment="Left" Width="Auto" Content="{Binding Path=TextBlock}"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
