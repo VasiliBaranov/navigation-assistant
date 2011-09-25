@@ -3,10 +3,16 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ViewModel="clr-namespace:NavigationAssistant.ViewModel"
         xmlns:Utilities="clr-namespace:NavigationAssistant.Utilities"
-        Title="Navigation Assistant" SizeToContent="WidthAndHeight" Topmost="True"
-        ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen"
-        Closing="HandleClose" Deactivated="HandleDeactivated"
-        FocusManager.FocusedElement="{Binding ElementName=SearchTextBox}">
+        Title="Navigation Assistant" 
+        SizeToContent="WidthAndHeight"
+        Topmost="True"
+        ResizeMode="NoResize" 
+        ShowInTaskbar="False" 
+        WindowStartupLocation="CenterScreen"
+        Closing="HandleClose" 
+        Deactivated="HandleDeactivated"
+        FocusManager.FocusedElement="{Binding ElementName=SearchTextBox}"
+        KeyDown="HandleWindowKeyDown">
     <!--Don't set the window icon.
     Wpf uses the assembly icon, if specified.
     But it wont show up if running in debug from VS.

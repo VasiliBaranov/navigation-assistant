@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Core.HookManager;
-using NavigationAssistant.Utilities;
 using NavigationAssistant.ViewModel;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
@@ -14,59 +13,47 @@ namespace NavigationAssistant
     /// </summary>
     public partial class MainWindow
     {
-        private NotifyIcon _notifyIcon;
+        #region Fields
+
+        private readonly NotifyIcon _notifyIcon;
 
         private bool _isCtrlPressed;
+
         private bool _isShiftPressed;
 
-        private Hotkey hk;
+        #endregion
+
+        #region Properties
 
         private NavigationModel CurrentNavigationModel
         {
             get { return Resources["NavigationModel"] as NavigationModel; }
         }
 
+        #endregion
+
+        #region Constructors
+
         public MainWindow()
         {
             InitializeComponent();
 
             _notifyIcon = new NotifyIcon();
-            _notifyIcon.BalloonTipText = "The app has been minimized. Click the tray icon to show.";
-            _notifyIcon.BalloonTipTitle = "Navigation Assistant";
-            _notifyIcon.Text = "Navigation Assistant";
+            _notifyIcon.BalloonTipText = Properties.Resources.NotifyIconBalloonText;
+            _notifyIcon.BalloonTipTitle = Properties.Resources.NotifyIconBalloonTitle;
+            _notifyIcon.Text = Properties.Resources.NotifyIconText;
             _notifyIcon.Icon = Properties.Resources.TrayIcon;
-            _notifyIcon.Click += NotifyIconClick;
+            _notifyIcon.Click += HandleNotifyIconClick;
             _notifyIcon.Visible = true;
 
             HookManager.KeyDown += HandleGlobalKeyDown;
             HookManager.KeyPress += HandleGlobalKeyPress;
             HookManager.KeyUp += HandleGlobalKeyUp;
-
-            //RegisterGlobalHotKeys();
         }
 
-        //private void RegisterGlobalHotKeys()
-        //{
-        //    hk = new Hotkey();
-        //    hk.KeyCode = Keys.U;
-        //    hk.Control = true;
-        //    hk.Shift = true;
-        //    hk.Pressed += hk_Pressed;
+        #endregion
 
-        //    if (!hk.GetCanRegister(this))
-        //    {
-        //        throw new InvalidOperationException("Can not register a global hotkey.");
-        //    }
-        //    else
-        //    {
-        //        bool success = hk.Register(System.Windows.Application.Current.MainWindow);
-        //    }
-        //}
-
-        //private void hk_Pressed(object sender, HandledEventArgs e)
-        //{
-        //    ActivateFromTray();
-        //}
+        #region Global Key Handlers
 
         private void HandleGlobalKeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
         {
@@ -105,26 +92,9 @@ namespace NavigationAssistant
             }
         }
 
-        private void HandleClose(object sender, CancelEventArgs args)
-        {
-            _notifyIcon.Dispose();
-            _notifyIcon = null;
+        #endregion
 
-            //if (hk.Registered)
-            //{
-            //    hk.Unregister();
-            //}
-        }
-
-        private void NotifyIconClick(object sender, EventArgs e)
-        {
-            ActivateFromTray();
-        }
-
-        private void HandleDeactivated(object sender, EventArgs e)
-        {
-            DeactivateToTray();
-        }
+        #region Private Methods
 
         private void ActivateFromTray()
         {
@@ -153,6 +123,30 @@ namespace NavigationAssistant
             }
         }
 
+        #endregion
+
+        #region Event Handlers
+
+        private void HandleClose(object sender, CancelEventArgs args)
+        {
+            DeactivateToTray();
+
+            //_notifyIcon.Dispose();
+            //_notifyIcon = null;
+
+            args.Cancel = true;
+        }
+
+        private void HandleNotifyIconClick(object sender, EventArgs e)
+        {
+            ActivateFromTray();
+        }
+
+        private void HandleDeactivated(object sender, EventArgs e)
+        {
+            DeactivateToTray();
+        }
+
         //We can not subscribe to ListItem (Label) events, as list items are aligned to the left
         //(to determine the width of the listbox correctly) and shorter labels do not occupy the entire line.
         //Also, we can not subscribe to MouseDown, as SelectedItem is changed just between MouseDown and MouseUp.
@@ -174,7 +168,7 @@ namespace NavigationAssistant
             //manual selection change in the preview key down handler, 
             //attempt to change selection by the ListBox in the key down handler.
             //It causes incorrect ListBox behaviour, as selection in its handler is different from the initial state.
-            if(e.Key == Key.Up)
+            if (e.Key == Key.Up)
             {
                 CurrentNavigationModel.MoveSelectionUp();
             }
@@ -189,8 +183,18 @@ namespace NavigationAssistant
             if (e.Key == Key.Return)
             {
                 Navigate();
-                return;
             }
         }
+
+        private void HandleWindowKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                DeactivateToTray();
+            }
+        }
+
+        #endregion
+
     }
 }

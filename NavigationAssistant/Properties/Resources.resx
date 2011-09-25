@@ -123,6 +123,15 @@
   <data name="NoMatchesFound" xml:space="preserve">
     <value>No matches found</value>
   </data>
+  <data name="NotifyIconBalloonText" xml:space="preserve">
+    <value>The app has been minimized. Click the tray icon to show.</value>
+  </data>
+  <data name="NotifyIconBalloonTitle" xml:space="preserve">
+    <value>Navigation Assistant</value>
+  </data>
+  <data name="NotifyIconText" xml:space="preserve">
+    <value>Navigation Assistant</value>
+  </data>
   <data name="TooManyMatchesText" xml:space="preserve">
     <value>Too many matches...</value>
   </data>

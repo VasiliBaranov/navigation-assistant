@@ -79,6 +79,33 @@ namespace NavigationAssistant.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The app has been minimized. Click the tray icon to show..
+        /// </summary>
+        internal static string NotifyIconBalloonText {
+            get {
+                return ResourceManager.GetString("NotifyIconBalloonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Navigation Assistant.
+        /// </summary>
+        internal static string NotifyIconBalloonTitle {
+            get {
+                return ResourceManager.GetString("NotifyIconBalloonTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Navigation Assistant.
+        /// </summary>
+        internal static string NotifyIconText {
+            get {
+                return ResourceManager.GetString("NotifyIconText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Too many matches....
         /// </summary>
         internal static string TooManyMatchesText {
