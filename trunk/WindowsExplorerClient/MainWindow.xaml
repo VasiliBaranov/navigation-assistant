@@ -36,7 +36,7 @@
                  IsSynchronizedWithCurrentItem="True" MouseUp="HandleMatchesListMouseUp"
                  ItemContainerStyle="{StaticResource ListBoxItemStyle}"
                  Height="Auto" MaxHeight="{Binding Path=MaxMatchesListBoxHeight, Mode=OneWay}"
-                 Width="Auto" MinWidth="300"
+                 Width="{Binding Path=MatchesListBoxWidth}" MinWidth="300"
                  Utilities:SizeObserver.Observe="True"
                  Utilities:SizeObserver.ObservedWidth="{Binding Path=MatchesListBoxActualWidth, Mode=OneWayToSource}">
             <ListBox.ItemTemplate>

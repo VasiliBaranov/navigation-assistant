@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Threading;
 using Core.Model;
 using Core.Services;
@@ -44,7 +45,7 @@ namespace WindowsExplorerClient.ViewModel
 
         private double _searchTextBoxHeight;
 
-        private string _matchesListBoxWidth;
+        private double _matchesListBoxWidth;
 
         private double _matchesListBoxActualWidth;
 
@@ -68,7 +69,7 @@ namespace WindowsExplorerClient.ViewModel
             _delayTimer.Interval = TimeSpan.FromMilliseconds(DelayInMilliseconds);
             _delayTimer.Tick += HandleDelayElapsed;
 
-            _matches = new ObservableCollection<MatchModel> { new MatchModel(_matchModelMapper, Resources.InitialMatchesMessage) };
+            Matches = new ObservableCollection<MatchModel> { new MatchModel(_matchModelMapper, Resources.InitialMatchesMessage) };
         }
 
         #endregion
@@ -139,8 +140,30 @@ namespace WindowsExplorerClient.ViewModel
             }
             set
             {
+                //We would like to:
+                //1. set matches width automatically
+                //2. restrict maximum matches height (so that matches list does not fall below the screen)
+
+                //Unfortunately, wpf behaves weirdly:
+                //1. it calculates matches width depending just on VISIBLE list items
+                //(but some may be hidden with scrolling due to max height restriction)
+                //2. wpf recalculates matches width while list scrolling (as new items become visible)
+                //This is slow as hell and looks weird.
+
+                //Therefore, we do the following:
+                //1. bind viewmodel to matches actual width updates
+                //2. set matches width to auto, remove height restriction
+                //3. load new matches, let wpf determine width according to ALL matches
+                //4. when actual width is updated (see MatchesListBoxActualWidth)
+                //  a. set width to actual width (so that wpf will not recalculate it when scrolling)
+                //  b. set max height
+
                 _matchesChanging = true;
-                MaxMatchesListBoxHeight = 10000;
+
+                //wpf is not able to use this value as width, and it falls back to the default value ("Auto")
+                //Wpf does not allow to use string values (and simply pass "Auto")
+                MatchesListBoxWidth = -1;
+                MaxMatchesListBoxHeight = 10000; //remove height restriction
 
                 _matches = value;
                 OnPropertyChanged("Matches");
@@ -160,6 +183,19 @@ namespace WindowsExplorerClient.ViewModel
             }
         }
 
+        public double MatchesListBoxWidth
+        {
+            get
+            {
+                return _matchesListBoxWidth;
+            }
+            set
+            {
+                _matchesListBoxWidth = value;
+                OnPropertyChanged("MatchesListBoxWidth");
+            }
+        }
+
         public double MatchesListBoxActualWidth
         {
             get
@@ -169,17 +205,20 @@ namespace WindowsExplorerClient.ViewModel
             set
             {
                 _matchesListBoxActualWidth = value;
+                OnPropertyChanged("MatchesListBoxActualWidth");
                 if (!_matchesChanging)
                 {
-                    OnPropertyChanged("MatchesListBoxActualWidth");
                     return;
                 }
 
-                //This set is due to the matches update
+                //This setter is called due to the matches update.
                 _matchesChanging = false;
 
                 //Assume that search text control is positioned at the top of the current window (almost true).
                 MaxMatchesListBoxHeight = _presentationService.GetMaxMatchesListHeight(0, _searchTextBoxHeight);
+
+                //20 pixels needed to account for a scroll bar
+                MatchesListBoxWidth = _matchesListBoxActualWidth + 20;
             }
         }
 
