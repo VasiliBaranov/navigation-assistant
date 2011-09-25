@@ -15,11 +15,13 @@ namespace NavigationAssistant
     {
         #region Fields
 
-        private readonly NotifyIcon _notifyIcon;
+        private NotifyIcon _notifyIcon;
 
         private bool _isCtrlPressed;
 
         private bool _isShiftPressed;
+
+        private bool _isClosingCompletely;
 
         #endregion
 
@@ -38,12 +40,7 @@ namespace NavigationAssistant
         {
             InitializeComponent();
 
-            _notifyIcon = new NotifyIcon();
-            _notifyIcon.BalloonTipText = Properties.Resources.NotifyIconBalloonText;
-            _notifyIcon.BalloonTipTitle = Properties.Resources.NotifyIconBalloonTitle;
-            _notifyIcon.Text = Properties.Resources.NotifyIconText;
-            _notifyIcon.Icon = Properties.Resources.TrayIcon;
-            _notifyIcon.Click += HandleNotifyIconClick;
+            _notifyIcon = CreateNotifyIcon();
             _notifyIcon.Visible = true;
 
             HookManager.KeyDown += HandleGlobalKeyDown;
@@ -96,6 +93,66 @@ namespace NavigationAssistant
 
         #region Private Methods
 
+        private NotifyIcon CreateNotifyIcon()
+        {
+            NotifyIcon notifyIcon = new NotifyIcon();
+            notifyIcon.BalloonTipText = Properties.Resources.NotifyIconBalloonText;
+            notifyIcon.BalloonTipTitle = Properties.Resources.NotifyIconBalloonTitle;
+            notifyIcon.Text = Properties.Resources.NotifyIconText;
+            notifyIcon.Icon = Properties.Resources.TrayIcon;
+            notifyIcon.Click += HandleNotifyIconClick;
+
+            // The ContextMenu property sets the menu that will
+            // appear when the systray icon is right clicked.
+            notifyIcon.ContextMenu = CreateIconContextMenu();
+
+            return notifyIcon;
+        }
+
+        private ContextMenu CreateIconContextMenu()
+        {
+            ContextMenu contextMenu = new ContextMenu();
+            MenuItem exitMenuItem = new MenuItem();
+            MenuItem settingsMenuItem = new MenuItem();
+            MenuItem startupMenuItem = new MenuItem();
+
+            // Initialize exitMenuItem
+            exitMenuItem.Text = Properties.Resources.ExitMenuItemText;
+            exitMenuItem.Click += HandleExitMenuItemClick;
+
+            // Initialize settingsMenuItem
+            settingsMenuItem.Text = Properties.Resources.SettingsMenuItemText;
+            settingsMenuItem.Click += HandleSettingsMenuItemClick;
+
+            // Initialize startupMenuItem
+            startupMenuItem.Text = Properties.Resources.StartupMenuItemText;
+            startupMenuItem.Click += HandleStartupMenuItemClick;
+
+            // Initialize contextMenu
+            contextMenu.MenuItems.Add(settingsMenuItem);
+            contextMenu.MenuItems.Add(startupMenuItem);
+            contextMenu.MenuItems.Add(exitMenuItem);
+
+            return contextMenu;
+        }
+
+        private void HandleExitMenuItemClick(object sender, EventArgs e)
+        {
+            _isClosingCompletely = true;
+            Close();
+        }
+
+        private void HandleSettingsMenuItemClick(object sender, EventArgs e)
+        {
+            MessageBox.Show("Settings screen!");
+        }
+
+        private void HandleStartupMenuItemClick(object sender, EventArgs e)
+        {
+            MenuItem startupMenuItem = sender as MenuItem;
+            startupMenuItem.Checked = !startupMenuItem.Checked;
+        }
+
         private void ActivateFromTray()
         {
             CurrentNavigationModel.UpdateHostWindow();
@@ -129,12 +186,16 @@ namespace NavigationAssistant
 
         private void HandleClose(object sender, CancelEventArgs args)
         {
-            DeactivateToTray();
-
-            //_notifyIcon.Dispose();
-            //_notifyIcon = null;
-
-            args.Cancel = true;
+            if (_isClosingCompletely)
+            {
+                _notifyIcon.Dispose();
+                _notifyIcon = null;
+            }
+            else
+            {
+                DeactivateToTray();
+                args.Cancel = true;
+            }
         }
 
         private void HandleNotifyIconClick(object sender, EventArgs e)
