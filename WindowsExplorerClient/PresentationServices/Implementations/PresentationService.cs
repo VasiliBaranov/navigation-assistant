@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
@@ -49,18 +49,39 @@ namespace WindowsExplorerClient.PresentationServices.Implementations
 
         public double GetMaxMatchesListHeight(double searchTextBoxTop, double searchTextBoxHeight)
         {
-            Window currentWindow = Application.Current.MainWindow;
-            double windowTopPosition = currentWindow.Top;
-
-            //Need to do some hacks to handle multiple monitors.
-            //For a single monitor System.Windows.SystemParameters.WorkArea or System.Windows.SystemParameters.PrimaryScreenHeight
-            //would have been sufficient (as they return primary monitor parameters).
-            //See http://stackoverflow.com/questions/254197/how-can-i-get-the-active-screen-dimensions
-            Screen screen = GetScreen(currentWindow);
-            double screenHeight = screen.WorkingArea.Height;
+            double windowTopPosition = CurrentWindow.Top;
+            double screenHeight = ScreenWorkingArea.Height;
 
             double availableHeight = screenHeight - windowTopPosition - searchTextBoxTop - searchTextBoxHeight;
             return availableHeight * Constants.MaxScreenFillingRatio;
+        }
+
+        public double GetMaxMatchesListWidth(double searchTextBoxLeft)
+        {
+            double windowLeftPosition = CurrentWindow.Left;
+            double screenWidth = ScreenWorkingArea.Width;
+
+            double availableWidth = screenWidth - windowLeftPosition - searchTextBoxLeft;
+            return availableWidth * Constants.MaxScreenFillingRatio;
+        }
+
+        private Rectangle ScreenWorkingArea
+        {
+            get
+            {
+                //Need to do some hacks to handle multiple monitors.
+                //For a single monitor System.Windows.SystemParameters.WorkArea or System.Windows.SystemParameters.PrimaryScreenHeight
+                //would have been sufficient (as they return primary monitor parameters).
+                //See http://stackoverflow.com/questions/254197/how-can-i-get-the-active-screen-dimensions
+                Screen screen = GetScreen(CurrentWindow);
+
+                return screen.WorkingArea;
+            }
+        }
+
+        private Window CurrentWindow
+        {
+            get { return Application.Current.MainWindow; }
         }
 
         private static Screen GetScreen(Window window)

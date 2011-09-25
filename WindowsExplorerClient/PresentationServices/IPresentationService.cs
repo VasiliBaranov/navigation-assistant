@@ -10,5 +10,7 @@ namespace WindowsExplorerClient.PresentationServices
         MatchModel MoveSelectionDown(ObservableCollection<MatchModel> matches, MatchModel selectedMatch);
 
         double GetMaxMatchesListHeight(double searchTextBoxTop, double searchTextBoxHeight);
+
+        double GetMaxMatchesListWidth(double searchTextBoxLeft);
     }
 }
