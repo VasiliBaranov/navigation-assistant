@@ -100,7 +100,7 @@ namespace NavigationAssistant
             notifyIcon.BalloonTipTitle = Properties.Resources.NotifyIconBalloonTitle;
             notifyIcon.Text = Properties.Resources.NotifyIconText;
             notifyIcon.Icon = Properties.Resources.TrayIcon;
-            notifyIcon.Click += HandleNotifyIconClick;
+            notifyIcon.MouseClick += HandleNotifyIconClick;
 
             // The ContextMenu property sets the menu that will
             // appear when the systray icon is right clicked.
@@ -136,23 +136,6 @@ namespace NavigationAssistant
             return contextMenu;
         }
 
-        private void HandleExitMenuItemClick(object sender, EventArgs e)
-        {
-            _isClosingCompletely = true;
-            Close();
-        }
-
-        private void HandleSettingsMenuItemClick(object sender, EventArgs e)
-        {
-            MessageBox.Show("Settings screen!");
-        }
-
-        private void HandleStartupMenuItemClick(object sender, EventArgs e)
-        {
-            MenuItem startupMenuItem = sender as MenuItem;
-            startupMenuItem.Checked = !startupMenuItem.Checked;
-        }
-
         private void ActivateFromTray()
         {
             CurrentNavigationModel.UpdateHostWindow();
@@ -184,6 +167,28 @@ namespace NavigationAssistant
 
         #region Event Handlers
 
+        #region Menu Handlers
+
+        private void HandleExitMenuItemClick(object sender, EventArgs e)
+        {
+            _isClosingCompletely = true;
+
+            Close();
+        }
+
+        private void HandleSettingsMenuItemClick(object sender, EventArgs e)
+        {
+            MessageBox.Show("Settings screen!");
+        }
+
+        private void HandleStartupMenuItemClick(object sender, EventArgs e)
+        {
+            MenuItem startupMenuItem = sender as MenuItem;
+            startupMenuItem.Checked = !startupMenuItem.Checked;
+        }
+
+        #endregion
+
         private void HandleClose(object sender, CancelEventArgs args)
         {
             if (_isClosingCompletely)
@@ -198,9 +203,15 @@ namespace NavigationAssistant
             }
         }
 
-        private void HandleNotifyIconClick(object sender, EventArgs e)
+        //This method is subscribed to the MouseClick event. We can not subscribe to the Click event,
+        //as then the handler will be closed even if context menu items are clicked, and before them.
+        //This handler is also called before menu item handlers, but e.Button is Right for menu clicks.
+        private void HandleNotifyIconClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            ActivateFromTray();
+            if (e.Button == MouseButtons.Left)
+            {
+                ActivateFromTray();
+            }
         }
 
         private void HandleDeactivated(object sender, EventArgs e)
