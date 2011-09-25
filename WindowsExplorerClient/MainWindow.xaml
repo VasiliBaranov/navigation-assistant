@@ -7,6 +7,10 @@
         ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen"
         Closing="HandleClose" Deactivated="HandleDeactivated"
         FocusManager.FocusedElement="{Binding ElementName=SearchTextBox}">
+    <!--Don't set the window icon.
+    Wpf uses the assembly icon, if specified.
+    But it wont show up if running in debug from VS.
+    Running externally or without attaching (ctrl + f5): the icon displays as expected.-->
     <Window.Resources>
         <ViewModel:NavigationModel x:Key="NavigationModel"/>
         <!--Technique taken from 
@@ -45,6 +49,7 @@
                  Utilities:SizeObserver.Observe="True"
                  Utilities:SizeObserver.ObservedWidth="{Binding Path=MatchesListBoxActualWidth, Mode=OneWayToSource}"
                  Utilities:SelectionScroller.AutoScrollToCurrentItem="True">
+            <!--AutoScrollToCurrentItem is set as far we allow selection change with up/down keys even if the control is not focused.-->
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Label HorizontalAlignment="Left" Width="Auto" Content="{Binding Path=TextBlock}" />
