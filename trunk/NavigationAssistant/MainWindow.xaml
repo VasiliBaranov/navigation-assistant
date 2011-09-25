@@ -1,0 +1,60 @@
+﻿<Window x:Class="NavigationAssistant.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ViewModel="clr-namespace:NavigationAssistant.ViewModel"
+        xmlns:Utilities="clr-namespace:NavigationAssistant.Utilities"
+        Title="Navigation Assistant" SizeToContent="WidthAndHeight" Topmost="True"
+        ResizeMode="NoResize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen"
+        Closing="HandleClose" Deactivated="HandleDeactivated"
+        FocusManager.FocusedElement="{Binding ElementName=SearchTextBox}">
+    <!--Don't set the window icon.
+    Wpf uses the assembly icon, if specified.
+    But it wont show up if running in debug from VS.
+    Running externally or without attaching (ctrl + f5): the icon displays as expected.-->
+    <Window.Resources>
+        <ViewModel:NavigationModel x:Key="NavigationModel"/>
+        <!--Technique taken from 
+        http://stackoverflow.com/questions/698830/wpf-listbox-change-selected-and-unfocused-style-to-not-be-grayed-out.
+        Other techniques, e.g. from 
+        http://vbcity.com/blogs/xtab/archive/2009/06/28/background-color-for-wpf-listbox-selected-item.aspx or
+        http://wildermuth.com/2007/4/17/Changing_the_Selected_Style_of_ListBox_s_in_XAML
+        do not work, as item selection is not updated when clicking not on Label text (but inside a line).-->
+        <Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem">
+            <Style.Resources>
+                <!--SelectedItem with focus-->
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightBlue" Opacity=".4"/>
+                <!--SelectedItem without focus-->
+                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="LightBlue" Opacity=".4"/>
+            </Style.Resources>
+        </Style>
+    </Window.Resources>
+    <StackPanel DataContext="{StaticResource NavigationModel}" Width="Auto" Height="Auto" VerticalAlignment="Top" 
+                KeyDown="HandlePanelKeyDown">
+        <TextBox x:Name="SearchTextBox" 
+                 HorizontalAlignment="Stretch" 
+                 Width="Auto" MinWidth="300" 
+                 Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"
+                 PreviewKeyDown="HandleSearchTextPreviewKeyDown"
+                 Utilities:SizeObserver.Observe="True"
+                 Utilities:SizeObserver.ObservedHeight="{Binding Path=SearchTextBoxHeight, Mode=OneWayToSource}" />
+        <ListBox x:Name="MatchesListBox" 
+                 HorizontalAlignment="Left"
+                 ItemsSource="{Binding Path=Matches}" 
+                 SelectedItem="{Binding Path=SelectedMatch}"
+                 IsSynchronizedWithCurrentItem="True" 
+                 MouseUp="HandleMatchesListMouseUp"
+                 ItemContainerStyle="{StaticResource ListBoxItemStyle}"
+                 Height="Auto" MaxHeight="{Binding Path=MaxMatchesListBoxHeight, Mode=OneWay}"
+                 Width="{Binding Path=MatchesListBoxWidth}" MinWidth="300"
+                 Utilities:SizeObserver.Observe="True"
+                 Utilities:SizeObserver.ObservedWidth="{Binding Path=MatchesListBoxActualWidth, Mode=OneWayToSource}"
+                 Utilities:SelectionScroller.AutoScrollToCurrentItem="True">
+            <!--AutoScrollToCurrentItem is set as far we allow selection change with up/down keys even if the control is not focused.-->
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Label HorizontalAlignment="Left" Width="Auto" Content="{Binding Path=TextBlock}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </StackPanel>
+</Window>

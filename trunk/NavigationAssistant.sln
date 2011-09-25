@@ -1,15 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfClient", "WpfClient\WpfClient.csproj", "{CE0AA5F5-7119-4C1E-88B2-BE64D6E342D1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{76B831D8-FFC9-4F01-92E4-365520261B4F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{F3A384AD-E711-4322-9950-101946AB51DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsExplorerClient", "WindowsExplorerClient\WindowsExplorerClient.csproj", "{8C61359D-F448-442A-ADCA-B965180457CB}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleExplorerClient", "ConsoleExplorerClient\ConsoleExplorerClient.csproj", "{448F9B81-5DAE-4E71-9DBD-DB2DD132AA6E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NavigationAssistant", "NavigationAssistant\NavigationAssistant.csproj", "{8C61359D-F448-442A-ADCA-B965180457CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,16 +17,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CE0AA5F5-7119-4C1E-88B2-BE64D6E342D1}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{CE0AA5F5-7119-4C1E-88B2-BE64D6E342D1}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{CE0AA5F5-7119-4C1E-88B2-BE64D6E342D1}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{CE0AA5F5-7119-4C1E-88B2-BE64D6E342D1}.Debug|x86.ActiveCfg = Debug|x86
-		{CE0AA5F5-7119-4C1E-88B2-BE64D6E342D1}.Debug|x86.Build.0 = Debug|x86
-		{CE0AA5F5-7119-4C1E-88B2-BE64D6E342D1}.Release|Any CPU.ActiveCfg = Release|x86
-		{CE0AA5F5-7119-4C1E-88B2-BE64D6E342D1}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{CE0AA5F5-7119-4C1E-88B2-BE64D6E342D1}.Release|Mixed Platforms.Build.0 = Release|x86
-		{CE0AA5F5-7119-4C1E-88B2-BE64D6E342D1}.Release|x86.ActiveCfg = Release|x86
-		{CE0AA5F5-7119-4C1E-88B2-BE64D6E342D1}.Release|x86.Build.0 = Release|x86
 		{76B831D8-FFC9-4F01-92E4-365520261B4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{76B831D8-FFC9-4F01-92E4-365520261B4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76B831D8-FFC9-4F01-92E4-365520261B4F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -61,16 +47,6 @@ Global
 		{8C61359D-F448-442A-ADCA-B965180457CB}.Release|Mixed Platforms.Build.0 = Release|x86
 		{8C61359D-F448-442A-ADCA-B965180457CB}.Release|x86.ActiveCfg = Release|x86
 		{8C61359D-F448-442A-ADCA-B965180457CB}.Release|x86.Build.0 = Release|x86
-		{448F9B81-5DAE-4E71-9DBD-DB2DD132AA6E}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{448F9B81-5DAE-4E71-9DBD-DB2DD132AA6E}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{448F9B81-5DAE-4E71-9DBD-DB2DD132AA6E}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{448F9B81-5DAE-4E71-9DBD-DB2DD132AA6E}.Debug|x86.ActiveCfg = Debug|x86
-		{448F9B81-5DAE-4E71-9DBD-DB2DD132AA6E}.Debug|x86.Build.0 = Debug|x86
-		{448F9B81-5DAE-4E71-9DBD-DB2DD132AA6E}.Release|Any CPU.ActiveCfg = Release|x86
-		{448F9B81-5DAE-4E71-9DBD-DB2DD132AA6E}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{448F9B81-5DAE-4E71-9DBD-DB2DD132AA6E}.Release|Mixed Platforms.Build.0 = Release|x86
-		{448F9B81-5DAE-4E71-9DBD-DB2DD132AA6E}.Release|x86.ActiveCfg = Release|x86
-		{448F9B81-5DAE-4E71-9DBD-DB2DD132AA6E}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

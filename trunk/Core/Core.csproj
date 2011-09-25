@@ -64,12 +64,12 @@
     <Compile Include="Services\Implementation\CacheSerializer.cs" />
     <Compile Include="Services\Implementation\FileSystemParser.cs" />
     <Compile Include="Services\Implementation\MatchSearcher.cs" />
-    <Compile Include="Services\Implementation\NavigationAssistant.cs" />
+    <Compile Include="Services\Implementation\NavigationService.cs" />
     <Compile Include="Services\Implementation\TotalCommander.cs" />
     <Compile Include="Services\Implementation\TotalCommanderManager.cs" />
     <Compile Include="Services\Implementation\WindowsExplorer.cs" />
     <Compile Include="Services\Implementation\WindowsExplorerManager.cs" />
-    <Compile Include="Services\INavigationAssistant.cs" />
+    <Compile Include="Services\INavigationService.cs" />
     <Compile Include="Utilities\Utility.cs" />
     <Compile Include="Utilities\WinApi.cs" />
   </ItemGroup>
