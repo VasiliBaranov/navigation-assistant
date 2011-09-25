@@ -6,7 +6,6 @@ using System.Windows.Threading;
 using Core.Model;
 using Core.Services;
 using Core.Services.Implementation;
-using Core.Utilities;
 using WindowsExplorerClient.PresentationServices;
 using WindowsExplorerClient.PresentationServices.Implementations;
 using WindowsExplorerClient.Properties;
@@ -31,6 +30,8 @@ namespace WindowsExplorerClient.ViewModel
 
         private readonly List<string> _rootFolders = new List<string> { "E:\\" };
 
+        private bool _matchesChanging;
+
         #endregion
 
         #region Data Fields
@@ -42,6 +43,12 @@ namespace WindowsExplorerClient.ViewModel
         private MatchModel _selectedMatch;
 
         private double _searchTextBoxHeight;
+
+        private string _matchesListBoxWidth;
+
+        private double _matchesListBoxActualWidth;
+
+        private double _maxMatchesListBoxHeight;
 
         #endregion
 
@@ -64,15 +71,6 @@ namespace WindowsExplorerClient.ViewModel
             _matches = new ObservableCollection<MatchModel> { new MatchModel(_matchModelMapper, Resources.InitialMatchesMessage) };
         }
 
-        private void HandleDelayElapsed(object sender, EventArgs e)
-        {
-            Matches = GetMatchModels(_searchText);
-            SelectedMatch = Matches[0];
-            _delayTimer.Stop(); //Would like to handle tick just once
-
-            OnPropertyChanged("SearchText");
-        }
-
         #endregion
 
         #region Properties
@@ -93,23 +91,6 @@ namespace WindowsExplorerClient.ViewModel
                 //Need to stop the execution from the previous setter.
                 _delayTimer.Stop();
                 _delayTimer.Start();
-            }
-        }
-
-        public ObservableCollection<MatchModel> Matches
-        {
-            get
-            {
-                return _matches;
-            }
-            set
-            {
-                //Before rendering matches we would like to update MaxMatchesListHeight,
-                //which depends on the current window position.
-                OnPropertyChanged("MaxMatchesListHeight");
-
-                _matches = value;
-                OnPropertyChanged("Matches");
             }
         }
 
@@ -150,12 +131,55 @@ namespace WindowsExplorerClient.ViewModel
             }
         }
 
-        public double MaxMatchesListHeight
+        public ObservableCollection<MatchModel> Matches
         {
             get
             {
+                return _matches;
+            }
+            set
+            {
+                _matchesChanging = true;
+                MaxMatchesListBoxHeight = 10000;
+
+                _matches = value;
+                OnPropertyChanged("Matches");
+            }
+        }
+
+        public double MaxMatchesListBoxHeight
+        {
+            get
+            {
+                return _maxMatchesListBoxHeight;
+            }
+            set
+            {
+                _maxMatchesListBoxHeight = value;
+                OnPropertyChanged("MaxMatchesListBoxHeight");
+            }
+        }
+
+        public double MatchesListBoxActualWidth
+        {
+            get
+            {
+                return _matchesListBoxActualWidth;
+            }
+            set
+            {
+                _matchesListBoxActualWidth = value;
+                if (!_matchesChanging)
+                {
+                    OnPropertyChanged("MatchesListBoxActualWidth");
+                    return;
+                }
+
+                //This set is due to the matches update
+                _matchesChanging = false;
+
                 //Assume that search text control is positioned at the top of the current window (almost true).
-                return _presentationService.GetMaxMatchesListHeight(0, _searchTextBoxHeight);
+                MaxMatchesListBoxHeight = _presentationService.GetMaxMatchesListHeight(0, _searchTextBoxHeight);
             }
         }
 
@@ -201,6 +225,15 @@ namespace WindowsExplorerClient.ViewModel
         #endregion
 
         #region Non Public Methods
+
+        private void HandleDelayElapsed(object sender, EventArgs e)
+        {
+            Matches = GetMatchModels(_searchText);
+            SelectedMatch = Matches[0];
+            _delayTimer.Stop(); //Would like to handle tick just once
+
+            OnPropertyChanged("SearchText");
+        }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {

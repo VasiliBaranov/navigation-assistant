@@ -141,7 +141,7 @@ namespace WindowsExplorerClient
 
             //It's better to set the text to empty here, not in activated,
             //as the Matches list reset (thorugh NavigationModel) is invisible then.
-            SearchText.Text = string.Empty;
+            SearchTextBox.Text = string.Empty;
         }
 
         private void Navigate()
