@@ -61,6 +61,15 @@ namespace NavigationAssistant.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to E&amp;xit.
+        /// </summary>
+        internal static string ExitMenuItemText {
+            get {
+                return ResourceManager.GetString("ExitMenuItemText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please type a folder name.
         /// </summary>
         internal static string InitialMatchesMessage {
@@ -102,6 +111,24 @@ namespace NavigationAssistant.Properties {
         internal static string NotifyIconText {
             get {
                 return ResourceManager.GetString("NotifyIconText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &amp;Settings.
+        /// </summary>
+        internal static string SettingsMenuItemText {
+            get {
+                return ResourceManager.GetString("SettingsMenuItemText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &amp;Run on startup.
+        /// </summary>
+        internal static string StartupMenuItemText {
+            get {
+                return ResourceManager.GetString("StartupMenuItemText", resourceCulture);
             }
         }
         
