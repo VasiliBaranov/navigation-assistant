@@ -61,6 +61,7 @@
     <Compile Include="PresentationServices\Implementations\MatchModelMapper.cs" />
     <Compile Include="PresentationServices\Implementations\PresentationService.cs" />
     <Compile Include="PresentationServices\IPresentationService.cs" />
+    <Compile Include="Utilities\SelectionScroller.cs" />
     <Compile Include="Utilities\SizeObserver.cs" />
     <Compile Include="ViewModel\MatchModel.cs" />
     <Compile Include="ViewModel\NavigationModel.cs" />

@@ -94,30 +94,6 @@ namespace WindowsExplorerClient.ViewModel
             }
         }
 
-        public MatchModel SelectedMatch
-        {
-            get
-            {
-                return _selectedMatch;
-            }
-            set
-            {
-                if (_selectedMatch != null)
-                {
-                    _selectedMatch.IsFocused = false;
-                }
-
-                _selectedMatch = value;
-
-                if (_selectedMatch != null)
-                {
-                    _selectedMatch.IsFocused = true;
-                }
-
-                OnPropertyChanged("SelectedMatch");
-            }
-        }
-
         public double SearchTextBoxHeight
         {
             get
@@ -128,6 +104,30 @@ namespace WindowsExplorerClient.ViewModel
             {
                 _searchTextBoxHeight = value;
                 OnPropertyChanged("SearchTextBoxHeight");
+            }
+        }
+
+        public MatchModel SelectedMatch
+        {
+            get
+            {
+                return _selectedMatch;
+            }
+            set
+            {
+                if (_selectedMatch != null)
+                {
+                    _selectedMatch.IsSelected = false;
+                }
+
+                _selectedMatch = value;
+
+                if (_selectedMatch != null)
+                {
+                    _selectedMatch.IsSelected = true;
+                }
+
+                OnPropertyChanged("SelectedMatch");
             }
         }
 
@@ -242,19 +242,13 @@ namespace WindowsExplorerClient.ViewModel
         public void MoveSelectionUp()
         {
             MatchModel selectedMatch = _presentationService.MoveSelectionUp(Matches, SelectedMatch);
-            if (selectedMatch != null)
-            {
-                SelectedMatch = selectedMatch;
-            }
+            UpdateSelectedMatch(selectedMatch);
         }
 
         public void MoveSelectionDown()
         {
             MatchModel selectedMatch = _presentationService.MoveSelectionDown(Matches, SelectedMatch);
-            if (selectedMatch != null)
-            {
-                SelectedMatch = selectedMatch;
-            }
+            UpdateSelectedMatch(selectedMatch);
         }
 
         public void UpdateHostWindow()
@@ -265,6 +259,16 @@ namespace WindowsExplorerClient.ViewModel
         #endregion
 
         #region Non Public Methods
+
+        private void UpdateSelectedMatch(MatchModel selectedMatch)
+        {
+            if (selectedMatch == null)
+            {
+                return;
+            }
+
+            SelectedMatch = selectedMatch;
+        }
 
         private void HandleDelayElapsed(object sender, EventArgs e)
         {

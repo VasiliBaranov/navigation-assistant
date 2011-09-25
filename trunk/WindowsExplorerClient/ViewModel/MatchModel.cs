@@ -10,6 +10,8 @@ namespace WindowsExplorerClient.ViewModel
 {
     public class MatchModel : INotifyPropertyChanged
     {
+        #region Fields
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private MatchString _matchedText;
@@ -18,9 +20,13 @@ namespace WindowsExplorerClient.ViewModel
 
         private string _path;
 
-        private bool _isFocused;
+        private bool _isSelected;
 
         private readonly IMatchModelMapper _matchModelMapper;
+
+        #endregion
+
+        #region Constructors
 
         public MatchModel(IMatchModelMapper matchModelMapper, MatchString matchedText, string path)
         {
@@ -42,6 +48,10 @@ namespace WindowsExplorerClient.ViewModel
 
             _textBlock = GetTextBlock(_matchedText);
         }
+
+        #endregion
+
+        #region Properties
 
         public MatchString MatchedText
         {
@@ -80,18 +90,22 @@ namespace WindowsExplorerClient.ViewModel
             }
         }
 
-        public bool IsFocused
+        public bool IsSelected
         {
             get
             {
-                return _isFocused;
+                return _isSelected;
             }
             set
             {
-                _isFocused = value;
-                OnPropertyChanged("IsFocused");
+                _isSelected = value;
+                OnPropertyChanged("IsSelected");
             }
         }
+
+        #endregion
+
+        #region Non Public Methods
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -105,5 +119,7 @@ namespace WindowsExplorerClient.ViewModel
         {
             return _matchModelMapper.GetTextBlock(matchedText, TextDecorations.Underline, Brushes.Blue);
         }
+
+        #endregion
     }
 }
