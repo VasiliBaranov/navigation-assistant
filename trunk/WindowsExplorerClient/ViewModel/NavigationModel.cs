@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows.Threading;
 using Core.Model;
 using Core.Services;
@@ -214,11 +213,13 @@ namespace WindowsExplorerClient.ViewModel
                 //This setter is called due to the matches update.
                 _matchesChanging = false;
 
-                //Assume that search text control is positioned at the top of the current window (almost true).
+                //Assume that search text control is positioned at the topleft corner of the current window (almost true).
                 MaxMatchesListBoxHeight = _presentationService.GetMaxMatchesListHeight(0, _searchTextBoxHeight);
 
-                //20 pixels needed to account for a scroll bar
-                MatchesListBoxWidth = _matchesListBoxActualWidth + 20;
+                //Set up matches listbox width explicitly, also taking into account max available screen width.
+                //20 pixels needed to account for a scroll bar.
+                double maxMatchesListWidth = _presentationService.GetMaxMatchesListWidth(0);
+                MatchesListBoxWidth = Math.Min(_matchesListBoxActualWidth + 20, maxMatchesListWidth);
             }
         }
 
