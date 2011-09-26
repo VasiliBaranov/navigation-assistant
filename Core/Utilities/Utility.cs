@@ -88,5 +88,31 @@ namespace Core.Utilities
                 .Select(d => d.RootDirectory.FullName)
                 .ToList();
         }
+
+        public static void EnsureClearFolder(string folderPath)
+        {
+            if (Directory.Exists(folderPath))
+            {
+                try
+                {
+                    Directory.Delete(folderPath, true);
+                }
+                catch
+                {
+                    // TODO: aparently we have a racing condition, for now we sleep and try again
+                    System.Threading.Thread.Sleep(1000);
+                    Directory.Delete(folderPath, true);
+                }
+            }
+            Directory.CreateDirectory(folderPath);
+        }
+
+        public static void EnsureFolder(string folderPath)
+        {
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+        }
     }
 }
