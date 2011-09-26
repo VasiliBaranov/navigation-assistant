@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Core.HookManager;
+using NavigationAssistant.PresentationModel;
+using NavigationAssistant.PresentationServices;
+using NavigationAssistant.PresentationServices.Implementations;
 using NavigationAssistant.ViewModel;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
@@ -178,6 +182,23 @@ namespace NavigationAssistant
 
         private void HandleSettingsMenuItemClick(object sender, EventArgs e)
         {
+            ISettingsSerializer settingsSerializer = new SettingsSerializer();
+            Settings settings = settingsSerializer.Deserialize();
+
+            if(settings == null)
+            {
+                settings = new Settings();
+            }
+
+            settings.FoldersToParse = new List<string> {"E:\\", "D:\\"};
+            settings.IncludeHiddenFolders = true;
+            settings.PrimaryNavigator = Navigators.WindowsExplorer;
+            settings.AdditionalNavigators = new List<Navigators>{Navigators.TotalCommander};
+            settings.CacheUpdateIntervalInSeconds = 200;
+            settings.CacheFolder = Application.LocalUserAppDataPath;
+
+            settingsSerializer.Serialize(settings);
+
             MessageBox.Show("Settings screen!");
         }
 
