@@ -1,7 +1,9 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using Core.Utilities;
+using Microsoft.Win32;
 using NavigationAssistant.PresentationModel;
 
 namespace NavigationAssistant.PresentationServices.Implementations
@@ -19,7 +21,7 @@ namespace NavigationAssistant.PresentationServices.Implementations
             string settingsFileName = GetSettingsFileName(false);
             if (!File.Exists(settingsFileName))
             {
-                return null;
+                return GetDefaultSettings();
             }
 
             XmlSerializer serializer = new XmlSerializer(typeof(Settings));
@@ -54,6 +56,63 @@ namespace NavigationAssistant.PresentationServices.Implementations
             }
 
             return Path.Combine(settingsFolder, SettingsFileName);
+        }
+
+        private Settings GetDefaultSettings()
+        {
+            Settings settings = new Settings
+                                    {
+                                        AdditionalNavigators = new List<Navigators> {Navigators.TotalCommander},
+                                        CacheFolder = Application.CommonAppDataPath,
+                                        CacheUpdateIntervalInSeconds = 60*10,
+                                        ExcludeFolderTemplates = new List<string> {"obj", "bin", ".svn"},
+                                        FoldersToParse = null,
+                                        IncludeHiddenFolders = false,
+                                        PrimaryNavigator = Navigators.WindowsExplorer,
+                                        TotalCommanderPath = GetTotalCommanderPath()
+                                    };
+
+            return settings;
+        }
+
+        private string GetTotalCommanderPath()
+        {
+            string folder = GetTotalCommanderFolder();
+
+            if (string.IsNullOrEmpty(folder))
+            {
+                return null;
+            }
+
+            return Path.Combine(folder, "TOTALCMD.EXE");
+        }
+
+        private string GetTotalCommanderFolder()
+        {
+            List<RegistryKey> registryKeys = new List<RegistryKey> {Registry.LocalMachine, Registry.CurrentUser};
+
+            foreach (RegistryKey registryKey in registryKeys)
+            {
+                try
+                {
+                    RegistryKey installDirValue = registryKey.OpenSubKey(@"Software\Ghisler\Total Commander");
+
+                    if (installDirValue != null)
+                    {
+                        string installDir = installDirValue.GetValue("InstallDir") as string;
+                        if (!string.IsNullOrEmpty(installDir) && Directory.Exists(installDir))
+                        {
+                            return installDir;
+                        }
+                    }
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+
+            return null;
         }
     }
 }
