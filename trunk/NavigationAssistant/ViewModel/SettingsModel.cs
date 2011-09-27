@@ -21,7 +21,7 @@ namespace NavigationAssistant.ViewModel
             settings.FoldersToParse = new List<string> { "E:\\", "D:\\" };
             settings.IncludeHiddenFolders = true;
             settings.PrimaryNavigator = Navigators.WindowsExplorer;
-            settings.AdditionalNavigators = new List<Navigators> { Navigators.TotalCommander };
+            settings.SupportedNavigators = new List<Navigators> { Navigators.TotalCommander };
             settings.CacheUpdateIntervalInSeconds = 200;
             settings.CacheFolder = Application.LocalUserAppDataPath;
 
