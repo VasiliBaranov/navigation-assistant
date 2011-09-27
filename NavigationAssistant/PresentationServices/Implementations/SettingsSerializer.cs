@@ -62,7 +62,7 @@ namespace NavigationAssistant.PresentationServices.Implementations
         {
             Settings settings = new Settings
                                     {
-                                        AdditionalNavigators = new List<Navigators> {Navigators.TotalCommander},
+                                        SupportedNavigators = new List<Navigators> {Navigators.TotalCommander, Navigators.WindowsExplorer},
                                         CacheFolder = Application.CommonAppDataPath,
                                         CacheUpdateIntervalInSeconds = 60*10,
                                         ExcludeFolderTemplates = new List<string> {"obj", "bin", ".svn"},

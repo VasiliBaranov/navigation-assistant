@@ -12,7 +12,7 @@ namespace NavigationAssistant.PresentationModel
 
         public Navigators PrimaryNavigator { get; set; }
 
-        public List<Navigators> AdditionalNavigators { get; set; }
+        public List<Navigators> SupportedNavigators { get; set; }
 
         public string TotalCommanderPath { get; set; }
 

@@ -1,8 +1,53 @@
 ﻿<Window x:Class="NavigationAssistant.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="SettingsWindow" Height="300" Width="300">
-    <Grid>
+        Title="Navigation Assistant Settings" Height="300" Width="600">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition MinWidth="50" Width="Auto" />
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition MinWidth="50" Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Height="23" HorizontalAlignment="Left" Name="PrimaryNavigatorLabel" Text="Primary Navigator" VerticalAlignment="Top" />
+        <GroupBox Grid.Column="1" Height="Auto" HorizontalAlignment="Left" Name="PrimaryNavigatorsGroupBox" VerticalAlignment="Top" Width="Auto">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <RadioButton HorizontalAlignment="Left" Name="WindowsExplorerPrimaryButton" Content="Windows Explorer" VerticalAlignment="Top" Margin="3"/>
+                <RadioButton Grid.Row="1" HorizontalAlignment="Left" Name="TotalCommanderPrimaryButton" Content="Total Commander" VerticalAlignment="Top" Margin="3"/>
+            </Grid>
+        </GroupBox>
+        <TextBlock Height="Auto" Grid.Column="2" HorizontalAlignment="Stretch" Name="PrimaryNavigatorsExplanation" VerticalAlignment="Stretch" Text="Choose a program to open a folder if no supported navigators are currently running." TextWrapping="Wrap"/>
+
+        <TextBlock Grid.Row="1" Height="23" HorizontalAlignment="Left" Name="SupportedNavigatorsLabel" Text="Supported Navigators" VerticalAlignment="Top" />
+        <GroupBox Grid.Row="1" Grid.Column="1" Height="Auto" HorizontalAlignment="Left" Name="SupportedNavigatorsGroupBox" VerticalAlignment="Top" Width="Auto">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <CheckBox HorizontalAlignment="Left" Name="WindowsExplorerButton" Content="Windows Explorer" VerticalAlignment="Top" Margin="3"/>
+                <CheckBox Grid.Row="1" HorizontalAlignment="Left" Name="TotalCommanderButton" Content="Total Commander" VerticalAlignment="Top" Margin="3"/>
+            </Grid>
+        </GroupBox>
+        <TextBlock Grid.Row="1" Grid.Column="2" Height="Auto" HorizontalAlignment="Stretch" Name="SupportedNavigatorsExplanation" VerticalAlignment="Stretch" Text="Specify the programs to be affected by navigation enhancements." TextWrapping="Wrap"/>
         
+        <TextBlock Grid.Row="2" Height="23" HorizontalAlignment="Left" Name="TotalCommanderPathLabel" Text="Total Commander Path" VerticalAlignment="Top" />
+        <TextBox Grid.Row="2" Grid.Column="1" Height="23" Width="200" HorizontalAlignment="Left" Name="TotalCommanderPathBox" VerticalAlignment="Top" Margin="3"/>
+        <TextBlock Grid.Row="2" Grid.Column="2" Height="Auto" HorizontalAlignment="Stretch" Name="TotalCommanderPathExplanation" VerticalAlignment="Stretch" Text="Specify the path to Total Commander executable." TextWrapping="Wrap"/>
     </Grid>
 </Window>
