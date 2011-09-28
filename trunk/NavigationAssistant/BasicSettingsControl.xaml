@@ -17,36 +17,44 @@
             <ColumnDefinition MinWidth="50" Width="*" />
         </Grid.ColumnDefinitions>
 
-        <GroupBox Height="Auto" HorizontalAlignment="Stretch" Name="PrimaryNavigatorsGroupBox" VerticalAlignment="Top" Width="Auto" Header="Primary Navigator">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <RadioButton HorizontalAlignment="Left" Name="WindowsExplorerPrimaryButton" Content="Windows Explorer" VerticalAlignment="Top" Margin="3"/>
-                <RadioButton Grid.Row="1" HorizontalAlignment="Left" Name="TotalCommanderPrimaryButton" Content="Total Commander" VerticalAlignment="Top" Margin="3"/>
-            </Grid>
+        <GroupBox Height="Auto" HorizontalAlignment="Stretch" Name="PrimaryNavigatorsGroupBox" 
+                  VerticalAlignment="Top" Width="Auto" Header="Primary Navigator">
+            <ItemsControl x:Name="PrimaryNavigators" 
+                 HorizontalAlignment="Left"
+                 ItemsSource="{Binding Path=PrimaryNavigatorModels}" 
+                 Height="Auto"
+                 Width="Auto">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <RadioButton GroupName="PrimaryNavigators" HorizontalAlignment="Left" Content="{Binding Path=Name}" VerticalAlignment="Top" Margin="3" IsChecked="{Binding Path=IsSelected}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </GroupBox>
 
-        <GroupBox Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Name="SupportedNavigatorsGroupBox" VerticalAlignment="Top" Width="Auto" Header="Supported Navigators">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <CheckBox HorizontalAlignment="Left" Name="WindowsExplorerButton" Content="Windows Explorer" VerticalAlignment="Top" Margin="3"/>
-                <CheckBox Grid.Row="1" HorizontalAlignment="Left" Name="TotalCommanderButton" Content="Total Commander" VerticalAlignment="Top" Margin="3"/>
-            </Grid>
+        <GroupBox Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Name="SupportedNavigatorsGroupBox" 
+                  VerticalAlignment="Top" Width="Auto" Header="Supported Navigators">
+            <ItemsControl x:Name="SupportedNavigators" 
+                 HorizontalAlignment="Left"
+                 ItemsSource="{Binding Path=SupportedNavigatorModels}" 
+                 Height="Auto"
+                 Width="Auto">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox HorizontalAlignment="Left" 
+                                  Content="{Binding Path=Name}" 
+                                  VerticalAlignment="Top" 
+                                  Margin="3" 
+                                  IsChecked="{Binding Path=IsSelected}"
+                                  IsEnabled="{Binding Path=IsEnabled}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </GroupBox>
 
         <TextBlock Grid.Row="2" Height="23" HorizontalAlignment="Left" Name="TotalCommanderPathLabel" Text="Total Commander Path" VerticalAlignment="Top" />
-        <TextBox Grid.Row="3" Height="23" MinWidth="200" HorizontalAlignment="Stretch" Name="TotalCommanderPathBox" VerticalAlignment="Top" Margin="3"/>
+        <TextBox Grid.Row="3" Height="23" MinWidth="200" HorizontalAlignment="Stretch" Name="TotalCommanderPathBox" 
+                 VerticalAlignment="Top" Margin="3" Text="{Binding Path=TotalCommanderPath}" IsEnabled="{Binding Path=TotalCommanderEnabled}"/>
 
         <StackPanel Grid.Row="4" HorizontalAlignment="Stretch" Name="ButtonsStackPanel" VerticalAlignment="Top" Orientation="Horizontal" FlowDirection="RightToLeft">
             <Button Content="Cancel" Height="Auto" Name="CancelButton" MinWidth="75" Margin="3"/>
