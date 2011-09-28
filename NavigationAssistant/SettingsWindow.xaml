@@ -1,12 +1,16 @@
 ﻿<Window x:Class="NavigationAssistant.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:NavigationAssistant"
+        xmlns:local="clr-namespace:NavigationAssistant" 
+        xmlns:ViewModel="clr-namespace:NavigationAssistant.ViewModel"
         Title="Navigation Assistant Settings" 
         SizeToContent="Height"
         Width="350"
         WindowStartupLocation="CenterScreen">
-    <TabControl HorizontalAlignment="Stretch" Name="SettingsTabControl" VerticalAlignment="Top">
+    <Window.Resources>
+        <ViewModel:SettingsModel x:Key="SettingsModel"/>
+    </Window.Resources>
+    <TabControl HorizontalAlignment="Stretch" Name="SettingsTabControl" VerticalAlignment="Top" DataContext="{StaticResource SettingsModel}" >
         <TabItem Header="Basic" Name="BasicSettingsTab">
             <local:BasicSettingsControl />
         </TabItem>
