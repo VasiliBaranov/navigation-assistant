@@ -7,15 +7,15 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition MinWidth="50" Width="Auto" />
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition MinWidth="50" Width="*" />
             <ColumnDefinition MinWidth="50" Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Height="23" HorizontalAlignment="Left" Name="PrimaryNavigatorLabel" Text="Primary Navigator" VerticalAlignment="Top" />
-        <GroupBox Grid.Column="1" Height="Auto" HorizontalAlignment="Left" Name="PrimaryNavigatorsGroupBox" VerticalAlignment="Top" Width="Auto">
+        <GroupBox Height="Auto" HorizontalAlignment="Stretch" Name="PrimaryNavigatorsGroupBox" VerticalAlignment="Top" Width="Auto" Header="Primary Navigator">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -28,10 +28,9 @@
                 <RadioButton Grid.Row="1" HorizontalAlignment="Left" Name="TotalCommanderPrimaryButton" Content="Total Commander" VerticalAlignment="Top" Margin="3"/>
             </Grid>
         </GroupBox>
-        <TextBlock Height="Auto" Grid.Column="2" HorizontalAlignment="Stretch" Name="PrimaryNavigatorsExplanation" VerticalAlignment="Stretch" Text="Choose a program to open a folder if no supported navigators are currently running." TextWrapping="Wrap"/>
+        <TextBlock Height="Auto" Grid.Column="1" HorizontalAlignment="Stretch" Name="PrimaryNavigatorsExplanation" VerticalAlignment="Stretch" Text="Choose a program for navigation if no supported navigators are currently running." TextWrapping="Wrap"/>
 
-        <TextBlock Grid.Row="1" Height="23" HorizontalAlignment="Left" Name="SupportedNavigatorsLabel" Text="Supported Navigators" VerticalAlignment="Top" />
-        <GroupBox Grid.Row="1" Grid.Column="1" Height="Auto" HorizontalAlignment="Left" Name="SupportedNavigatorsGroupBox" VerticalAlignment="Top" Width="Auto">
+        <GroupBox Grid.Row="1" Height="Auto" HorizontalAlignment="Stretch" Name="SupportedNavigatorsGroupBox" VerticalAlignment="Top" Width="Auto" Header="Supported Navigators">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -44,10 +43,15 @@
                 <CheckBox Grid.Row="1" HorizontalAlignment="Left" Name="TotalCommanderButton" Content="Total Commander" VerticalAlignment="Top" Margin="3"/>
             </Grid>
         </GroupBox>
-        <TextBlock Grid.Row="1" Grid.Column="2" Height="Auto" HorizontalAlignment="Stretch" Name="SupportedNavigatorsExplanation" VerticalAlignment="Stretch" Text="Specify the programs to be affected by navigation enhancements." TextWrapping="Wrap"/>
+        <TextBlock Grid.Row="1" Grid.Column="1" Height="Auto" HorizontalAlignment="Stretch" Name="SupportedNavigatorsExplanation" VerticalAlignment="Stretch" Text="Specify programs to be affected by navigation enhancements." TextWrapping="Wrap"/>
         
         <TextBlock Grid.Row="2" Height="23" HorizontalAlignment="Left" Name="TotalCommanderPathLabel" Text="Total Commander Path" VerticalAlignment="Top" />
-        <TextBox Grid.Row="2" Grid.Column="1" Height="23" Width="200" HorizontalAlignment="Left" Name="TotalCommanderPathBox" VerticalAlignment="Top" Margin="3"/>
-        <TextBlock Grid.Row="2" Grid.Column="2" Height="Auto" HorizontalAlignment="Stretch" Name="TotalCommanderPathExplanation" VerticalAlignment="Stretch" Text="Specify the path to Total Commander executable." TextWrapping="Wrap"/>
+        <TextBox Grid.Row="3" Height="23" MinWidth="200" HorizontalAlignment="Stretch" Name="TotalCommanderPathBox" VerticalAlignment="Top" Margin="3"/>
+        <TextBlock Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" Height="Auto" HorizontalAlignment="Stretch" Name="TotalCommanderPathExplanation" VerticalAlignment="Stretch" Text="Specify a path to the Total Commander executable." TextWrapping="Wrap"/>
+
+        <StackPanel Grid.Row="4" HorizontalAlignment="Stretch" Name="ButtonsStackPanel" VerticalAlignment="Top" Orientation="Horizontal" FlowDirection="RightToLeft">
+            <Button Content="Cancel" Height="Auto" Name="CancelButton" MinWidth="75" Margin="3"/>
+            <Button Content="Save" Height="Auto" Name="SaveButton" MinWidth="75" Margin="3"/>
+        </StackPanel>
     </Grid>
 </Window>
