@@ -25,7 +25,7 @@ namespace Core.Services.Implementation
 
         public List<MatchedFileSystemItem> GetFolderMatches(List<string> rootFolders, string searchText)
         {
-            if (Utility.IsNullOrEmpty(rootFolders) || string.IsNullOrEmpty(searchText))
+            if (ListUtility.IsNullOrEmpty(rootFolders) || string.IsNullOrEmpty(searchText))
             {
                 return new List<MatchedFileSystemItem>();
             }

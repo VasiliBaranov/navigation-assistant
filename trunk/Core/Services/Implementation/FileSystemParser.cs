@@ -11,7 +11,7 @@ namespace Core.Services.Implementation
     {
         public List<FileSystemItem> GetFolders(List<string> rootFolders)
         {
-            if (Utility.IsNullOrEmpty(rootFolders))
+            if (ListUtility.IsNullOrEmpty(rootFolders))
             {
                 throw new ArgumentNullException("rootFolders");
             }
@@ -20,7 +20,7 @@ namespace Core.Services.Implementation
 
             foreach (string rootFolder in rootFolders)
             {
-                folders.AddRange(Utility.GetFoldersRecursively(rootFolder));
+                folders.AddRange(DirectoryUtility.GetFoldersRecursively(rootFolder));
                 folders.Add(rootFolder);
             }
 

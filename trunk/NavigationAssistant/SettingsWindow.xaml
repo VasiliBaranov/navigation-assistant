@@ -43,7 +43,7 @@
                 <local:BasicSettingsControl DataContext="{Binding Path=BasicSettings}"/>
             </TabItem>
             <TabItem Header="Advanced" Name="AdvancedSettingsTab">
-                <local:AdvancedSettingsControl />
+                <local:AdvancedSettingsControl DataContext="{Binding Path=AdvancedSettings}"/>
             </TabItem>
         </TabControl>
         <StackPanel Grid.Row="2" Name="ButtonsStackPanel" Style="{StaticResource ButtonsPanel}">

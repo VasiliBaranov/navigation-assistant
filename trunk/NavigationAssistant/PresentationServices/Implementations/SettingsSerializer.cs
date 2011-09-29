@@ -87,7 +87,7 @@ namespace NavigationAssistant.PresentationServices.Implementations
             string settingsFolder = Application.LocalUserAppDataPath;
             if (ensureFolder)
             {
-                Utility.EnsureFolder(settingsFolder);
+                DirectoryUtility.EnsureFolder(settingsFolder);
             }
 
             return Path.Combine(settingsFolder, SettingsFileName);

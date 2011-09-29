@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
@@ -21,7 +22,7 @@ namespace NavigationAssistant.PresentationServices.Implementations
 
         public MatchModel MoveSelectionUp(ObservableCollection<MatchModel> matches, MatchModel selectedMatch)
         {
-            if (Utility.IsNullOrEmpty(matches))
+            if (ListUtility.IsNullOrEmpty(matches))
             {
                 return null;
             }
@@ -39,7 +40,7 @@ namespace NavigationAssistant.PresentationServices.Implementations
 
         public MatchModel MoveSelectionDown(ObservableCollection<MatchModel> matches, MatchModel selectedMatch)
         {
-            if (Utility.IsNullOrEmpty(matches))
+            if (ListUtility.IsNullOrEmpty(matches))
             {
                 return null;
             }

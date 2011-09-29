@@ -11,7 +11,7 @@ namespace Core.Services.Implementation
     {
         public List<MatchedFileSystemItem> GetMatches(List<FileSystemItem> items, string searchText)
         {
-            if (Utility.IsNullOrEmpty(items) || string.IsNullOrEmpty(searchText))
+            if (ListUtility.IsNullOrEmpty(items) || string.IsNullOrEmpty(searchText))
             {
                 return new List<MatchedFileSystemItem>();
             }
@@ -88,7 +88,7 @@ namespace Core.Services.Implementation
             //List<string> substrings = Utility.SplitStringByUpperChars(match);
             string[] substrings = match.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 
-            if (Utility.IsNullOrEmpty(substrings))
+            if (ListUtility.IsNullOrEmpty(substrings))
             {
                 return null;
             }
