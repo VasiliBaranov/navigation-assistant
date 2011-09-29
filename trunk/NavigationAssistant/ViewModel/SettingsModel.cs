@@ -11,7 +11,7 @@ namespace NavigationAssistant.ViewModel
     {
         #region Fields
 
-        private Settings _settings;
+        private readonly Settings _settings;
 
         private ObservableCollection<NavigatorModel> _primaryNavigatorModels;
 
