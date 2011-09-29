@@ -46,7 +46,7 @@ namespace Core.Services.Implementation
 
         public List<FileSystemItem> GetFolders(List<string> rootFolders)
         {
-            if (Utility.IsNullOrEmpty(rootFolders))
+            if (ListUtility.IsNullOrEmpty(rootFolders))
             {
                 throw new ArgumentNullException("rootFolders");
             }
@@ -100,7 +100,7 @@ namespace Core.Services.Implementation
 
         private void UpdateCache()
         {
-            List<string> rootFolders = Utility.GetHardDriveRootFolders();
+            List<string> rootFolders = DirectoryUtility.GetHardDriveRootFolders();
             List<FileSystemItem> folders = _fileSystemParser.GetFolders(rootFolders);
 
             lock (_cacheSync)

@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Core.Services;
 using NavigationAssistant.PresentationModel;
 using NavigationAssistant.ViewModel;

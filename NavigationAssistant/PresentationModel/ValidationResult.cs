@@ -9,7 +9,7 @@ namespace NavigationAssistant.PresentationModel
 
         public bool IsValid
         {
-            get { return Utility.IsNullOrEmpty(ErrorKeys); }
+            get { return ListUtility.IsNullOrEmpty(ErrorKeys); }
         }
 
         public ValidationResult()

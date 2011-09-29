@@ -2,8 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Utilities="clr-namespace:NavigationAssistant.Utilities" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <Style x:Key="SettingBase">
@@ -34,18 +34,18 @@
         </Grid.ColumnDefinitions>
 
         <TextBlock Name="FoldersToParseLabel" Text="Folders To Parse" />
-        <TextBox Name="FoldersToParseTextBox" Style="{StaticResource Field}"/>
+        <TextBox Name="FoldersToParseTextBox" Style="{StaticResource Field}" Text="{Binding Path=FoldersToParse}"/>
 
         <TextBlock Grid.Row="1" Name="ExcludeFolderTemplatesLabel" Text="Exclude Folder Templates" />
-        <TextBox Grid.Row="1" Name="ExcludeFolderTemplatesTextBox" Style="{StaticResource Field}"/>
+        <TextBox Grid.Row="1" Name="ExcludeFolderTemplatesTextBox" Style="{StaticResource Field}" Text="{Binding Path=ExcludeFolderTemplates}"/>
 
         <TextBlock Grid.Row="2" Name="IncludeHiddenFoldersLabel" Text="Include Hidden Folders" />
-        <CheckBox Grid.Row="2" Name="IncludeHiddenFoldersCheckBox" Style="{StaticResource Field}"/>
+        <CheckBox Grid.Row="2" Name="IncludeHiddenFoldersCheckBox" Style="{StaticResource Field}" IsChecked="{Binding Path=IncludeHiddenFolders}"/>
 
         <TextBlock Grid.Row="3" Name="CacheFolderLabel" Text="Cache Folder" />
-        <TextBox Grid.Row="3" Name="CacheFolderTextBox" Style="{StaticResource Field}"/>
+        <TextBox Grid.Row="3" Name="CacheFolderTextBox" Style="{StaticResource Field}" Text="{Binding Path=CacheFolder}"/>
 
         <TextBlock Grid.Row="4" Name="CacheUpdateIntervalLabel" Text="Cache Update Interval (sec)" />
-        <TextBox Grid.Row="4" Name="CacheUpdateIntervalTextBox" Style="{StaticResource Field}"/>
+        <TextBox Grid.Row="4" Name="CacheUpdateIntervalTextBox" Style="{StaticResource Field}" Text="{Binding Path=CacheUpdateIntervalInSeconds}" Utilities:NumericExtension.IsNumeric="True"/>
     </Grid>
 </UserControl>

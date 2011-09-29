@@ -16,7 +16,7 @@ namespace NavigationAssistant.PresentationServices.Implementations
     {
         public List<MatchModel> GetMatchModels(List<MatchedFileSystemItem> folderMatches)
         {
-            if (Utility.IsNullOrEmpty(folderMatches))
+            if (ListUtility.IsNullOrEmpty(folderMatches))
             {
                 return new List<MatchModel> {new MatchModel(this, Resources.NoMatchesFound)};
             }

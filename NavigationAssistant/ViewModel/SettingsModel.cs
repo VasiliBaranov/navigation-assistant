@@ -20,6 +20,8 @@ namespace NavigationAssistant.ViewModel
 
         private readonly BasicSettingsModel _basicSettings;
 
+        private readonly AdvancedSettingsModel _advancedSettings;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
@@ -35,6 +37,7 @@ namespace NavigationAssistant.ViewModel
             _cancelCommand = new CancelSettingsCommand();
 
             _basicSettings = new BasicSettingsModel(_settings);
+            _advancedSettings = new AdvancedSettingsModel(_settings);
         }
 
         #endregion
@@ -46,6 +49,14 @@ namespace NavigationAssistant.ViewModel
             get
             {
                 return _basicSettings;
+            }
+        }
+
+        public AdvancedSettingsModel AdvancedSettings
+        {
+            get
+            {
+                return _advancedSettings;
             }
         }
 
