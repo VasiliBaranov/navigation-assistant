@@ -5,6 +5,6 @@ namespace Core.Services
 {
     public interface IFileSystemParser
     {
-        List<FileSystemItem> GetFolders(List<string> rootFolders);
+        List<FileSystemItem> GetSubFolders(List<string> rootFolders);
     }
 }

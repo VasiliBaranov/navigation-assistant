@@ -16,7 +16,7 @@ namespace NavigationAssistant.ViewModel
     {
         #region Supplemetary Fields
 
-        private readonly INavigationService _navigationAssistant;
+        private INavigationService _navigationAssistant;
 
         private readonly IMatchModelMapper _matchModelMapper;
 
@@ -27,8 +27,6 @@ namespace NavigationAssistant.ViewModel
         public event PropertyChangedEventHandler PropertyChanged;
 
         private const int DelayInMilliseconds = 200;
-
-        private readonly List<string> _rootFolders = new List<string> { "E:\\" };
 
         private bool _matchesChanging;
 
@@ -59,9 +57,7 @@ namespace NavigationAssistant.ViewModel
             _matchModelMapper = new MatchModelMapper();
             _presentationService = new PresentationService();
             
-            ISettingsSerializer settingsSerializer = new SettingsSerializer();
-            Settings settings = settingsSerializer.Deserialize();
-            _navigationAssistant = _presentationService.BuildNavigationService(settings);
+            UpdateSettings();
 
             _delayTimer = new DispatcherTimer();
             _delayTimer.Interval = TimeSpan.FromMilliseconds(DelayInMilliseconds);
@@ -255,6 +251,13 @@ namespace NavigationAssistant.ViewModel
             HostWindow = _navigationAssistant.GetActiveWindow();
         }
 
+        public void UpdateSettings()
+        {
+            ISettingsSerializer settingsSerializer = new SettingsSerializer();
+            Settings settings = settingsSerializer.Deserialize();
+            _navigationAssistant = _presentationService.BuildNavigationService(settings);
+        }
+
         #endregion
 
         #region Non Public Methods
@@ -296,7 +299,7 @@ namespace NavigationAssistant.ViewModel
                            };
             }
 
-            List<MatchedFileSystemItem> folderMatches = _navigationAssistant.GetFolderMatches(_rootFolders, searchText);
+            List<MatchedFileSystemItem> folderMatches = _navigationAssistant.GetFolderMatches(searchText);
 
             List<MatchModel> matchModels = _matchModelMapper.GetMatchModels(folderMatches);
             return new ObservableCollection<MatchModel>(matchModels);

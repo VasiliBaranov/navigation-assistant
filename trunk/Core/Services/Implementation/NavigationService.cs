@@ -12,6 +12,8 @@ namespace Core.Services.Implementation
         private readonly IExplorerManager _primaryExplorerManager;
         private readonly List<IExplorerManager> _supportedExplorerManagers;
 
+        private List<string> _rootFolders;
+
         public NavigationService(IFileSystemParser fileSystemParser, 
             IMatchSearcher matchSearcher, 
             IExplorerManager primaryExplorerManager,
@@ -21,16 +23,35 @@ namespace Core.Services.Implementation
             _matchSearcher = matchSearcher;
             _primaryExplorerManager = primaryExplorerManager;
             _supportedExplorerManagers = supportedExplorerManagers;
+
+            _rootFolders = DirectoryUtility.GetHardDriveRootFolders();
         }
 
-        public List<MatchedFileSystemItem> GetFolderMatches(List<string> rootFolders, string searchText)
+        //public List<string> RootFolders { get; set; }
+        public List<string> RootFolders
         {
-            if (ListUtility.IsNullOrEmpty(rootFolders) || string.IsNullOrEmpty(searchText))
+            get
+            {
+                return _rootFolders;
+            }
+            set
+            {
+                _rootFolders = value;
+                if (ListUtility.IsNullOrEmpty(_rootFolders))
+                {
+                    _rootFolders = DirectoryUtility.GetHardDriveRootFolders();
+                }
+            }
+        }
+
+        public List<MatchedFileSystemItem> GetFolderMatches(string searchText)
+        {
+            if (string.IsNullOrEmpty(searchText))
             {
                 return new List<MatchedFileSystemItem>();
             }
 
-            List<FileSystemItem> folders = _fileSystemParser.GetFolders(rootFolders);
+            List<FileSystemItem> folders = _fileSystemParser.GetSubFolders(_rootFolders);
             List<MatchedFileSystemItem> matchedFolders = _matchSearcher.GetMatches(folders, searchText);
 
             return matchedFolders;

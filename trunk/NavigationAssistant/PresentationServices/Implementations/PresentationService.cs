@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
-using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
@@ -92,6 +90,8 @@ namespace NavigationAssistant.PresentationServices.Implementations
             supportedExplorerManagers.Add(primaryExplorerManager);
 
             INavigationService navigationAssistant = new NavigationService(cachedParser, new MatchSearcher(), primaryExplorerManager, supportedExplorerManagers);
+            navigationAssistant.RootFolders = settings.FoldersToParse;
+
             return navigationAssistant;
         }
 

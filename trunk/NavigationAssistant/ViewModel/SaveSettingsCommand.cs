@@ -22,12 +22,32 @@ namespace NavigationAssistant.ViewModel
         {
             ValidationResult validationResult = _settingsModel.Save();
 
-            if (validationResult.IsValid)
+            if (!validationResult.IsValid)
             {
-                Utility.CloseWindow<SettingsWindow>();
+                ShowErrors(validationResult);
                 return;
             }
 
+            Utility.CloseWindow<SettingsWindow>();
+
+            MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow != null)
+            {
+                mainWindow.CurrentNavigationModel.UpdateSettings();
+            }
+
+            return;
+        }
+
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        public event EventHandler CanExecuteChanged;
+
+        private void ShowErrors(ValidationResult validationResult)
+        {
             StringBuilder messageBuilder = new StringBuilder();
             messageBuilder.AppendLine("Please correct the following errors:");
             foreach (string errorKey in validationResult.ErrorKeys)
@@ -38,12 +58,5 @@ namespace NavigationAssistant.ViewModel
 
             MessageBox.Show(messageBuilder.ToString(), "Errors", MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
-
-        public bool CanExecute(object parameter)
-        {
-            return true;
-        }
-
-        public event EventHandler CanExecuteChanged;
     }
 }
