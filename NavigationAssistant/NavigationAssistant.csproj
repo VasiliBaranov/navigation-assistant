@@ -78,9 +78,11 @@
     <Compile Include="PresentationServices\IPresentationService.cs" />
     <Compile Include="Utilities\SelectionScroller.cs" />
     <Compile Include="Utilities\SizeObserver.cs" />
+    <Compile Include="ViewModel\CancelSettingsCommand.cs" />
     <Compile Include="ViewModel\MatchModel.cs" />
     <Compile Include="ViewModel\NavigationModel.cs" />
     <Compile Include="ViewModel\NavigatorModel.cs" />
+    <Compile Include="ViewModel\SaveSettingsCommand.cs" />
     <Compile Include="ViewModel\SettingsModel.cs" />
     <Page Include="AdvancedSettingsControl.xaml">
       <SubType>Designer</SubType>
