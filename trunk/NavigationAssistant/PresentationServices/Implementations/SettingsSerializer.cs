@@ -19,18 +19,23 @@ namespace NavigationAssistant.PresentationServices.Implementations
         public Settings Deserialize()
         {
             string settingsFileName = GetSettingsFileName(false);
-            if (!File.Exists(settingsFileName))
-            {
-                return GetDefaultSettings();
-            }
-
-            XmlSerializer serializer = new XmlSerializer(typeof(Settings));
 
             Settings settings;
-            using (StreamReader reader = new StreamReader(settingsFileName))
+            bool settingsAreDefault = !File.Exists(settingsFileName);
+            if (settingsAreDefault)
             {
-                settings = serializer.Deserialize(reader) as Settings;
+                settings = GetDefaultSettings();
             }
+            else
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(Settings));
+                using (StreamReader reader = new StreamReader(settingsFileName))
+                {
+                    settings = serializer.Deserialize(reader) as Settings;
+                }
+            }
+
+            ValidateTotalCommanderPath(settings, settingsAreDefault);
 
             return settings;
         }
@@ -58,6 +63,22 @@ namespace NavigationAssistant.PresentationServices.Implementations
             return Path.Combine(settingsFolder, SettingsFileName);
         }
 
+        //This check is needed, as Total Commander may be deleted or moved since the last settings save.
+        //Also, registry may contain an outdated value.
+        private void ValidateTotalCommanderPath(Settings settings, bool settingsAreDefault)
+        {
+            if (string.IsNullOrEmpty(settings.TotalCommanderPath))
+            {
+                return;
+            }
+
+            if (!File.Exists(settings.TotalCommanderPath))
+            {
+                string fallbackValue = settingsAreDefault ? null : GetTotalCommanderPath();
+                settings.TotalCommanderPath = fallbackValue;
+            }
+        }
+
         private Settings GetDefaultSettings()
         {
             Settings settings = new Settings
@@ -78,13 +99,18 @@ namespace NavigationAssistant.PresentationServices.Implementations
         private string GetTotalCommanderPath()
         {
             string folder = GetTotalCommanderFolder();
-
             if (string.IsNullOrEmpty(folder))
             {
                 return null;
             }
 
-            return Path.Combine(folder, "TOTALCMD.EXE");
+            string path = Path.Combine(folder, "TOTALCMD.EXE");
+            if (!File.Exists(path))
+            {
+                return null;
+            }
+
+            return path;
         }
 
         private string GetTotalCommanderFolder()

@@ -70,8 +70,8 @@
 
         <StackPanel Name="ButtonsStackPanel" 
                     Style="{StaticResource ButtonsPanel}">
-            <Button Content="Cancel" Name="CancelButton" Style="{StaticResource Button}"/>
-            <Button Content="Save" Name="SaveButton" Style="{StaticResource Button}"/>
+            <Button Content="Cancel" Name="CancelButton" Style="{StaticResource Button}" Command="{Binding Path=CancelCommand}"/>
+            <Button Content="Save" Name="SaveButton" Style="{StaticResource Button}" Command="{Binding Path=SaveCommand}"/>
         </StackPanel>
     </StackPanel>
 </UserControl>
