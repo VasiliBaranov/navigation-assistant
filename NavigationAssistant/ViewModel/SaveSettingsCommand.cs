@@ -1,5 +1,11 @@
 ﻿using System;
+using System.Globalization;
+using System.Text;
+using System.Windows;
 using System.Windows.Input;
+using NavigationAssistant.PresentationModel;
+using NavigationAssistant.Properties;
+using NavigationAssistant.Utilities;
 
 namespace NavigationAssistant.ViewModel
 {
@@ -14,7 +20,23 @@ namespace NavigationAssistant.ViewModel
 
         public void Execute(object parameter)
         {
-            _settingsModel.Save();
+            ValidationResult validationResult = _settingsModel.Save();
+
+            if (validationResult.IsValid)
+            {
+                Utility.CloseWindow<SettingsWindow>();
+                return;
+            }
+
+            StringBuilder messageBuilder = new StringBuilder();
+            messageBuilder.AppendLine("Please correct the following errors:");
+            foreach (string errorKey in validationResult.ErrorKeys)
+            {
+                string error = Resources.ResourceManager.GetString(errorKey, Resources.Culture);
+                messageBuilder.AppendLine(string.Format(CultureInfo.InvariantCulture, "- {0}", error));
+            }
+
+            MessageBox.Show(messageBuilder.ToString(), "Errors", MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
 
         public bool CanExecute(object parameter)

@@ -141,6 +141,15 @@ namespace NavigationAssistant.Properties {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to Total Commander path is invalid.
+        /// </summary>
+        internal static string TotalCommanderPathInvalidError {
+            get {
+                return ResourceManager.GetString("TotalCommanderPathInvalidError", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Icon TrayIcon {
             get {
                 object obj = ResourceManager.GetObject("TrayIcon", resourceCulture);

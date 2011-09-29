@@ -6,6 +6,6 @@ namespace NavigationAssistant.PresentationServices
     {
         Settings Deserialize();
 
-        void Serialize(Settings settings);
+        ValidationResult Serialize(Settings settings);
     }
 }

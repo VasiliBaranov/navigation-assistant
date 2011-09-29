@@ -65,6 +65,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="PresentationModel\Navigators.cs" />
     <Compile Include="PresentationModel\Settings.cs" />
+    <Compile Include="PresentationModel\ValidationResult.cs" />
     <Compile Include="PresentationServices\Implementations\SettingsSerializer.cs" />
     <Compile Include="PresentationServices\ISettingsSerializer.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
@@ -78,6 +79,7 @@
     <Compile Include="PresentationServices\IPresentationService.cs" />
     <Compile Include="Utilities\SelectionScroller.cs" />
     <Compile Include="Utilities\SizeObserver.cs" />
+    <Compile Include="Utilities\Utility.cs" />
     <Compile Include="ViewModel\CancelSettingsCommand.cs" />
     <Compile Include="ViewModel\MatchModel.cs" />
     <Compile Include="ViewModel\NavigationModel.cs" />
