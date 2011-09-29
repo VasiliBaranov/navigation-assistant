@@ -40,7 +40,7 @@
         </Grid.ColumnDefinitions>
         <TabControl Name="SettingsTabControl" Style="{StaticResource SettingsTab}">
             <TabItem Header="Basic" Name="BasicSettingsTab">
-                <local:BasicSettingsControl />
+                <local:BasicSettingsControl DataContext="{Binding Path=BasicSettings}"/>
             </TabItem>
             <TabItem Header="Advanced" Name="AdvancedSettingsTab">
                 <local:AdvancedSettingsControl />
