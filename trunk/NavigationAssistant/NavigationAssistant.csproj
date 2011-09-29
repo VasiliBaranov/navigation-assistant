@@ -81,6 +81,7 @@
     <Compile Include="Utilities\ScrollExtension.cs" />
     <Compile Include="Utilities\SizeExtension.cs" />
     <Compile Include="Utilities\Utility.cs" />
+    <Compile Include="ViewModel\BasicSettingsModel.cs" />
     <Compile Include="ViewModel\CancelSettingsCommand.cs" />
     <Compile Include="ViewModel\MatchModel.cs" />
     <Compile Include="ViewModel\NavigationModel.cs" />
