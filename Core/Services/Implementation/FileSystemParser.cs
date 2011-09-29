@@ -9,7 +9,7 @@ namespace Core.Services.Implementation
 {
     public class FileSystemParser : IFileSystemParser
     {
-        public List<FileSystemItem> GetFolders(List<string> rootFolders)
+        public List<FileSystemItem> GetSubFolders(List<string> rootFolders)
         {
             if (ListUtility.IsNullOrEmpty(rootFolders))
             {

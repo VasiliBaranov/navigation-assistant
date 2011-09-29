@@ -27,7 +27,7 @@ namespace NavigationAssistant
 
         #region Properties
 
-        private NavigationModel CurrentNavigationModel
+        public NavigationModel CurrentNavigationModel
         {
             get { return Resources["NavigationModel"] as NavigationModel; }
         }

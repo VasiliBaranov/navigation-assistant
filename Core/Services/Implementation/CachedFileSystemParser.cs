@@ -44,7 +44,7 @@ namespace Core.Services.Implementation
 
         #region Public Methods
 
-        public List<FileSystemItem> GetFolders(List<string> rootFolders)
+        public List<FileSystemItem> GetSubFolders(List<string> rootFolders)
         {
             if (ListUtility.IsNullOrEmpty(rootFolders))
             {
@@ -101,7 +101,7 @@ namespace Core.Services.Implementation
         private void UpdateCache()
         {
             List<string> rootFolders = DirectoryUtility.GetHardDriveRootFolders();
-            List<FileSystemItem> folders = _fileSystemParser.GetFolders(rootFolders);
+            List<FileSystemItem> folders = _fileSystemParser.GetSubFolders(rootFolders);
 
             lock (_cacheSync)
             {

@@ -5,7 +5,9 @@ namespace Core.Services
 {
     public interface INavigationService
     {
-        List<MatchedFileSystemItem> GetFolderMatches(List<string> rootFolders, string searchText);
+        List<string> RootFolders { get; set; }
+
+        List<MatchedFileSystemItem> GetFolderMatches(string searchText);
 
         void NavigateTo(string path, ApplicationWindow hostWindow);
 
