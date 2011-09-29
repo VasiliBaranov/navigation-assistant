@@ -77,6 +77,9 @@ namespace NavigationAssistant.PresentationServices.Implementations
             IFileSystemParser basicParser = new FileSystemParser();
             ICacheSerializer cacheSerializer = new CacheSerializer(settings.CacheFolder);
             IFileSystemParser cachedParser = new CachedFileSystemParser(basicParser, cacheSerializer, settings.CacheUpdateIntervalInSeconds);
+            cachedParser.IncludeHiddenFolders = settings.IncludeHiddenFolders;
+            cachedParser.ExcludeFolderTemplates = settings.ExcludeFolderTemplates;
+            cachedParser.FoldersToParse = settings.FoldersToParse;
 
             List<Navigators> additionalNavigators = new List<Navigators>(settings.SupportedNavigators);
             additionalNavigators.Remove(settings.PrimaryNavigator);
@@ -90,7 +93,6 @@ namespace NavigationAssistant.PresentationServices.Implementations
             supportedExplorerManagers.Add(primaryExplorerManager);
 
             INavigationService navigationAssistant = new NavigationService(cachedParser, new MatchSearcher(), primaryExplorerManager, supportedExplorerManagers);
-            navigationAssistant.RootFolders = settings.FoldersToParse;
 
             return navigationAssistant;
         }
@@ -136,6 +138,5 @@ namespace NavigationAssistant.PresentationServices.Implementations
         }
 
         #endregion
-
     }
 }
