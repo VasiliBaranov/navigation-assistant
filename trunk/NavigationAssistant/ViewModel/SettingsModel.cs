@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -117,9 +118,9 @@ namespace NavigationAssistant.ViewModel
 
         #region Public Methods
 
-        public void Save()
+        public ValidationResult Save()
         {
-            _settingsSerializer.Serialize(_settings);
+            return _settingsSerializer.Serialize(_settings);
         }
 
         #endregion

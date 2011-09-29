@@ -16,6 +16,8 @@ namespace NavigationAssistant.PresentationServices.Implementations
     {
         private const string SettingsFileName = "UserSettings.config";
 
+        #region Public Methods
+
         public Settings Deserialize()
         {
             string settingsFileName = GetSettingsFileName(false);
@@ -40,8 +42,14 @@ namespace NavigationAssistant.PresentationServices.Implementations
             return settings;
         }
 
-        public void Serialize(Settings settings)
+        public ValidationResult Serialize(Settings settings)
         {
+            ValidationResult validationResult = ValidateSettings(settings);
+            if (validationResult.ErrorKeys.Count > 0)
+            {
+                return validationResult;
+            }
+
             string settingsFileName = GetSettingsFileName(true);
 
             XmlSerializer serializer = new XmlSerializer(typeof (Settings));
@@ -50,6 +58,28 @@ namespace NavigationAssistant.PresentationServices.Implementations
             {
                 serializer.Serialize(writer, settings);
             }
+
+            return validationResult;
+        }
+
+        #endregion
+
+        #region Non Public Methods
+
+        private ValidationResult ValidateSettings(Settings settings)
+        {
+            List<string> errorKeys = new List<string>();
+
+            bool totalCommanderSupported = settings.SupportedNavigators.Contains(Navigators.TotalCommander);
+            bool totalCommanderPathValid = !string.IsNullOrEmpty(settings.TotalCommanderPath) &&
+                                           File.Exists(settings.TotalCommanderPath);
+
+            if (totalCommanderSupported && !totalCommanderPathValid)
+            {
+                errorKeys.Add("TotalCommanderPathInvalidError");
+            }
+
+            return new ValidationResult(errorKeys);
         }
 
         private string GetSettingsFileName(bool ensureFolder)
@@ -140,5 +170,7 @@ namespace NavigationAssistant.PresentationServices.Implementations
 
             return null;
         }
+
+        #endregion
     }
 }

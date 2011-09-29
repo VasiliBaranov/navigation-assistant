@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Linq;
-using System.Windows;
 using System.Windows.Input;
+using NavigationAssistant.Utilities;
 
 namespace NavigationAssistant.ViewModel
 {
@@ -9,11 +8,7 @@ namespace NavigationAssistant.ViewModel
     {
         public void Execute(object parameter)
         {
-            SettingsWindow settingsWindow = Application.Current.Windows.OfType<SettingsWindow>().FirstOrDefault();
-            if (settingsWindow != null && settingsWindow.IsActive)
-            {
-                settingsWindow.Close();
-            }
+            Utility.CloseWindow<SettingsWindow>();
         }
 
         public bool CanExecute(object parameter)
