@@ -78,8 +78,8 @@
     <Compile Include="PresentationServices\Implementations\MatchModelMapper.cs" />
     <Compile Include="PresentationServices\Implementations\PresentationService.cs" />
     <Compile Include="PresentationServices\IPresentationService.cs" />
-    <Compile Include="Utilities\SelectionScroller.cs" />
-    <Compile Include="Utilities\SizeObserver.cs" />
+    <Compile Include="Utilities\ScrollExtension.cs" />
+    <Compile Include="Utilities\SizeExtension.cs" />
     <Compile Include="Utilities\Utility.cs" />
     <Compile Include="ViewModel\CancelSettingsCommand.cs" />
     <Compile Include="ViewModel\MatchModel.cs" />

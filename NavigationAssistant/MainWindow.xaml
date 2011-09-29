@@ -41,8 +41,8 @@
                  Width="Auto" MinWidth="300" 
                  Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"
                  PreviewKeyDown="HandleSearchTextPreviewKeyDown"
-                 Utilities:SizeObserver.Observe="True"
-                 Utilities:SizeObserver.ObservedHeight="{Binding Path=SearchTextBoxHeight, Mode=OneWayToSource}" />
+                 Utilities:SizeExtension.Observe="True"
+                 Utilities:SizeExtension.ObservedHeight="{Binding Path=SearchTextBoxHeight, Mode=OneWayToSource}" />
         <ListBox x:Name="MatchesListBox" 
                  HorizontalAlignment="Left"
                  ItemsSource="{Binding Path=Matches}" 
@@ -52,9 +52,9 @@
                  ItemContainerStyle="{StaticResource ListBoxItemStyle}"
                  Height="Auto" MaxHeight="{Binding Path=MaxMatchesListBoxHeight, Mode=OneWay}"
                  Width="{Binding Path=MatchesListBoxWidth}" MinWidth="300"
-                 Utilities:SizeObserver.Observe="True"
-                 Utilities:SizeObserver.ObservedWidth="{Binding Path=MatchesListBoxActualWidth, Mode=OneWayToSource}"
-                 Utilities:SelectionScroller.AutoScrollToCurrentItem="True">
+                 Utilities:SizeExtension.Observe="True"
+                 Utilities:SizeExtension.ObservedWidth="{Binding Path=MatchesListBoxActualWidth, Mode=OneWayToSource}"
+                 Utilities:ScrollExtension.AutoScrollToCurrentItem="True">
             <!--AutoScrollToCurrentItem is set as far we allow selection change with up/down keys even if the control is not focused.-->
             <ListBox.ItemTemplate>
                 <DataTemplate>
