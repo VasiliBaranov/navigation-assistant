@@ -4,18 +4,49 @@
         xmlns:local="clr-namespace:NavigationAssistant" 
         xmlns:ViewModel="clr-namespace:NavigationAssistant.ViewModel"
         Title="Navigation Assistant Settings" 
-        SizeToContent="Height"
+        Height="300"
         Width="350"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <ViewModel:SettingsModel x:Key="SettingsModel"/>
+        <Style x:Key="ButtonsPanel">
+            <Setter Property="Control.HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Control.VerticalAlignment" Value="Top" />
+            <Setter Property="StackPanel.Orientation" Value="Horizontal" />
+            <Setter Property="StackPanel.FlowDirection" Value="RightToLeft" />
+            <Setter Property="Control.Margin" Value="0" />
+        </Style>
+        <Style x:Key="Button">
+            <Setter Property="Control.Margin" Value="3" />
+            <Setter Property="Control.MinWidth" Value="75" />
+        </Style>
+        <Style x:Key="SettingsTab">
+            <Setter Property="Control.HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Control.VerticalAlignment" Value="Top" />
+            <Setter Property="Control.Margin" Value="3" />
+        </Style>
     </Window.Resources>
-    <TabControl HorizontalAlignment="Stretch" Name="SettingsTabControl" VerticalAlignment="Top" DataContext="{StaticResource SettingsModel}" >
-        <TabItem Header="Basic" Name="BasicSettingsTab">
-            <local:BasicSettingsControl />
-        </TabItem>
-        <TabItem Header="Advanced" Name="AdvancedSettingsTab">
-            <local:AdvancedSettingsControl />
-        </TabItem>
-    </TabControl>
+
+    <Grid DataContext="{StaticResource SettingsModel}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TabControl Name="SettingsTabControl" Style="{StaticResource SettingsTab}">
+            <TabItem Header="Basic" Name="BasicSettingsTab">
+                <local:BasicSettingsControl />
+            </TabItem>
+            <TabItem Header="Advanced" Name="AdvancedSettingsTab">
+                <local:AdvancedSettingsControl />
+            </TabItem>
+        </TabControl>
+        <StackPanel Grid.Row="2" Name="ButtonsStackPanel" Style="{StaticResource ButtonsPanel}">
+            <Button Content="Cancel" Name="CancelButton" Style="{StaticResource Button}" Command="{Binding Path=CancelCommand}"/>
+            <Button Content="Save" Name="SaveButton" Style="{StaticResource Button}" Command="{Binding Path=SaveCommand}"/>
+        </StackPanel>
+    </Grid>
 </Window>

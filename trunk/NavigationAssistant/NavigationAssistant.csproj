@@ -71,6 +71,7 @@
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\WindowExtension.cs" />
     <Compile Include="Utilities\FocusExtension.cs" />
     <Compile Include="Utilities\Hotkey.cs" />
     <Compile Include="PresentationServices\IMatchModelMapper.cs" />
