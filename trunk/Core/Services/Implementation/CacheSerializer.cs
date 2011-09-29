@@ -10,14 +10,13 @@ namespace Core.Services.Implementation
     {
         //Xml is too verbose
         //Binary formatting is not readable
-        //Consider: using Settings (as app may not always have write access to the cacheFilePath, and Settings will use AppLocal folder then.
         private readonly string _cacheFilePath;
 
         private const string Separator = "?";
 
-        public CacheSerializer(string cacheFilePath)
+        public CacheSerializer(string cacheFolder)
         {
-            _cacheFilePath = cacheFilePath;
+            _cacheFilePath = Path.Combine(cacheFolder, "Cache.txt");
         }
 
         public void SerializeCache(List<FileSystemItem> cache)

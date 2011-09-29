@@ -23,19 +23,17 @@ namespace Core.Services.Implementation
 
         private readonly object _cacheSync = new object();
 
-        private const int ExpirationIntervalInSeconds = 10 * 60; //10 minutes
-
         #endregion
 
         #region Constructors
 
-        public CachedFileSystemParser(IFileSystemParser fileSystemParser, ICacheSerializer cacheSerializer)
+        public CachedFileSystemParser(IFileSystemParser fileSystemParser, ICacheSerializer cacheSerializer, int expirationIntervalInSeconds)
         {
             _fileSystemParser = fileSystemParser;
             _cacheSerializer = cacheSerializer;
 
             _expirationTimer = new Timer();
-            _expirationTimer.Interval = ExpirationIntervalInSeconds * 1000;
+            _expirationTimer.Interval = expirationIntervalInSeconds * 1000;
             _expirationTimer.Elapsed += HandleCacheExpired;
 
             //should raise the System.Timers.Timer.Elapsed event only once
@@ -79,6 +77,10 @@ namespace Core.Services.Implementation
                 return FilterCacheItems(_cache, rootFolders);
             }
         }
+
+        #endregion
+
+        #region Non Public Methods
 
         private List<FileSystemItem> FilterCacheItems(List<FileSystemItem> items, List<string> rootFolders)
         {
