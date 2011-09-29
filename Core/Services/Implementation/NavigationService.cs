@@ -9,18 +9,23 @@ namespace Core.Services.Implementation
     {
         private readonly IFileSystemParser _fileSystemParser;
         private readonly IMatchSearcher _matchSearcher;
-        private readonly IExplorerManager _explorerManager;
+        private readonly IExplorerManager _primaryExplorerManager;
+        private readonly List<IExplorerManager> _supportedExplorerManagers;
 
-        public NavigationService(IFileSystemParser fileSystemParser, IMatchSearcher matchSearcher, IExplorerManager explorerManager)
+        public NavigationService(IFileSystemParser fileSystemParser, 
+            IMatchSearcher matchSearcher, 
+            IExplorerManager primaryExplorerManager,
+            List<IExplorerManager> supportedExplorerManagers)
         {
             _fileSystemParser = fileSystemParser;
             _matchSearcher = matchSearcher;
-            _explorerManager = explorerManager;
+            _primaryExplorerManager = primaryExplorerManager;
+            _supportedExplorerManagers = supportedExplorerManagers;
         }
 
         public List<MatchedFileSystemItem> GetFolderMatches(List<string> rootFolders, string searchText)
         {
-            if (Utilities.Utility.IsNullOrEmpty(rootFolders) || string.IsNullOrEmpty(searchText))
+            if (Utility.IsNullOrEmpty(rootFolders) || string.IsNullOrEmpty(searchText))
             {
                 return new List<MatchedFileSystemItem>();
             }
@@ -33,9 +38,20 @@ namespace Core.Services.Implementation
 
         public void NavigateTo(string path, ApplicationWindow hostWindow)
         {
-            IExplorer explorer = _explorerManager.IsExplorer(hostWindow)
-                                     ? _explorerManager.GetExplorer(hostWindow)
-                                     : _explorerManager.CreateExplorer();
+            IExplorer explorer = null;
+            foreach (IExplorerManager explorerManager in _supportedExplorerManagers)
+            {
+                if (explorerManager.IsExplorer(hostWindow))
+                {
+                    explorer = explorerManager.GetExplorer(hostWindow);
+                    break;
+                }
+            }
+
+            if (explorer == null)
+            {
+                explorer = _primaryExplorerManager.CreateExplorer();
+            }
 
             explorer.NavigateTo(path);
         }

@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Windows.Threading;
 using Core.Model;
 using Core.Services;
-using Core.Services.Implementation;
+using NavigationAssistant.PresentationModel;
 using NavigationAssistant.PresentationServices;
 using NavigationAssistant.PresentationServices.Implementations;
 using NavigationAssistant.Properties;
@@ -56,13 +56,12 @@ namespace NavigationAssistant.ViewModel
 
         public NavigationModel()
         {
-            IFileSystemParser fileSystemParser = new CachedFileSystemParser(new FileSystemParser(), new CacheSerializer(@"e:\temp\Cache.txt"));
-            //_navigationAssistant = new NavigationAssistant(fileSystemParser, new MatchSearcher(), new WindowsExplorerManager());
-            _navigationAssistant = new NavigationService(fileSystemParser, new MatchSearcher(), new TotalCommanderManager(@"d:\Program Files\Total Commander\TOTALCMD.EXE"));
-
             _matchModelMapper = new MatchModelMapper();
-
             _presentationService = new PresentationService();
+            
+            ISettingsSerializer settingsSerializer = new SettingsSerializer();
+            Settings settings = settingsSerializer.Deserialize();
+            _navigationAssistant = _presentationService.BuildNavigationService(settings);
 
             _delayTimer = new DispatcherTimer();
             _delayTimer.Interval = TimeSpan.FromMilliseconds(DelayInMilliseconds);

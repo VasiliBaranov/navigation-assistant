@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using Core.Services;
+using NavigationAssistant.PresentationModel;
 using NavigationAssistant.ViewModel;
 
 namespace NavigationAssistant.PresentationServices
@@ -12,5 +14,7 @@ namespace NavigationAssistant.PresentationServices
         double GetMaxMatchesListHeight(double searchTextBoxTop, double searchTextBoxHeight);
 
         double GetMaxMatchesListWidth(double searchTextBoxLeft);
+
+        INavigationService BuildNavigationService(Settings settings);
     }
 }

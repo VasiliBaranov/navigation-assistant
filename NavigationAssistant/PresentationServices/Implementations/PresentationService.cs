@@ -1,9 +1,15 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
+using Core.Services;
+using Core.Services.Implementation;
 using Core.Utilities;
+using NavigationAssistant.PresentationModel;
 using NavigationAssistant.ViewModel;
 using Application = System.Windows.Application;
 
@@ -11,6 +17,8 @@ namespace NavigationAssistant.PresentationServices.Implementations
 {
     public class PresentationService : IPresentationService
     {
+        #region Public Methods
+
         public MatchModel MoveSelectionUp(ObservableCollection<MatchModel> matches, MatchModel selectedMatch)
         {
             if (Utility.IsNullOrEmpty(matches))
@@ -65,6 +73,43 @@ namespace NavigationAssistant.PresentationServices.Implementations
             return availableWidth * Constants.MaxScreenFillingRatio;
         }
 
+        public INavigationService BuildNavigationService(Settings settings)
+        {
+            IFileSystemParser basicParser = new FileSystemParser();
+            ICacheSerializer cacheSerializer = new CacheSerializer(settings.CacheFolder);
+            IFileSystemParser cachedParser = new CachedFileSystemParser(basicParser, cacheSerializer, settings.CacheUpdateIntervalInSeconds);
+
+            List<Navigators> additionalNavigators = new List<Navigators>(settings.SupportedNavigators);
+            additionalNavigators.Remove(settings.PrimaryNavigator);
+
+            List<IExplorerManager> supportedExplorerManagers =
+                additionalNavigators
+                    .Select(navigator => CreateExplorerManager(navigator, settings))
+                    .ToList();
+
+            IExplorerManager primaryExplorerManager = CreateExplorerManager(settings.PrimaryNavigator, settings);
+            supportedExplorerManagers.Add(primaryExplorerManager);
+
+            INavigationService navigationAssistant = new NavigationService(cachedParser, new MatchSearcher(), primaryExplorerManager, supportedExplorerManagers);
+            return navigationAssistant;
+        }
+
+        #endregion
+
+        #region Non Public Methods
+
+        private IExplorerManager CreateExplorerManager(Navigators navigator, Settings settings)
+        {
+            if (navigator == Navigators.TotalCommander)
+            {
+                return new TotalCommanderManager(settings.TotalCommanderPath);
+            }
+            else
+            {
+                return new WindowsExplorerManager();
+            }
+        }
+
         private Rectangle ScreenWorkingArea
         {
             get
@@ -88,6 +133,8 @@ namespace NavigationAssistant.PresentationServices.Implementations
         {
             return Screen.FromHandle(new WindowInteropHelper(window).Handle);
         }
+
+        #endregion
 
     }
 }
