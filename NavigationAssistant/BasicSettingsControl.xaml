@@ -12,17 +12,8 @@
             <Setter Property="Control.Height" Value="Auto" />
             <Setter Property="Control.Margin" Value="3" />
         </Style>
-        <Style x:Key="ButtonsPanel" BasedOn="{StaticResource SettingBase}">
-            <Setter Property="StackPanel.Orientation" Value="Horizontal" />
-            <Setter Property="StackPanel.FlowDirection" Value="RightToLeft" />
-            <Setter Property="Control.Margin" Value="0" />
-        </Style>
         <Style x:Key="GroupBoxList" BasedOn="{StaticResource SettingBase}">
             <Setter Property="Control.Margin" Value="0" />
-        </Style>
-        <Style x:Key="Button">
-            <Setter Property="Control.Margin" Value="3" />
-            <Setter Property="Control.MinWidth" Value="75" />
         </Style>
     </UserControl.Resources>
     <StackPanel>
@@ -67,11 +58,5 @@
                  Text="{Binding Path=TotalCommanderPath}" 
                  IsEnabled="{Binding Path=TotalCommanderEnabled}"
                  Style="{StaticResource SettingBase}" />
-
-        <StackPanel Name="ButtonsStackPanel" 
-                    Style="{StaticResource ButtonsPanel}">
-            <Button Content="Cancel" Name="CancelButton" Style="{StaticResource Button}" Command="{Binding Path=CancelCommand}"/>
-            <Button Content="Save" Name="SaveButton" Style="{StaticResource Button}" Command="{Binding Path=SaveCommand}"/>
-        </StackPanel>
     </StackPanel>
 </UserControl>

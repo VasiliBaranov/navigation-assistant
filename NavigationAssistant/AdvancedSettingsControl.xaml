@@ -5,7 +5,21 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Margin="5">
+    <UserControl.Resources>
+        <Style x:Key="SettingBase">
+            <Setter Property="Control.VerticalAlignment" Value="Top" />
+            <Setter Property="Control.Height" Value="Auto" />
+            <Setter Property="Control.Margin" Value="3" />
+        </Style>
+        <Style BasedOn="{StaticResource SettingBase}" TargetType="TextBlock">
+            <Setter Property="Control.HorizontalAlignment" Value="Left" />
+        </Style>
+        <Style x:Key="Field" BasedOn="{StaticResource SettingBase}">
+            <Setter Property="Control.HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Grid.Column" Value="1" />
+        </Style>
+    </UserControl.Resources>
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -19,25 +33,19 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Height="Auto" HorizontalAlignment="Left" Name="FoldersToParseLabel" Text="Folders To Parse" VerticalAlignment="Top" />
-        <TextBox Height="Auto" Grid.Column="1" HorizontalAlignment="Stretch" Name="FoldersToParseTextBox" VerticalAlignment="Stretch" />
+        <TextBlock Name="FoldersToParseLabel" Text="Folders To Parse" />
+        <TextBox Name="FoldersToParseTextBox" Style="{StaticResource Field}"/>
 
-        <TextBlock Grid.Row="1" Height="Auto" HorizontalAlignment="Left" Name="ExcludeFolderTemplatesLabel" Text="Exclude Folder Templates" VerticalAlignment="Top" />
-        <TextBox Grid.Row="1" Height="Auto" Grid.Column="1" HorizontalAlignment="Stretch" Name="ExcludeFolderTemplatesTextBox" VerticalAlignment="Stretch" />
+        <TextBlock Grid.Row="1" Name="ExcludeFolderTemplatesLabel" Text="Exclude Folder Templates" />
+        <TextBox Grid.Row="1" Name="ExcludeFolderTemplatesTextBox" Style="{StaticResource Field}"/>
 
-        <TextBlock Grid.Row="2" Height="Auto" HorizontalAlignment="Left" Name="IncludeHiddenFoldersLabel" Text="Total Commander Path" VerticalAlignment="Top" />
-        <CheckBox Grid.Row="2" Grid.Column="1" Height="Auto" HorizontalAlignment="Stretch" Name="IncludeHiddenFoldersCheckBox" VerticalAlignment="Top" Margin="3"/>
+        <TextBlock Grid.Row="2" Name="IncludeHiddenFoldersLabel" Text="Include Hidden Folders" />
+        <CheckBox Grid.Row="2" Name="IncludeHiddenFoldersCheckBox" Style="{StaticResource Field}"/>
 
-        <TextBlock Grid.Row="3" Height="Auto" HorizontalAlignment="Left" Name="CacheFolderLabel" Text="Cache Folder" VerticalAlignment="Top" />
-        <TextBox Grid.Row="3" Height="Auto" Grid.Column="1" HorizontalAlignment="Stretch" Name="CacheFolderTextBox" VerticalAlignment="Stretch" />
+        <TextBlock Grid.Row="3" Name="CacheFolderLabel" Text="Cache Folder" />
+        <TextBox Grid.Row="3" Name="CacheFolderTextBox" Style="{StaticResource Field}"/>
 
-        <TextBlock Grid.Row="4" Height="Auto" HorizontalAlignment="Left" Name="CacheUpdateIntervalLabel" Text="Cache Update Interval (sec)" VerticalAlignment="Top" />
-        <TextBox Grid.Row="4" Height="Auto" Grid.Column="1" HorizontalAlignment="Stretch" Name="CacheUpdateIntervalTextBox" VerticalAlignment="Stretch" />
-
-        <StackPanel Grid.Row="5" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Name="ButtonsStackPanel" VerticalAlignment="Top" Orientation="Horizontal" FlowDirection="RightToLeft">
-            <Button Content="Cancel" Height="Auto" Name="CancelButton" MinWidth="75" Margin="3"/>
-            <Button Content="Save" Height="Auto" Name="SaveButton" MinWidth="75" Margin="3"/>
-        </StackPanel>
-
+        <TextBlock Grid.Row="4" Name="CacheUpdateIntervalLabel" Text="Cache Update Interval (sec)" />
+        <TextBox Grid.Row="4" Name="CacheUpdateIntervalTextBox" Style="{StaticResource Field}"/>
     </Grid>
 </UserControl>
