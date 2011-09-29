@@ -5,6 +5,12 @@ namespace Core.Services
 {
     public interface IFileSystemParser
     {
-        List<FileSystemItem> GetSubFolders(List<string> rootFolders);
+        bool IncludeHiddenFolders { get; set; }
+
+        List<string> ExcludeFolderTemplates { get; set; }
+
+        List<string> FoldersToParse { get; set; }
+
+        List<FileSystemItem> GetSubFolders();
     }
 }

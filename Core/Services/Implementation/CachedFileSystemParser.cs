@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Timers;
 using Core.Model;
 using Core.Utilities;
@@ -23,6 +24,46 @@ namespace Core.Services.Implementation
 
         private readonly object _cacheSync = new object();
 
+        private bool _includeHiddenFolders;
+
+        private List<string> _excludeFolderTemplates;
+
+        private List<string> _foldersToParse;
+
+        #endregion
+
+        #region Properties
+
+        public bool IncludeHiddenFolders
+        {
+            get { return _includeHiddenFolders; }
+            set
+            {
+                _includeHiddenFolders = value;
+                ResetCache();
+            }
+        }
+
+        public List<string> ExcludeFolderTemplates
+        {
+            get { return _excludeFolderTemplates; }
+            set
+            {
+                _excludeFolderTemplates = value;
+                ResetCache();
+            }
+        }
+
+        public List<string> FoldersToParse
+        {
+            get { return _foldersToParse; }
+            set
+            {
+                _foldersToParse = value;
+                ResetCache();
+            }
+        }
+
         #endregion
 
         #region Constructors
@@ -44,37 +85,29 @@ namespace Core.Services.Implementation
 
         #region Public Methods
 
-        public List<FileSystemItem> GetSubFolders(List<string> rootFolders)
+        public List<FileSystemItem> GetSubFolders()
         {
-            if (ListUtility.IsNullOrEmpty(rootFolders))
-            {
-                throw new ArgumentNullException("rootFolders");
-            }
-
             //Use synchronization to avoid conflicts with the cache update after expiration.
             lock (_cacheSync)
             {
-                if (_cache != null)
+                if (_cache == null)
                 {
-                    return FilterCacheItems(_cache, rootFolders);
+                    //Method is called for the first time
+                    _cache = _cacheSerializer.DeserializeCache();
+                    if (_cache == null)
+                    {
+                        //The application is loaded for the first time (no cache stored on disk).
+                        //Run this method in the main thread, thus freezing it.
+                        UpdateCacheUnsynchronized();
+                    }
+                    else
+                    {
+                        _cache = FilterCache(_cache, _foldersToParse, _excludeFolderTemplates, _includeHiddenFolders);
+                        _expirationTimer.Start();
+                    }
                 }
 
-                //Method is called for the first time
-                _cache = _cacheSerializer.DeserializeCache();
-                if (_cache != null)
-                {
-                    _expirationTimer.Start();
-                    return FilterCacheItems(_cache, rootFolders);
-                }
-            }
-
-            //The application is loaded for the first time (no cache stored on disk).
-            //Run this method in the main thread, thus freezing it.
-            UpdateCache();
-
-            lock (_cacheSync)
-            {
-                return FilterCacheItems(_cache, rootFolders);
+                return _cache;
             }
         }
 
@@ -82,34 +115,71 @@ namespace Core.Services.Implementation
 
         #region Non Public Methods
 
-        private List<FileSystemItem> FilterCacheItems(List<FileSystemItem> items, List<string> rootFolders)
+        private void ResetCache()
         {
-            List<FileSystemItem> filteredItems = new List<FileSystemItem>();
-            foreach (FileSystemItem item in items)
+            lock (_cacheSync)
             {
-                bool isInRootFolder = rootFolders.Any(rootFolder => item.ItemPath.StartsWith(rootFolder));
-
-                if (isInRootFolder)
-                {
-                    filteredItems.Add(item);
-                }
+                _cache = null;
             }
+        }
+
+        private static List<FileSystemItem> FilterCache(List<FileSystemItem> items,
+            List<string> rootFolders, List<string> excludeFolderTemplates, bool includeHiddenFolders)
+        {
+            List<Regex> excludeRegexes = excludeFolderTemplates.Select(t => new Regex(t, RegexOptions.IgnoreCase)).ToList();
+
+            List<FileSystemItem> filteredItems = items
+                .Where(item => IsInRootFolder(item, rootFolders) && !ShouldBeExcluded(item, excludeRegexes))
+                .ToList();
 
             return filteredItems;
         }
 
+        private static bool IsInRootFolder(FileSystemItem item, List<string> rootFolders)
+        {
+            if (ListUtility.IsNullOrEmpty(rootFolders))
+            {
+                return true;
+            }
+
+            return rootFolders.Any(rootFolder => item.ItemPath.StartsWith(rootFolder));
+        }
+
+        private static bool ShouldBeExcluded(FileSystemItem item, List<Regex> excludeRegexes)
+        {
+            List<string> foldersInPath = DirectoryUtility.SplitPath(item.ItemPath);
+
+            foreach (string folder in foldersInPath)
+            {
+                foreach (Regex excludeRegex in excludeRegexes)
+                {
+                    if (excludeRegex.IsMatch(folder))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         private void UpdateCache()
         {
-            List<string> rootFolders = DirectoryUtility.GetHardDriveRootFolders();
-            List<FileSystemItem> folders = _fileSystemParser.GetSubFolders(rootFolders);
-
             lock (_cacheSync)
             {
-                _cache = folders;
-                _cacheSerializer.SerializeCache(_cache);
-
-                _expirationTimer.Start();
+                UpdateCacheUnsynchronized();
             }
+        }
+
+        private void UpdateCacheUnsynchronized()
+        {
+            //Don't set any restrictions on this parsing, as want to grab the entire system.
+            List<FileSystemItem> folders = _fileSystemParser.GetSubFolders();
+            _cacheSerializer.SerializeCache(folders);
+
+            _cache = FilterCache(folders, _foldersToParse, _excludeFolderTemplates, _includeHiddenFolders);
+
+            _expirationTimer.Start();
         }
 
         private void HandleCacheUpdated(IAsyncResult asyncResult)

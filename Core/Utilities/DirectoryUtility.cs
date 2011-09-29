@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -71,6 +72,17 @@ namespace Core.Utilities
             {
                 Directory.CreateDirectory(folderPath);
             }
+        }
+
+        public static List<string> SplitPath(string path)
+        {
+            path = Path.GetFullPath(path);
+
+            List<string> folders = path
+                .Split(new[] {Path.DirectorySeparatorChar}, StringSplitOptions.RemoveEmptyEntries)
+                .ToList();
+
+            return folders;
         }
     }
 }
