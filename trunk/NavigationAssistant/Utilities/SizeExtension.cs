@@ -5,23 +5,23 @@ namespace NavigationAssistant.Utilities
 {
     //Declares an attached property to bind ActualSize to ViewModel.
     //Code taken from http://stackoverflow.com/questions/1083224/pushing-read-only-gui-properties-back-into-viewmodel
-    public static class SizeObserver
+    public static class SizeExtension
     {
         public static readonly DependencyProperty ObserveProperty = DependencyProperty.RegisterAttached(
             "Observe",
             typeof(bool),
-            typeof(SizeObserver),
+            typeof(SizeExtension),
             new FrameworkPropertyMetadata(OnObserveChanged));
 
         public static readonly DependencyProperty ObservedWidthProperty = DependencyProperty.RegisterAttached(
             "ObservedWidth",
             typeof(double),
-            typeof(SizeObserver));
+            typeof(SizeExtension));
 
         public static readonly DependencyProperty ObservedHeightProperty = DependencyProperty.RegisterAttached(
             "ObservedHeight",
             typeof(double),
-            typeof(SizeObserver));
+            typeof(SizeExtension));
 
         public static bool GetObserve(FrameworkElement frameworkElement)
         {

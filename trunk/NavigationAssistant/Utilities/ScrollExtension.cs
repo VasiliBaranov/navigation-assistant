@@ -11,11 +11,11 @@ namespace NavigationAssistant.Utilities
     /// <remarks>
     /// Code taken from http://michlg.wordpress.com/2010/01/16/listbox-automatically-scroll-currentitem-into-view/
     /// </remarks>
-    public class SelectionScroller : DependencyObject
+    public class ScrollExtension : DependencyObject
     {
         #region Properties
 
-        public static readonly DependencyProperty AutoScrollToCurrentItemProperty = DependencyProperty.RegisterAttached("AutoScrollToCurrentItem", typeof(bool), typeof(SelectionScroller), new UIPropertyMetadata(default(bool), OnAutoScrollToCurrentItemChanged));
+        public static readonly DependencyProperty AutoScrollToCurrentItemProperty = DependencyProperty.RegisterAttached("AutoScrollToCurrentItem", typeof(bool), typeof(ScrollExtension), new UIPropertyMetadata(default(bool), OnAutoScrollToCurrentItemChanged));
 
         /// <summary>
         /// Returns the value of the AutoScrollToCurrentItemProperty
