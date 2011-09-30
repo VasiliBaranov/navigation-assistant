@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Core.HookManager;
+using NavigationAssistant.PresentationServices;
+using NavigationAssistant.PresentationServices.Implementations;
 using NavigationAssistant.ViewModel;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
@@ -23,6 +25,8 @@ namespace NavigationAssistant
 
         private bool _isClosingCompletely;
 
+        private ISettingsSerializer _settingsSerializer;
+
         #endregion
 
         #region Properties
@@ -40,12 +44,16 @@ namespace NavigationAssistant
         {
             InitializeComponent();
 
+            _settingsSerializer = new SettingsSerializer();
+
             _notifyIcon = CreateNotifyIcon();
             _notifyIcon.Visible = true;
 
             HookManager.KeyDown += HandleGlobalKeyDown;
             HookManager.KeyPress += HandleGlobalKeyPress;
             HookManager.KeyUp += HandleGlobalKeyUp;
+
+            DeactivateToTray();
         }
 
         #endregion
@@ -114,7 +122,7 @@ namespace NavigationAssistant
             ContextMenu contextMenu = new ContextMenu();
             MenuItem exitMenuItem = new MenuItem();
             MenuItem settingsMenuItem = new MenuItem();
-            MenuItem startupMenuItem = new MenuItem();
+            MenuItem runOnStartupMenuItem = new MenuItem();
 
             // Initialize exitMenuItem
             exitMenuItem.Text = Properties.Resources.ExitMenuItemText;
@@ -125,12 +133,13 @@ namespace NavigationAssistant
             settingsMenuItem.Click += HandleSettingsMenuItemClick;
 
             // Initialize startupMenuItem
-            startupMenuItem.Text = Properties.Resources.StartupMenuItemText;
-            startupMenuItem.Click += HandleStartupMenuItemClick;
+            runOnStartupMenuItem.Text = Properties.Resources.StartupMenuItemText;
+            runOnStartupMenuItem.Checked = _settingsSerializer.GetRunOnStartup();
+            runOnStartupMenuItem.Click += HandleRunOnStartupMenuItemClick;
 
             // Initialize contextMenu
             contextMenu.MenuItems.Add(settingsMenuItem);
-            contextMenu.MenuItems.Add(startupMenuItem);
+            contextMenu.MenuItems.Add(runOnStartupMenuItem);
             contextMenu.MenuItems.Add(exitMenuItem);
 
             return contextMenu;
@@ -184,10 +193,12 @@ namespace NavigationAssistant
             settings.Show();
         }
 
-        private void HandleStartupMenuItemClick(object sender, EventArgs e)
+        private void HandleRunOnStartupMenuItemClick(object sender, EventArgs e)
         {
             MenuItem startupMenuItem = sender as MenuItem;
             startupMenuItem.Checked = !startupMenuItem.Checked;
+
+            _settingsSerializer.SetRunOnStartup(startupMenuItem.Checked);
         }
 
         #endregion
