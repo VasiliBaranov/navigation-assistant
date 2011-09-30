@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows;
@@ -95,6 +96,13 @@ namespace NavigationAssistant.PresentationServices.Implementations
             INavigationService navigationAssistant = new NavigationService(cachedParser, new MatchSearcher(), primaryExplorerManager, supportedExplorerManagers);
 
             return navigationAssistant;
+        }
+
+        public bool ApplicationIsRunning()
+        {
+            Process[] processes = Process.GetProcessesByName("NavigationAssistant");
+
+            return processes.Length > 1;
         }
 
         #endregion

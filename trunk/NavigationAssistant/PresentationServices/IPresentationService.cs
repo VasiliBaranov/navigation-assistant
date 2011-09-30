@@ -17,5 +17,7 @@ namespace NavigationAssistant.PresentationServices
         double GetMaxMatchesListWidth(double searchTextBoxLeft);
 
         INavigationService BuildNavigationService(Settings settings);
+
+        bool ApplicationIsRunning();
     }
 }

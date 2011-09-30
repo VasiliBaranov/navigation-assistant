@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Windows;
+﻿using System.Windows;
+using NavigationAssistant.PresentationServices;
+using NavigationAssistant.PresentationServices.Implementations;
 
 namespace NavigationAssistant
 {
@@ -12,5 +9,16 @@ namespace NavigationAssistant
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            IPresentationService presentationService = new PresentationService();
+            bool appIsRunning = presentationService.ApplicationIsRunning();
+
+            if(appIsRunning)
+            {
+                MessageBox.Show("Navigation Assistant is already running");
+                Shutdown();
+            }
+        }
     }
 }
