@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Reflection;
+using System.Security.AccessControl;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using Core.Utilities;
@@ -60,6 +63,34 @@ namespace NavigationAssistant.PresentationServices.Implementations
             }
 
             return validationResult;
+        }
+
+        public bool GetRunOnStartup()
+        {
+            RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run");
+            string navigationAssistantPath = startupKey.GetValue("NavigationAssistant") as string;
+
+            bool runOnStartup = navigationAssistantPath != null;
+            return runOnStartup;
+        }
+
+        public void SetRunOnStartup(bool value)
+        {
+            RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+
+            if (value)
+            {
+                string path = string.Format(CultureInfo.InvariantCulture, "\"{0}\"", Assembly.GetEntryAssembly().Location);
+                startupKey.SetValue("NavigationAssistant", path, RegistryValueKind.String);
+            }
+            else
+            {
+                bool valueExists = GetRunOnStartup();
+                if (valueExists)
+                {
+                    startupKey.DeleteValue("NavigationAssistant");
+                }
+            }
         }
 
         #endregion

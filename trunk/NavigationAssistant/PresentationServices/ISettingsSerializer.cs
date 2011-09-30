@@ -7,5 +7,9 @@ namespace NavigationAssistant.PresentationServices
         Settings Deserialize();
 
         ValidationResult Serialize(Settings settings);
+
+        bool GetRunOnStartup();
+
+        void SetRunOnStartup(bool value);
     }
 }
