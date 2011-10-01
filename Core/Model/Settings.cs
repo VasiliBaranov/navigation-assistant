@@ -27,6 +27,9 @@ namespace Core.Model
 
         public string CacheFolder { get; set; }
 
+        public KeyCombination GlobalKeyCombination { get; set; }
+
+        //This setting is set through registry
         [XmlIgnore]
         public bool RunOnStartup { get; set; }
 
