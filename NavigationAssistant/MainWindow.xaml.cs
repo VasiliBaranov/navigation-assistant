@@ -145,6 +145,12 @@ namespace NavigationAssistant
             return contextMenu;
         }
 
+        //This method will be moved to icon view and presenter
+        public void UpdateIconMenu()
+        {
+            _notifyIcon.ContextMenu.MenuItems[1].Checked = _settingsSerializer.GetRunOnStartup();
+        }
+
         private void ActivateFromTray()
         {
             CurrentNavigationModel.UpdateHostWindow();

@@ -40,6 +40,8 @@ namespace Core.Services.Implementation
                 }
             }
 
+            settings.RunOnStartup = GetRunOnStartup();
+
             ValidateTotalCommanderPath(settings, settingsAreDefault);
 
             return settings;
@@ -61,6 +63,8 @@ namespace Core.Services.Implementation
             {
                 serializer.Serialize(writer, settings);
             }
+
+             SetRunOnStartup(settings.RunOnStartup);
 
             return validationResult;
         }
