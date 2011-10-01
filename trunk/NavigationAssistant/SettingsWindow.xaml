@@ -6,7 +6,7 @@
         xmlns:Utilities="clr-namespace:NavigationAssistant.Utilities" 
         Title="Navigation Assistant Settings" 
         Height="300"
-        Width="350"
+        Width="400"
         WindowStartupLocation="CenterScreen"
         Utilities:WindowExtension.HasMaximizeButton="false">
     <Window.Resources>

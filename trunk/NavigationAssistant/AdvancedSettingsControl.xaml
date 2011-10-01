@@ -7,7 +7,7 @@
              d:DesignHeight="300" d:DesignWidth="400">
     <UserControl.Resources>
         <Style x:Key="SettingBase">
-            <Setter Property="Control.VerticalAlignment" Value="Top" />
+            <Setter Property="Control.VerticalAlignment" Value="Center" />
             <Setter Property="Control.Height" Value="Auto" />
             <Setter Property="Control.Margin" Value="3" />
         </Style>
@@ -20,6 +20,14 @@
         </Style>
         <Style x:Key="KeysField" BasedOn="{StaticResource Field}">
             <Setter Property="StackPanel.Orientation" Value="Horizontal" />
+            <Setter Property="Control.Margin" Value="0 3 0 3" />
+        </Style>
+        <Style x:Key="KeyModifier">
+            <Setter Property="Control.VerticalAlignment" Value="Center" />
+            <Setter Property="Control.Margin" Value="1 0 1 0" />
+        </Style>
+        <Style x:Key="KeyTextBox">
+            <Setter Property="Control.Width" Value="30" />
         </Style>
     </UserControl.Resources>
     <Grid>
@@ -59,16 +67,16 @@
         <TextBlock Grid.Row="6" Name="KeyCombinationLabel" Text="Key Combination"/>
         <StackPanel Grid.Row="6" Style="{StaticResource KeysField}">
             <TextBlock Name="RequireControlLabel" Text="Ctrl"/>
-            <CheckBox Name="RequireControlBox" IsChecked="{Binding Path=RequireControl}"/>
+            <CheckBox Name="RequireControlBox" IsChecked="{Binding Path=RequireControl}" Style="{StaticResource KeyModifier}" />
             
-            <TextBlock Name="RequireShiftLabel" Text="Shift"/>
-            <CheckBox Name="RequireShiftBox" IsChecked="{Binding Path=RequireShift}"/>
+            <TextBlock Name="RequireShiftLabel" Text="; Shift"/>
+            <CheckBox Name="RequireShiftBox" IsChecked="{Binding Path=RequireShift}" Style="{StaticResource KeyModifier}" />
 
-            <TextBlock Name="RequireAltLabel" Text="Alt"/>
-            <CheckBox Name="RequireAltBox" IsChecked="{Binding Path=RequireAlt}"/>
+            <TextBlock Name="RequireAltLabel" Text="; Alt"/>
+            <CheckBox Name="RequireAltBox" IsChecked="{Binding Path=RequireAlt}" Style="{StaticResource KeyModifier}" />
 
-            <TextBlock Name="KeyLabel" Text="Key" />
-            <TextBox Name="KeyTextBox" Text="{Binding Path=Key, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Name="KeyLabel" Text="; Key" />
+            <TextBox Name="KeyTextBox" Text="{Binding Path=Key, UpdateSourceTrigger=PropertyChanged}" MaxLength="1" Style="{StaticResource KeyTextBox}"/>
         </StackPanel>
     </Grid>
 </UserControl>
