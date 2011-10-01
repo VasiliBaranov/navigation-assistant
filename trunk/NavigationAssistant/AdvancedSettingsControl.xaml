@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Utilities="clr-namespace:NavigationAssistant.Utilities" mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="400">
     <UserControl.Resources>
         <Style x:Key="SettingBase">
             <Setter Property="Control.VerticalAlignment" Value="Top" />
@@ -18,9 +18,13 @@
             <Setter Property="Control.HorizontalAlignment" Value="Stretch" />
             <Setter Property="Grid.Column" Value="1" />
         </Style>
+        <Style x:Key="KeysField" BasedOn="{StaticResource Field}">
+            <Setter Property="StackPanel.Orientation" Value="Horizontal" />
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -49,7 +53,22 @@
         <TextBlock Grid.Row="4" Name="CacheUpdateIntervalLabel" Text="Cache Update Interval (sec)" />
         <TextBox Grid.Row="4" Name="CacheUpdateIntervalTextBox" Style="{StaticResource Field}" Text="{Binding Path=CacheUpdateIntervalInSeconds}" Utilities:NumericExtension.IsNumeric="True"/>
 
-        <TextBlock Grid.Row="5" Name="RunOnStartupLabel" Text="Run On Startup" />
+        <TextBlock Grid.Row="5" Name="RunOnStartupLabel" Text="Run On Startup"/>
         <CheckBox Grid.Row="5" Name="RunOnStartupCheckBox" Style="{StaticResource Field}" IsChecked="{Binding Path=RunOnStartup}"/>
+
+        <TextBlock Grid.Row="6" Name="KeyCombinationLabel" Text="Key Combination"/>
+        <StackPanel Grid.Row="6" Style="{StaticResource KeysField}">
+            <TextBlock Name="RequireControlLabel" Text="Ctrl"/>
+            <CheckBox Name="RequireControlBox" IsChecked="{Binding Path=RunOnStartup}"/>
+            
+            <TextBlock Name="RequireShiftLabel" Text="Shift"/>
+            <CheckBox Name="RequireShiftBox" IsChecked="{Binding Path=RunOnStartup}"/>
+
+            <TextBlock Name="RequireAltLabel" Text="Alt"/>
+            <CheckBox Name="RequireAltBox" IsChecked="{Binding Path=RunOnStartup}"/>
+
+            <TextBlock Name="KeyLabel" Text="Key" />
+            <TextBox Name="KeyTextBox" Text="{Binding Path=CacheUpdateIntervalInSeconds}"/>
+        </StackPanel>
     </Grid>
 </UserControl>

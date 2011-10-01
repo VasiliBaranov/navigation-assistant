@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Windows.Input;
-using Core.HookManager;
 using Core.Services;
 using Core.Services.Implementation;
 using NavigationAssistant.ViewModel;
@@ -19,13 +18,11 @@ namespace NavigationAssistant
 
         private NotifyIcon _notifyIcon;
 
-        private bool _isCtrlPressed;
-
-        private bool _isShiftPressed;
-
         private bool _isClosingCompletely;
 
         private readonly ISettingsSerializer _settingsSerializer;
+
+        private readonly IKeyboardListener _keyboardListener;
 
         #endregion
 
@@ -46,55 +43,14 @@ namespace NavigationAssistant
 
             _settingsSerializer = new SettingsSerializer();
 
+            _keyboardListener = new KeyboardListener();
+            _keyboardListener.KeyCombinationPressed += GlobalKeyCombinationPressed;
+            _keyboardListener.StartListening(_settingsSerializer.Deserialize().GlobalKeyCombination); //TODO: use valid
+
             _notifyIcon = CreateNotifyIcon();
             _notifyIcon.Visible = true;
 
-            HookManager.KeyDown += HandleGlobalKeyDown;
-            HookManager.KeyPress += HandleGlobalKeyPress;
-            HookManager.KeyUp += HandleGlobalKeyUp;
-
             DeactivateToTray();
-        }
-
-        #endregion
-
-        #region Global Key Handlers
-
-        private void HandleGlobalKeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.LControlKey)
-            {
-                _isCtrlPressed = false;
-            }
-
-            if (e.KeyCode == Keys.LShiftKey)
-            {
-                _isShiftPressed = false;
-            }
-        }
-
-        private void HandleGlobalKeyPress(object sender, KeyPressEventArgs e)
-        {
-            //NOTE: May be implement setting e.Handled in all global handlers?
-        }
-
-        private void HandleGlobalKeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.LControlKey)
-            {
-                _isCtrlPressed = true;
-            }
-
-            if (e.KeyCode == Keys.LShiftKey)
-            {
-                _isShiftPressed = true;
-            }
-
-            bool correctCombinationClicked = _isCtrlPressed && _isShiftPressed && e.KeyCode == Keys.M;
-            if (correctCombinationClicked)
-            {
-                ActivateFromTray();
-            }
         }
 
         #endregion
@@ -209,12 +165,19 @@ namespace NavigationAssistant
 
         #endregion
 
+        private void GlobalKeyCombinationPressed(object sender, EventArgs e)
+        {
+            ActivateFromTray();
+        }
+
         private void HandleClose(object sender, CancelEventArgs args)
         {
             if (_isClosingCompletely)
             {
                 _notifyIcon.Dispose();
                 _notifyIcon = null;
+
+                _keyboardListener.StopListening();
             }
             else
             {
