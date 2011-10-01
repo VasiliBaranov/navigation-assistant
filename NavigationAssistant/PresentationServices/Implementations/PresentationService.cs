@@ -6,10 +6,10 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
+using Core.Model;
 using Core.Services;
 using Core.Services.Implementation;
 using Core.Utilities;
-using NavigationAssistant.PresentationModel;
 using NavigationAssistant.ViewModel;
 using Application = System.Windows.Application;
 
@@ -73,31 +73,6 @@ namespace NavigationAssistant.PresentationServices.Implementations
             return availableWidth * Constants.MaxScreenFillingRatio;
         }
 
-        public INavigationService BuildNavigationService(Settings settings)
-        {
-            IFileSystemParser basicParser = new FileSystemParser();
-            ICacheSerializer cacheSerializer = new CacheSerializer(settings.CacheFolder);
-            IFileSystemParser cachedParser = new CachedFileSystemParser(basicParser, cacheSerializer, settings.CacheUpdateIntervalInSeconds);
-            cachedParser.IncludeHiddenFolders = settings.IncludeHiddenFolders;
-            cachedParser.ExcludeFolderTemplates = settings.ExcludeFolderTemplates;
-            cachedParser.FoldersToParse = settings.FoldersToParse;
-
-            List<Navigators> additionalNavigators = new List<Navigators>(settings.SupportedNavigators);
-            additionalNavigators.Remove(settings.PrimaryNavigator);
-
-            List<IExplorerManager> supportedExplorerManagers =
-                additionalNavigators
-                    .Select(navigator => CreateExplorerManager(navigator, settings))
-                    .ToList();
-
-            IExplorerManager primaryExplorerManager = CreateExplorerManager(settings.PrimaryNavigator, settings);
-            supportedExplorerManagers.Add(primaryExplorerManager);
-
-            INavigationService navigationAssistant = new NavigationService(cachedParser, new MatchSearcher(), primaryExplorerManager, supportedExplorerManagers);
-
-            return navigationAssistant;
-        }
-
         public bool ApplicationIsRunning()
         {
             Process[] processes = Process.GetProcessesByName("NavigationAssistant");
@@ -108,18 +83,6 @@ namespace NavigationAssistant.PresentationServices.Implementations
         #endregion
 
         #region Non Public Methods
-
-        private IExplorerManager CreateExplorerManager(Navigators navigator, Settings settings)
-        {
-            if (navigator == Navigators.TotalCommander)
-            {
-                return new TotalCommanderManager(settings.TotalCommanderPath);
-            }
-            else
-            {
-                return new WindowsExplorerManager();
-            }
-        }
 
         private Rectangle ScreenWorkingArea
         {

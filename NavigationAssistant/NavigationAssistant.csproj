@@ -63,11 +63,6 @@
       <DependentUpon>BasicSettingsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Constants.cs" />
-    <Compile Include="PresentationModel\Navigators.cs" />
-    <Compile Include="PresentationModel\Settings.cs" />
-    <Compile Include="PresentationModel\ValidationResult.cs" />
-    <Compile Include="PresentationServices\Implementations\SettingsSerializer.cs" />
-    <Compile Include="PresentationServices\ISettingsSerializer.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
@@ -150,6 +145,9 @@
       <Project>{F3A384AD-E711-4322-9950-101946AB51DA}</Project>
       <Name>Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="PresentationModel\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
