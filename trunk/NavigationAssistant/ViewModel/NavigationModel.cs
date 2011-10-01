@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Windows.Threading;
 using Core.Model;
 using Core.Services;
-using NavigationAssistant.PresentationModel;
+using Core.Services.Implementation;
 using NavigationAssistant.PresentationServices;
 using NavigationAssistant.PresentationServices.Implementations;
 using NavigationAssistant.Properties;
@@ -255,7 +255,7 @@ namespace NavigationAssistant.ViewModel
         {
             ISettingsSerializer settingsSerializer = new SettingsSerializer();
             Settings settings = settingsSerializer.Deserialize();
-            _navigationAssistant = _presentationService.BuildNavigationService(settings);
+            _navigationAssistant = settingsSerializer.BuildNavigationService(settings);
         }
 
         #endregion

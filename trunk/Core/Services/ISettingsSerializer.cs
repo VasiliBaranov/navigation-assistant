@@ -1,6 +1,6 @@
-﻿using NavigationAssistant.PresentationModel;
+﻿using Core.Model;
 
-namespace NavigationAssistant.PresentationServices
+namespace Core.Services
 {
     public interface ISettingsSerializer
     {
@@ -11,5 +11,7 @@ namespace NavigationAssistant.PresentationServices
         bool GetRunOnStartup();
 
         void SetRunOnStartup(bool value);
+
+        INavigationService BuildNavigationService(Settings settings);
     }
 }

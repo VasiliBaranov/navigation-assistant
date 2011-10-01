@@ -1,4 +1,4 @@
-﻿namespace NavigationAssistant.PresentationModel
+﻿namespace Core.Model
 {
     public enum Navigators
     {

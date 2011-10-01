@@ -54,6 +54,9 @@
     <Compile Include="Model\ApplicationWindow.cs" />
     <Compile Include="Model\MatchString.cs" />
     <Compile Include="Model\MatchSubstring.cs" />
+    <Compile Include="Model\Navigators.cs" />
+    <Compile Include="Model\Settings.cs" />
+    <Compile Include="Model\ValidationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ICacheSerializer.cs" />
     <Compile Include="Services\IExplorer.cs" />
@@ -65,11 +68,13 @@
     <Compile Include="Services\Implementation\FileSystemParser.cs" />
     <Compile Include="Services\Implementation\MatchSearcher.cs" />
     <Compile Include="Services\Implementation\NavigationService.cs" />
+    <Compile Include="Services\Implementation\SettingsSerializer.cs" />
     <Compile Include="Services\Implementation\TotalCommander.cs" />
     <Compile Include="Services\Implementation\TotalCommanderManager.cs" />
     <Compile Include="Services\Implementation\WindowsExplorer.cs" />
     <Compile Include="Services\Implementation\WindowsExplorerManager.cs" />
     <Compile Include="Services\INavigationService.cs" />
+    <Compile Include="Services\ISettingsSerializer.cs" />
     <Compile Include="Utilities\ListUtility.cs" />
     <Compile Include="Utilities\StringUtility.cs" />
     <Compile Include="Utilities\DirectoryUtility.cs" />

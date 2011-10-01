@@ -3,8 +3,8 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Core.HookManager;
-using NavigationAssistant.PresentationServices;
-using NavigationAssistant.PresentationServices.Implementations;
+using Core.Services;
+using Core.Services.Implementation;
 using NavigationAssistant.ViewModel;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
@@ -25,7 +25,7 @@ namespace NavigationAssistant
 
         private bool _isClosingCompletely;
 
-        private ISettingsSerializer _settingsSerializer;
+        private readonly ISettingsSerializer _settingsSerializer;
 
         #endregion
 

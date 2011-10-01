@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
-using System.Security.AccessControl;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using Core.Model;
 using Core.Utilities;
 using Microsoft.Win32;
-using NavigationAssistant.PresentationModel;
 
-namespace NavigationAssistant.PresentationServices.Implementations
+namespace Core.Services.Implementation
 {
     //With *.settings files approach app.config become awful.
     //Custom Configuration Sections approach is weird and too verbose.
@@ -93,9 +93,49 @@ namespace NavigationAssistant.PresentationServices.Implementations
             }
         }
 
+        public INavigationService BuildNavigationService(Settings settings)
+        {
+            IFileSystemParser basicParser = new FileSystemParser();
+            ICacheSerializer cacheSerializer = new CacheSerializer(settings.CacheFolder);
+            IFileSystemParser cachedParser = new CachedFileSystemParser(basicParser, cacheSerializer, settings.CacheUpdateIntervalInSeconds);
+            cachedParser.IncludeHiddenFolders = settings.IncludeHiddenFolders;
+            cachedParser.ExcludeFolderTemplates = settings.ExcludeFolderTemplates;
+            cachedParser.FoldersToParse = settings.FoldersToParse;
+
+            List<Navigators> additionalNavigators = new List<Navigators>(settings.SupportedNavigators);
+            additionalNavigators.Remove(settings.PrimaryNavigator);
+
+            List<IExplorerManager> supportedExplorerManagers =
+                additionalNavigators
+                    .Select(navigator => CreateExplorerManager(navigator, settings))
+                    .ToList();
+
+            IExplorerManager primaryExplorerManager = CreateExplorerManager(settings.PrimaryNavigator, settings);
+            supportedExplorerManagers.Add(primaryExplorerManager);
+
+            INavigationService navigationAssistant = new NavigationService(cachedParser, new MatchSearcher(), primaryExplorerManager, supportedExplorerManagers);
+
+            //Warming up (to fill the caches, etc)
+            navigationAssistant.GetFolderMatches("temp");
+
+            return navigationAssistant;
+        }
+
         #endregion
 
         #region Non Public Methods
+
+        private IExplorerManager CreateExplorerManager(Navigators navigator, Settings settings)
+        {
+            if (navigator == Navigators.TotalCommander)
+            {
+                return new TotalCommanderManager(settings.TotalCommanderPath);
+            }
+            else
+            {
+                return new WindowsExplorerManager();
+            }
+        }
 
         private ValidationResult ValidateSettings(Settings settings)
         {

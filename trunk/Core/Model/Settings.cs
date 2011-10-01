@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NavigationAssistant.PresentationModel
+namespace Core.Model
 {
     public class Settings
     {
