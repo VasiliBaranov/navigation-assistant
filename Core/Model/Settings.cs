@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
 using System.Xml.Serialization;
 
 namespace Core.Model
@@ -27,7 +29,22 @@ namespace Core.Model
 
         public string CacheFolder { get; set; }
 
-        public KeyCombination GlobalKeyCombination { get; set; }
+        //Keys enumeration is weird, and is serialize in a weird way.
+        //E.g. "Control, Shift, M" is serialized as "LButton MButton XButton1 Back Tab Clear Return Enter A D E H I L M Shift Control"
+        [XmlIgnore]
+        public Keys GlobalKeyCombination { get; set; }
+
+        public string GlobalKeyCombinationString 
+        {
+            get
+            {
+                return GlobalKeyCombination.ToString();
+            }
+            set
+            {
+                GlobalKeyCombination = (Keys) Enum.Parse(typeof (Keys), value);
+            } 
+        }
 
         //This setting is set through registry
         [XmlIgnore]

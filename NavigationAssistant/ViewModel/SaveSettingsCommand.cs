@@ -35,6 +35,7 @@ namespace NavigationAssistant.ViewModel
             {
                 mainWindow.CurrentNavigationModel.UpdateSettings();
                 mainWindow.UpdateIconMenu();
+                mainWindow.UpdateKeyListening();
             }
 
             return;

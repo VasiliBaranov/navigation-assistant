@@ -45,7 +45,7 @@ namespace NavigationAssistant
 
             _keyboardListener = new KeyboardListener();
             _keyboardListener.KeyCombinationPressed += GlobalKeyCombinationPressed;
-            _keyboardListener.StartListening(_settingsSerializer.Deserialize().GlobalKeyCombination); //TODO: use valid
+            _keyboardListener.StartListening(_settingsSerializer.Deserialize().GlobalKeyCombination);
 
             _notifyIcon = CreateNotifyIcon();
             _notifyIcon.Visible = true;
@@ -54,6 +54,12 @@ namespace NavigationAssistant
         }
 
         #endregion
+
+        public void UpdateKeyListening()
+        {
+            _keyboardListener.StopListening();
+            _keyboardListener.StartListening(_settingsSerializer.Deserialize().GlobalKeyCombination);
+        }
 
         #region Private Methods
 

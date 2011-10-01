@@ -1,5 +1,5 @@
 ﻿using System;
-using Core.Model;
+using System.Windows.Forms;
 
 namespace Core.Services
 {
@@ -7,7 +7,7 @@ namespace Core.Services
     {
         event EventHandler KeyCombinationPressed;
 
-        void StartListening(KeyCombination combinationToListen);
+        void StartListening(Keys combinationToListen);
 
         void StopListening();
     }

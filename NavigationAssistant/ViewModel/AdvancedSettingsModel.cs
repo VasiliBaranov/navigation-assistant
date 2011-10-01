@@ -109,11 +109,11 @@ namespace NavigationAssistant.ViewModel
         {
             get
             {
-                return _settings.GlobalKeyCombination.KeyEquivalentsArePresent(KeyEquivalents.Control);
+                return EnumUtility.IsPresent(_settings.GlobalKeyCombination, Keys.Control);
             }
             set
             {
-                _settings.GlobalKeyCombination.UpdateKeyEquivalents(KeyEquivalents.Control, value);
+                _settings.GlobalKeyCombination = EnumUtility.UpdateKey(_settings.GlobalKeyCombination, Keys.Control, value);
                 OnPropertyChanged("RequireControl");
             }
         }
@@ -122,11 +122,11 @@ namespace NavigationAssistant.ViewModel
         {
             get
             {
-                return _settings.GlobalKeyCombination.KeyEquivalentsArePresent(KeyEquivalents.Shift);
+                return EnumUtility.IsPresent(_settings.GlobalKeyCombination, Keys.Shift);
             }
             set
             {
-                _settings.GlobalKeyCombination.UpdateKeyEquivalents(KeyEquivalents.Shift, value);
+                _settings.GlobalKeyCombination = EnumUtility.UpdateKey(_settings.GlobalKeyCombination, Keys.Shift, value);
                 OnPropertyChanged("RequireShift");
             }
         }
@@ -135,11 +135,11 @@ namespace NavigationAssistant.ViewModel
         {
             get
             {
-                return _settings.GlobalKeyCombination.KeyEquivalentsArePresent(KeyEquivalents.Alt);
+                return EnumUtility.IsPresent(_settings.GlobalKeyCombination, Keys.Alt);
             }
             set
             {
-                _settings.GlobalKeyCombination.UpdateKeyEquivalents(KeyEquivalents.Alt, value);
+                _settings.GlobalKeyCombination = EnumUtility.UpdateKey(_settings.GlobalKeyCombination, Keys.Alt, value);
                 OnPropertyChanged("RequireAlt");
             }
         }
@@ -148,12 +148,16 @@ namespace NavigationAssistant.ViewModel
         {
             get
             {
-                return "M";//_settings.GlobalKeyCombination.KeyEquivalentsArePresent(KeyEquivalents.Alt);
+                return EnumUtility.ExtractNotModifiedKey(_settings.GlobalKeyCombination).ToString();
             }
             set
             {
+                //Remove old key code
+                Keys oldKeyCode = EnumUtility.ExtractNotModifiedKey(_settings.GlobalKeyCombination);
+                Keys modifiers = EnumUtility.RemoveKey(_settings.GlobalKeyCombination, oldKeyCode);
+
                 Keys key = (Keys) Enum.Parse(typeof(Keys), value);
-                _settings.GlobalKeyCombination.UpdateKeyEquivalents(new KeyEquivalents(key), true);
+                _settings.GlobalKeyCombination = EnumUtility.AddKey(modifiers, key);
                 OnPropertyChanged("Key");
             }
         }
