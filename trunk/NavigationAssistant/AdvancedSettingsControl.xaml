@@ -59,16 +59,16 @@
         <TextBlock Grid.Row="6" Name="KeyCombinationLabel" Text="Key Combination"/>
         <StackPanel Grid.Row="6" Style="{StaticResource KeysField}">
             <TextBlock Name="RequireControlLabel" Text="Ctrl"/>
-            <CheckBox Name="RequireControlBox" IsChecked="{Binding Path=RunOnStartup}"/>
+            <CheckBox Name="RequireControlBox" IsChecked="{Binding Path=RequireControl}"/>
             
             <TextBlock Name="RequireShiftLabel" Text="Shift"/>
-            <CheckBox Name="RequireShiftBox" IsChecked="{Binding Path=RunOnStartup}"/>
+            <CheckBox Name="RequireShiftBox" IsChecked="{Binding Path=RequireShift}"/>
 
             <TextBlock Name="RequireAltLabel" Text="Alt"/>
-            <CheckBox Name="RequireAltBox" IsChecked="{Binding Path=RunOnStartup}"/>
+            <CheckBox Name="RequireAltBox" IsChecked="{Binding Path=RequireAlt}"/>
 
             <TextBlock Name="KeyLabel" Text="Key" />
-            <TextBox Name="KeyTextBox" Text="{Binding Path=CacheUpdateIntervalInSeconds}"/>
+            <TextBox Name="KeyTextBox" Text="{Binding Path=Key, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
     </Grid>
 </UserControl>

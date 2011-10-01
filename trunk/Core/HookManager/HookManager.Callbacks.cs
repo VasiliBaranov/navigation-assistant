@@ -328,13 +328,15 @@ namespace Core.HookManager
                 //raise KeyDown
                 if (s_KeyDown != null && (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN))
                 {
-                    Keys keyData = (Keys)MyKeyboardHookStruct.VirtualKeyCode;
+                    Keys keyData = KeyMapper.GetKey(MyKeyboardHookStruct.VirtualKeyCode);
                     KeyEventArgs e = new KeyEventArgs(keyData);
                     s_KeyDown.Invoke(null, e);
                     handled = e.Handled;
                 }
 
                 // raise KeyPress
+                //NOTE: This code doesn't work if you press symbols with modifiers
+                //e.g. for Ctrl+Shift+M key is 13 (\r); but simply for M key = 'M'.
                 if (s_KeyPress != null && wParam == WM_KEYDOWN)
                 {
                     bool isDownShift = ((GetKeyState(VK_SHIFT) & 0x80) == 0x80 ? true : false);
@@ -360,7 +362,7 @@ namespace Core.HookManager
                 // raise KeyUp
                 if (s_KeyUp != null && (wParam == WM_KEYUP || wParam == WM_SYSKEYUP))
                 {
-                    Keys keyData = (Keys)MyKeyboardHookStruct.VirtualKeyCode;
+                    Keys keyData = KeyMapper.GetKey(MyKeyboardHookStruct.VirtualKeyCode);
                     KeyEventArgs e = new KeyEventArgs(keyData);
                     s_KeyUp.Invoke(null, e);
                     handled = handled || e.Handled;

@@ -46,12 +46,11 @@
     </Compile>
     <Compile Include="HookManager\HookManager.Callbacks.cs" />
     <Compile Include="HookManager\HookManager.cs" />
+    <Compile Include="HookManager\HookManager.KeyMapper.cs" />
     <Compile Include="HookManager\HookManager.Structures.cs" />
     <Compile Include="HookManager\HookManager.Windows.cs" />
     <Compile Include="HookManager\MouseEventExtArgs.cs" />
     <Compile Include="Model\FileSystemItem.cs" />
-    <Compile Include="Model\KeyCombination.cs" />
-    <Compile Include="Model\KeyEquivalents.cs" />
     <Compile Include="Model\MatchedFileSystemItem.cs" />
     <Compile Include="Model\ApplicationWindow.cs" />
     <Compile Include="Model\MatchString.cs" />
@@ -79,6 +78,7 @@
     <Compile Include="Services\Implementation\WindowsExplorerManager.cs" />
     <Compile Include="Services\INavigationService.cs" />
     <Compile Include="Services\ISettingsSerializer.cs" />
+    <Compile Include="Utilities\EnumUtility.cs" />
     <Compile Include="Utilities\ListUtility.cs" />
     <Compile Include="Utilities\StringUtility.cs" />
     <Compile Include="Utilities\DirectoryUtility.cs" />

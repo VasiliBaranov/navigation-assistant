@@ -186,13 +186,6 @@ namespace Core.Services.Implementation
 
         private Settings GetDefaultSettings()
         {
-            KeyCombination keyCombination = new KeyCombination
-                                                {
-                                                    KeyEquivalents.Control,
-                                                    KeyEquivalents.Shift,
-                                                    new KeyEquivalents(Keys.M)
-                                                };
-
             Settings settings = new Settings
                                     {
                                         SupportedNavigators = new List<Navigators> {Navigators.TotalCommander, Navigators.WindowsExplorer},
@@ -203,7 +196,7 @@ namespace Core.Services.Implementation
                                         IncludeHiddenFolders = false,
                                         PrimaryNavigator = Navigators.WindowsExplorer,
                                         TotalCommanderPath = GetTotalCommanderPath(),
-                                        GlobalKeyCombination = keyCombination
+                                        GlobalKeyCombination = Keys.Control | Keys.Shift | Keys.M
                                     };
 
             return settings;
