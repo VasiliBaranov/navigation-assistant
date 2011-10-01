@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using Core.Utilities;
 
@@ -9,9 +8,9 @@ namespace Core.Services.Implementation
     {
         #region Fields
 
-        private KeyCombination _combinationToListen;
+        private Keys _combinationToListen;
 
-        private KeyCombination _activeCombination;
+        private Keys _activeCombination;
 
         public event EventHandler KeyCombinationPressed;
 
@@ -21,8 +20,8 @@ namespace Core.Services.Implementation
 
         public void StartListening(Keys combinationToListen)
         {
-            _combinationToListen = BuildCombination(combinationToListen);
-            _activeCombination = new KeyCombination();
+            _combinationToListen = combinationToListen;
+            _activeCombination = (Keys) 0;
 
             HookManager.HookManager.KeyDown += HandleGlobalKeyDown;
             HookManager.HookManager.KeyPress += HandleGlobalKeyPress;
@@ -40,53 +39,9 @@ namespace Core.Services.Implementation
 
         #region Non Public Methods
 
-        private static KeyCombination BuildCombination(Keys key)
-        {
-            KeyCombination keyCombination = new KeyCombination();
-            if (EnumUtility.IsPresent(key, Keys.Control))
-            {
-                keyCombination.Add(KeyGroup.Control);
-            }
-            if (EnumUtility.IsPresent(key, Keys.Shift))
-            {
-                keyCombination.Add(KeyGroup.Shift);
-            }
-            if (EnumUtility.IsPresent(key, Keys.Alt))
-            {
-                keyCombination.Add(KeyGroup.Alt);
-            }
-
-            Keys notModifiedKey = EnumUtility.ExtractNotModifiedKey(key);
-            keyCombination.Add(new KeyGroup(notModifiedKey));
-
-            return keyCombination;
-        }
-
-        private static KeyGroup GetKeyGroup(KeyCombination keyCombination, Keys key)
-        {
-            foreach (KeyGroup keyEquivalents in keyCombination)
-            {
-                foreach (Keys currentKey in keyEquivalents)
-                {
-                    if (currentKey == key)
-                    {
-                        return keyEquivalents;
-                    }
-                }
-            }
-
-            return null;
-        }
-
         private void HandleGlobalKeyUp(object sender, KeyEventArgs e)
         {
-            KeyGroup pressedKeyGroup = GetKeyGroup(_combinationToListen, e.KeyData);
-
-            //Active combination may contain the pressed key group, if (e.g.) left and right controls are pressed.
-            if (pressedKeyGroup != null && _activeCombination.Contains(pressedKeyGroup))
-            {
-                _activeCombination.Remove(pressedKeyGroup);
-            }
+            _activeCombination = EnumUtility.RemoveKey(_activeCombination, e.KeyData);
         }
 
         private void HandleGlobalKeyPress(object sender, KeyPressEventArgs e)
@@ -98,17 +53,11 @@ namespace Core.Services.Implementation
 
         private void HandleGlobalKeyDown(object sender, KeyEventArgs e)
         {
-            KeyGroup pressedKeyGroup = GetKeyGroup(_combinationToListen, e.KeyData);
+            _activeCombination = EnumUtility.AddKey(_activeCombination, e.KeyData);
 
-            //Active combination may contain the pressed key group, if (e.g.) left and right controls are pressed.
-            if (pressedKeyGroup != null && !_activeCombination.Contains(pressedKeyGroup))
+            if (_activeCombination == _combinationToListen)
             {
-                _activeCombination.Add(pressedKeyGroup);
-            }
-
-            bool correctCombinationClicked = (_activeCombination.Count == _combinationToListen.Count);
-            if (correctCombinationClicked)
-            {
+                e.Handled = true;
                 OnKeyCombinationPressed();
             }
         }
@@ -118,47 +67,6 @@ namespace Core.Services.Implementation
             if (KeyCombinationPressed != null)
             {
                 KeyCombinationPressed(this, new EventArgs());
-            }
-        }
-
-        #endregion
-
-        #region Nested Classes
-
-        private class KeyCombination : List<KeyGroup>
-        {
-
-        }
-
-        //HookManager returns Keys.LControlKey if left control is used (which is correct, btw);
-        //but Keys.LControlKey == RButton | Space | F17 (god knows, why).
-        //So it's impossible to use Keys enum to determine that a control has been clicked,
-        //that's why these classes are used.
-        private class KeyGroup : List<Keys>
-        {
-            public KeyGroup()
-            {
-
-            }
-
-            public KeyGroup(Keys key)
-            {
-                Add(key);
-            }
-
-            public static KeyGroup Control
-            {
-                get { return new KeyGroup { Keys.LControlKey, Keys.RControlKey }; }
-            }
-
-            public static KeyGroup Shift
-            {
-                get { return new KeyGroup { Keys.LShiftKey, Keys.RShiftKey }; }
-            }
-
-            public static KeyGroup Alt
-            {
-                get { return new KeyGroup(Keys.Alt); }
             }
         }
 

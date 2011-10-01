@@ -8,7 +8,23 @@ namespace Core.HookManager
         //http://msdn.microsoft.com/en-us/library/system.windows.forms.keys.aspx
         public static Keys GetKey(int virtualKeyCode)
         {
-            return (Keys) virtualKeyCode;
+            if (virtualKeyCode == 164)
+            {
+                return Keys.Alt;
+            }
+
+            Keys keyCode = (Keys) virtualKeyCode;
+            if (keyCode == Keys.LControlKey || keyCode == Keys.RControlKey)
+            {
+                return Keys.Control;
+            }
+
+            if (keyCode == Keys.LShiftKey || keyCode == Keys.RShiftKey)
+            {
+                return Keys.Shift;
+            }
+
+            return keyCode;
         }
     }
 }
