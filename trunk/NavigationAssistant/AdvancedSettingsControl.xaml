@@ -27,6 +27,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition MinWidth="50" Width="Auto" />
@@ -47,5 +48,8 @@
 
         <TextBlock Grid.Row="4" Name="CacheUpdateIntervalLabel" Text="Cache Update Interval (sec)" />
         <TextBox Grid.Row="4" Name="CacheUpdateIntervalTextBox" Style="{StaticResource Field}" Text="{Binding Path=CacheUpdateIntervalInSeconds}" Utilities:NumericExtension.IsNumeric="True"/>
+
+        <TextBlock Grid.Row="5" Name="RunOnStartupLabel" Text="Run On Startup" />
+        <CheckBox Grid.Row="5" Name="RunOnStartupCheckBox" Style="{StaticResource Field}" IsChecked="{Binding Path=RunOnStartup}"/>
     </Grid>
 </UserControl>

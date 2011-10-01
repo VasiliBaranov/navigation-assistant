@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace Core.Model
 {
@@ -25,6 +26,9 @@ namespace Core.Model
         public int CacheUpdateIntervalInSeconds { get; set; }
 
         public string CacheFolder { get; set; }
+
+        [XmlIgnore]
+        public bool RunOnStartup { get; set; }
 
         #endregion
     }

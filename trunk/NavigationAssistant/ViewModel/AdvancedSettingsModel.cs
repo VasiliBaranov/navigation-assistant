@@ -38,6 +38,19 @@ namespace NavigationAssistant.ViewModel
             }
         }
 
+        public bool RunOnStartup
+        {
+            get
+            {
+                return _settings.RunOnStartup;
+            }
+            set
+            {
+                _settings.RunOnStartup = value;
+                OnPropertyChanged("RunOnStartup");
+            }
+        }
+
         public int CacheUpdateIntervalInSeconds
         {
             get

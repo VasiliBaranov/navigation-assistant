@@ -34,6 +34,7 @@ namespace NavigationAssistant.ViewModel
             if (mainWindow != null)
             {
                 mainWindow.CurrentNavigationModel.UpdateSettings();
+                mainWindow.UpdateIconMenu();
             }
 
             return;
