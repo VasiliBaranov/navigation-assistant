@@ -1,4 +1,4 @@
-﻿namespace Core.Services
+﻿namespace NavigationAssistant.Core.Services
 {
     public interface IExplorer
     {

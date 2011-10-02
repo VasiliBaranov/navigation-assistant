@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Core.Services
+namespace NavigationAssistant.Core.Services
 {
     public interface IKeyboardListener
     {

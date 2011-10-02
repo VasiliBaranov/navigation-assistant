@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using SHDocVw;
 
-namespace Core.Services.Implementation
+namespace NavigationAssistant.Core.Services.Implementation
 {
     public class WindowsExplorer : IExplorer
     {

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Core.Model;
-using Core.Utilities;
+using NavigationAssistant.Core.Model;
+using NavigationAssistant.Core.Utilities;
 
-namespace Core.Services.Implementation
+namespace NavigationAssistant.Core.Services.Implementation
 {
     public class MatchSearcher : IMatchSearcher
     {

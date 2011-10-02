@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Core.Model;
+using NavigationAssistant.Core.Model;
 using SHDocVw;
 
-namespace Core.Services.Implementation
+namespace NavigationAssistant.Core.Services.Implementation
 {
     public class WindowsExplorerManager : IExplorerManager
     {

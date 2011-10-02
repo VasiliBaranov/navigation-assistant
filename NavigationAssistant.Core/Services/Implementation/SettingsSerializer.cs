@@ -5,11 +5,11 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using Core.Model;
-using Core.Utilities;
+using NavigationAssistant.Core.Model;
+using NavigationAssistant.Core.Utilities;
 using Microsoft.Win32;
 
-namespace Core.Services.Implementation
+namespace NavigationAssistant.Core.Services.Implementation
 {
     //With *.settings files approach app.config become awful.
     //Custom Configuration Sections approach is weird and too verbose.

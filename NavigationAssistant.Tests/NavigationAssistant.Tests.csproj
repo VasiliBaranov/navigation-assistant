@@ -8,8 +8,8 @@
     <ProjectGuid>{76B831D8-FFC9-4F01-92E4-365520261B4F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tests</RootNamespace>
-    <AssemblyName>Tests</AssemblyName>
+    <RootNamespace>NavigationAssistant.Tests</RootNamespace>
+    <AssemblyName>NavigationAssistant.Tests</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

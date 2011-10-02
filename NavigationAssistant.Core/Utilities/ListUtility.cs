@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Core.Utilities
+namespace NavigationAssistant.Core.Utilities
 {
     public static class ListUtility
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 
-namespace Core.Model
+namespace NavigationAssistant.Core.Model
 {
     public class Settings
     {

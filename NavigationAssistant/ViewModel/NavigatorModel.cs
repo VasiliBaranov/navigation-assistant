@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
-using Core.Model;
+using NavigationAssistant.Core.Model;
 
 namespace NavigationAssistant.ViewModel
 {

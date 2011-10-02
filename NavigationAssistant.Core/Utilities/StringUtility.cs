@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace Core.Utilities
+namespace NavigationAssistant.Core.Utilities
 {
     public static class StringUtility
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Core.Utilities
+namespace NavigationAssistant.Core.Utilities
 {
     public static class DirectoryUtility
     {

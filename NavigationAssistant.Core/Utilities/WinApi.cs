@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Core.Utilities
+namespace NavigationAssistant.Core.Utilities
 {
     public static class WinApi
     {

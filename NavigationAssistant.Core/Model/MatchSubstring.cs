@@ -1,4 +1,4 @@
-﻿namespace Core.Model
+﻿namespace NavigationAssistant.Core.Model
 {
     public class MatchSubstring
     {

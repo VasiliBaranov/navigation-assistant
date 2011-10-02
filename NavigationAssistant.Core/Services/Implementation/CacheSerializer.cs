@@ -2,9 +2,9 @@
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using Core.Model;
+using NavigationAssistant.Core.Model;
 
-namespace Core.Services.Implementation
+namespace NavigationAssistant.Core.Services.Implementation
 {
     public class CacheSerializer : ICacheSerializer
     {
