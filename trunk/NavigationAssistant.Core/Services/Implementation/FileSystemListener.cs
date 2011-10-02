@@ -56,25 +56,38 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private void HandleFolderRenamed(object sender, RenamedEventArgs e)
         {
-            OnFileSystemChanged(e.OldFullPath, e.FullPath);
+            OnFolderSystemChanged(e.OldFullPath, e.FullPath);
         }
 
         private void HandleFolderDeleted(object sender, FileSystemEventArgs e)
         {
-            OnFileSystemChanged(e.FullPath, null);
+            OnFolderSystemChanged(e.FullPath, null);
         }
 
         private void HandleFolderCreated(object sender, FileSystemEventArgs e)
         {
-            OnFileSystemChanged(null, e.FullPath);
+            OnFolderSystemChanged(null, e.FullPath);
         }
 
         private void HandleFolderChanged(object sender, FileSystemEventArgs e)
         {
-            OnFileSystemChanged(e.FullPath, e.FullPath);
+            bool directoryExists = false;
+            try
+            {
+                directoryExists = Directory.Exists(e.FullPath);
+            }
+            catch (Exception)
+            {
+                //No permissions
+            }
+
+            if (directoryExists)
+            {
+                OnFolderSystemChanged(e.FullPath, e.FullPath);
+            }
         }
 
-        protected virtual void OnFileSystemChanged(string oldPath, string newPath)
+        protected virtual void OnFolderSystemChanged(string oldPath, string newPath)
         {
             if (FolderSystemChanged != null)
             {
