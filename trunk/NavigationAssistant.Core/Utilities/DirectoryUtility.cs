@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using NavigationAssistant.Core.Model;
 
 namespace NavigationAssistant.Core.Utilities
 {
@@ -27,7 +29,7 @@ namespace NavigationAssistant.Core.Utilities
                 catch
                 {
                     // TODO: aparently we have a racing condition, for now we sleep and try again
-                    System.Threading.Thread.Sleep(1000);
+                    Thread.Sleep(1000);
                     Directory.Delete(folderPath, true);
                 }
             }
@@ -51,6 +53,25 @@ namespace NavigationAssistant.Core.Utilities
                 .ToList();
 
             return folders;
+        }
+
+        public static FileSystemItem GetFileSystemItem(DirectoryInfo directoryInfo)
+        {
+            return new FileSystemItem(directoryInfo.FullName)
+                       {
+                           IsHidden = directoryInfo.IsHidden()
+                       };
+        }
+
+        public static bool IsHidden(this DirectoryInfo directoryInfo)
+        {
+            return (directoryInfo.Attributes & FileAttributes.Hidden) != 0;
+        }
+
+        public static FileSystemItem FindItem(List<FileSystemItem> items, string fullPath)
+        {
+            FileSystemItem item = items.FirstOrDefault(i => String.Equals(i.FullPath, fullPath, StringComparison.Ordinal));
+            return item;
         }
     }
 }
