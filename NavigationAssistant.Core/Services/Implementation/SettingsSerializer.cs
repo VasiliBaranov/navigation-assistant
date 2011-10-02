@@ -101,7 +101,9 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             IFileSystemParser basicParser = new FileSystemParser();
             ICacheSerializer cacheSerializer = new CacheSerializer(settings.CacheFolder);
-            IFileSystemParser cachedParser = new CachedFileSystemParser(basicParser, cacheSerializer, settings.CacheUpdateIntervalInSeconds);
+            IFileSystemListener listener = new FileSystemListener();
+            IFileSystemParser cachedParser = new CachedFileSystemParser(basicParser, cacheSerializer, listener,
+                settings.CacheUpdateDelayInSeconds);
             cachedParser.IncludeHiddenFolders = settings.IncludeHiddenFolders;
             cachedParser.ExcludeFolderTemplates = settings.ExcludeFolderTemplates;
             cachedParser.FoldersToParse = settings.FoldersToParse;
@@ -190,7 +192,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                                     {
                                         SupportedNavigators = new List<Navigators> {Navigators.TotalCommander, Navigators.WindowsExplorer},
                                         CacheFolder = Application.CommonAppDataPath,
-                                        CacheUpdateIntervalInSeconds = 60*10,
+                                        CacheUpdateDelayInSeconds = 60*10,
                                         ExcludeFolderTemplates = new List<string> {"obj", "bin", ".svn"},
                                         FoldersToParse = null,
                                         IncludeHiddenFolders = false,

@@ -53,16 +53,16 @@ namespace NavigationAssistant.ViewModel
             }
         }
 
-        public int CacheUpdateIntervalInSeconds
+        public int CacheUpdateDelayInMinutes
         {
             get
             {
-                return _settings.CacheUpdateIntervalInSeconds;
+                return _settings.CacheUpdateDelayInSeconds / 60;
             }
             set
             {
-                _settings.CacheUpdateIntervalInSeconds = value;
-                OnPropertyChanged("CacheUpdateIntervalInSeconds");
+                _settings.CacheUpdateDelayInSeconds = value * 60;
+                OnPropertyChanged("CacheUpdateDelayInSeconds");
             }
         }
 
