@@ -27,19 +27,6 @@ namespace NavigationAssistant.ViewModel
 
         #region Properties
 
-        public bool IncludeHiddenFolders
-        {
-            get
-            {
-                return _settings.IncludeHiddenFolders;
-            }
-            set
-            {
-                _settings.IncludeHiddenFolders = value;
-                OnPropertyChanged("IncludeHiddenFolders");
-            }
-        }
-
         public bool RunOnStartup
         {
             get

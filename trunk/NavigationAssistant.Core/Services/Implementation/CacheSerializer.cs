@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -14,6 +15,8 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private const string Separator = "?";
 
+        private static readonly object CacheSync = new object();
+
         public CacheSerializer(string cacheFolder)
         {
             _cacheFilePath = Path.Combine(cacheFolder, "Cache.txt");
@@ -22,8 +25,12 @@ namespace NavigationAssistant.Core.Services.Implementation
         public void SerializeCache(List<FileSystemItem> cache)
         {
             //File system path can not contain ?, so this format is not ambiguous
-            string[] lines = cache.Select(i => string.Format(CultureInfo.InvariantCulture, "{0}{1}{2}", i.FullPath, Separator, i.Name) ).ToArray();
-            File.WriteAllLines(_cacheFilePath, lines);
+            string[] lines = cache.Select(GetLine).ToArray();
+
+            lock (CacheSync)
+            {
+                File.WriteAllLines(_cacheFilePath, lines);
+            }
         }
 
         public List<FileSystemItem> DeserializeCache()
@@ -39,25 +46,38 @@ namespace NavigationAssistant.Core.Services.Implementation
 
             return result;
         }
-
-        private FileSystemItem ParseLine(string line)
+        private static string GetLine(FileSystemItem item)
         {
-            int separatorIndex = line.IndexOf(Separator);
+            int hiddenIndicator = item.IsHidden ? 1 : 0;
+            return string.Format(CultureInfo.InvariantCulture, "{1}{0}{2}{0}{3}", Separator, item.FullPath, item.Name, hiddenIndicator);
+        }
 
-            if (separatorIndex < 0)
+        private static FileSystemItem ParseLine(string line)
+        {
+            string[] parts = line.Split(new[] {Separator}, StringSplitOptions.None);
+
+            FileSystemItem fileSystemItem = new FileSystemItem();
+            fileSystemItem.FullPath = parts[0];
+
+            if (parts.Length > 1)
             {
-                return new FileSystemItem(string.Empty, line);
+                fileSystemItem.Name = parts[1];
             }
 
-            string itemPath = line.Substring(0, separatorIndex);
-            string itemName = string.Empty;
-
-            if (line.Length > separatorIndex + 1)
+            if (parts.Length > 2)
             {
-                itemName = line.Substring(separatorIndex + 1);
+                string hiddenIndicator = parts[2];
+                if (string.IsNullOrEmpty(hiddenIndicator))
+                {
+                    fileSystemItem.IsHidden = false;
+                }
+                else
+                {
+                    fileSystemItem.IsHidden = string.Equals(hiddenIndicator, "1", StringComparison.Ordinal);
+                }
             }
 
-            return new FileSystemItem(itemName, itemPath);
+            return fileSystemItem;
         }
     }
 }

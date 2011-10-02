@@ -184,6 +184,7 @@ namespace NavigationAssistant
                 _notifyIcon = null;
 
                 _keyboardListener.StopListening();
+                CurrentNavigationModel.Close();
             }
             else
             {

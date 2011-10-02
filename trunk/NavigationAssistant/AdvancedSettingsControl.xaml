@@ -39,7 +39,6 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition MinWidth="50" Width="Auto" />
@@ -52,20 +51,17 @@
         <TextBlock Grid.Row="1" Name="ExcludeFolderTemplatesLabel" Text="Exclude Folder Templates" />
         <TextBox Grid.Row="1" Name="ExcludeFolderTemplatesTextBox" Style="{StaticResource Field}" Text="{Binding Path=ExcludeFolderTemplates}"/>
 
-        <TextBlock Grid.Row="2" Name="IncludeHiddenFoldersLabel" Text="Include Hidden Folders" />
-        <CheckBox Grid.Row="2" Name="IncludeHiddenFoldersCheckBox" Style="{StaticResource Field}" IsChecked="{Binding Path=IncludeHiddenFolders}"/>
+        <TextBlock Grid.Row="2" Name="CacheFolderLabel" Text="Cache Folder" />
+        <TextBox Grid.Row="2" Name="CacheFolderTextBox" Style="{StaticResource Field}" Text="{Binding Path=CacheFolder}"/>
 
-        <TextBlock Grid.Row="3" Name="CacheFolderLabel" Text="Cache Folder" />
-        <TextBox Grid.Row="3" Name="CacheFolderTextBox" Style="{StaticResource Field}" Text="{Binding Path=CacheFolder}"/>
+        <TextBlock Grid.Row="3" Name="CacheUpdateDelayLabel" Text="Cache Update Delay (min)" />
+        <TextBox Grid.Row="3" Name="CacheUpdateDelayTextBox" Style="{StaticResource Field}" Text="{Binding Path=CacheUpdateDelayInMinutes}" Utilities:NumericExtension.IsNumeric="True"/>
 
-        <TextBlock Grid.Row="4" Name="CacheUpdateDelayLabel" Text="Cache Update Delay (min)" />
-        <TextBox Grid.Row="4" Name="CacheUpdateDelayTextBox" Style="{StaticResource Field}" Text="{Binding Path=CacheUpdateDelayInMinutes}" Utilities:NumericExtension.IsNumeric="True"/>
+        <TextBlock Grid.Row="4" Name="RunOnStartupLabel" Text="Run On Startup"/>
+        <CheckBox Grid.Row="4" Name="RunOnStartupCheckBox" Style="{StaticResource Field}" IsChecked="{Binding Path=RunOnStartup}"/>
 
-        <TextBlock Grid.Row="5" Name="RunOnStartupLabel" Text="Run On Startup"/>
-        <CheckBox Grid.Row="5" Name="RunOnStartupCheckBox" Style="{StaticResource Field}" IsChecked="{Binding Path=RunOnStartup}"/>
-
-        <TextBlock Grid.Row="6" Name="KeyCombinationLabel" Text="Key Combination"/>
-        <StackPanel Grid.Row="6" Style="{StaticResource KeysField}">
+        <TextBlock Grid.Row="5" Name="KeyCombinationLabel" Text="Key Combination"/>
+        <StackPanel Grid.Row="5" Style="{StaticResource KeysField}">
             <TextBlock Name="RequireControlLabel" Text="Ctrl"/>
             <CheckBox Name="RequireControlBox" IsChecked="{Binding Path=RequireControl}" Style="{StaticResource KeyModifier}" />
             
