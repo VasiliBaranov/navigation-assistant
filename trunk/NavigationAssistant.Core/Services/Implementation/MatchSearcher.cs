@@ -29,7 +29,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private MatchedFileSystemItem GetMatchedItem(FileSystemItem item, Regex matchRegex)
         {
-            List<MatchSubstring> substrings = GetMatchSubstrings(item.ItemName, matchRegex);
+            List<MatchSubstring> substrings = GetMatchSubstrings(item.Name, matchRegex);
             if (substrings == null)
             {
                 return null;

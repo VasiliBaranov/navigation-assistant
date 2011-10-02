@@ -99,10 +99,9 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public INavigationService BuildNavigationService(Settings settings)
         {
-            IFileSystemParser basicParser = new FileSystemParser();
+            IFileSystemParser basicParser = new FileSystemParser(new FileSystemListener());
             ICacheSerializer cacheSerializer = new CacheSerializer(settings.CacheFolder);
-            IFileSystemListener listener = new FileSystemListener();
-            IFileSystemParser cachedParser = new CachedFileSystemParser(basicParser, cacheSerializer, listener,
+            IFileSystemParser cachedParser = new CachedFileSystemParser(basicParser, cacheSerializer, new FileSystemListener(),
                 settings.CacheUpdateDelayInSeconds);
             cachedParser.IncludeHiddenFolders = settings.IncludeHiddenFolders;
             cachedParser.ExcludeFolderTemplates = settings.ExcludeFolderTemplates;
@@ -121,7 +120,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
             INavigationService navigationAssistant = new NavigationService(cachedParser, new MatchSearcher(), primaryExplorerManager, supportedExplorerManagers);
 
-            //Warming up (to fill the caches, etc)
+            //Warming up (to fill caches, etc)
             navigationAssistant.GetFolderMatches("temp");
 
             return navigationAssistant;
@@ -195,7 +194,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                                         CacheUpdateDelayInSeconds = 60*10,
                                         ExcludeFolderTemplates = new List<string> {"obj", "bin", ".svn"},
                                         FoldersToParse = null,
-                                        IncludeHiddenFolders = false,
+                                        IncludeHiddenFolders = true,
                                         PrimaryNavigator = Navigators.WindowsExplorer,
                                         TotalCommanderPath = GetTotalCommanderPath(),
                                         GlobalKeyCombination = Keys.Control | Keys.Shift | Keys.M

@@ -49,7 +49,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileSystemParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NavigationAssistant.Core\NavigationAssistant.Core.csproj">
+      <Project>{F3A384AD-E711-4322-9950-101946AB51DA}</Project>
+      <Name>NavigationAssistant.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NavigationAssistant\NavigationAssistant.csproj">
+      <Project>{8C61359D-F448-442A-ADCA-B965180457CB}</Project>
+      <Name>NavigationAssistant</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

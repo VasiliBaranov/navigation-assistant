@@ -11,8 +11,8 @@
 
         public MatchedFileSystemItem(FileSystemItem fileSystemItem, MatchString matchedString)
         {
-            ItemName = fileSystemItem.ItemName;
-            ItemPath = fileSystemItem.ItemPath;
+            Name = fileSystemItem.Name;
+            FullPath = fileSystemItem.FullPath;
             MatchedItemName = matchedString;
         }
     }

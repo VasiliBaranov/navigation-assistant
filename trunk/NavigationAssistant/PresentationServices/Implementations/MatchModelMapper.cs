@@ -23,7 +23,7 @@ namespace NavigationAssistant.PresentationServices.Implementations
 
             List<MatchModel> matchRepresentations = folderMatches
                 .Take(Constants.MaxMatchesToDisplay)
-                .OrderBy(m => m.ItemPath.Length)
+                .OrderBy(m => m.FullPath.Length)
                 .Select(GetMatchModel)
                 .ToList();
 
@@ -39,10 +39,10 @@ namespace NavigationAssistant.PresentationServices.Implementations
         {
             //Clone the matched item name
             MatchString matchedItemName = new MatchString(match.MatchedItemName);
-            string path = string.Format(CultureInfo.InvariantCulture, " -> {0}", match.ItemPath);
+            string path = string.Format(CultureInfo.InvariantCulture, " -> {0}", match.FullPath);
             matchedItemName.Add(new MatchSubstring(path, false));
 
-            return new MatchModel(this, matchedItemName, match.ItemPath);
+            return new MatchModel(this, matchedItemName, match.FullPath);
         }
 
         public TextBlock GetTextBlock(MatchString matchedText, TextDecorationCollection matchDecoration, Brush matchColor)
