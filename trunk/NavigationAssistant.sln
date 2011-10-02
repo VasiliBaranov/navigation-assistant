@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{76B831D8-FFC9-4F01-92E4-365520261B4F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NavigationAssistant.Tests", "Tests\NavigationAssistant.Tests.csproj", "{76B831D8-FFC9-4F01-92E4-365520261B4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{F3A384AD-E711-4322-9950-101946AB51DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NavigationAssistant.Core", "Core\NavigationAssistant.Core.csproj", "{F3A384AD-E711-4322-9950-101946AB51DA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NavigationAssistant", "NavigationAssistant\NavigationAssistant.csproj", "{8C61359D-F448-442A-ADCA-B965180457CB}"
 EndProject
