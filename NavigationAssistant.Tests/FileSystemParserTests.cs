@@ -130,12 +130,57 @@ namespace NavigationAssistant.Tests
         [Test]
         public void GetSubFolders_FileCreatedWhileOperation_FileNotIncludedInOutput()
         {
-            _parser = new FileSystemParserWithAction(new FileSystemListener(), () => File.WriteAllText(Folder + "\\temp.txt", "text"));
+            DirectoryUtility.EnsureClearFolder(SubFolder);
+            _parser = new FileSystemParserWithAction(new FileSystemListener(), () => File.WriteAllText(SubFolder + "\\temp.txt", "text"));
             _parser.FoldersToParse = new List<string> { Folder };
 
             List<FileSystemItem> subfolders = _parser.GetSubFolders();
 
-            Assert.That(subfolders.Count, Is.EqualTo(1));
+            Assert.That(subfolders.Count, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void GetSubFolders_FileUpdatedWhileOperation_FileNotIncludedInOutput()
+        {
+            DirectoryUtility.EnsureClearFolder(SubFolder);
+            File.WriteAllText(SubFolder + "\\temp.txt", "text");
+            _parser = new FileSystemParserWithAction(new FileSystemListener(), () => File.WriteAllText(SubFolder + "\\temp.txt", "text"));
+            _parser.FoldersToParse = new List<string> { Folder };
+
+            List<FileSystemItem> subfolders = _parser.GetSubFolders();
+
+            Assert.That(subfolders.Count, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void GetSubFolders_FileDeletedWhileOperation_FileNotIncludedInOutput()
+        {
+            DirectoryUtility.EnsureClearFolder(SubFolder);
+            File.WriteAllText(SubFolder + "\\temp.txt", "text");
+            _parser = new FileSystemParserWithAction(new FileSystemListener(), () => File.Delete(SubFolder + "\\temp.txt"));
+            _parser.FoldersToParse = new List<string> { Folder };
+
+            List<FileSystemItem> subfolders = _parser.GetSubFolders();
+
+            Assert.That(subfolders.Count, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void GetSubFolders_FileMadeHiddenWhileOperation_FileNotIncludedInOutput()
+        {
+            DirectoryUtility.EnsureClearFolder(SubFolder);
+            File.WriteAllText(SubFolder + "\\temp.txt", "text");
+            _parser = new FileSystemParserWithAction(new FileSystemListener(),
+                                                     () =>
+                                                         {
+                                                             FileInfo fileInfo = new FileInfo(SubFolder + "\\temp.txt");
+                                                             fileInfo.Attributes = fileInfo.Attributes | FileAttributes.Hidden;
+                                                         });
+            _parser.FoldersToParse = new List<string> { Folder };
+
+            List<FileSystemItem> subfolders = _parser.GetSubFolders();
+
+            Assert.That(subfolders.Count, Is.EqualTo(2));
         }
 
         private static void MakeSubFolderHidden()

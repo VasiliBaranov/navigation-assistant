@@ -152,7 +152,10 @@ namespace NavigationAssistant.Core.Services.Implementation
                 _fullCache = _fullCache.OrderBy(item => item.FullPath).ToList();
                 _cacheSerializer.SerializeCache(_fullCache);
 
-                FileSystemParser.UpdateFolders(_cache, e, IsCorrect);
+                if (_cache != null)
+                {
+                    FileSystemParser.UpdateFolders(_cache, e, IsCorrect);
+                }
             }
         }
 
@@ -167,7 +170,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             List<Regex> excludeRegexes = GetExcludeRegexes(excludeFolderTemplates);
 
             List<FileSystemItem> filteredItems = items
-                .Where(item => IsInRootFolder(item, rootFolders) && !ShouldBeExcluded(item, excludeRegexes))
+                .Where(item => IsCorrect(item, rootFolders, excludeRegexes, includeHiddenFolders))
                 .ToList();
 
             return filteredItems;
@@ -176,7 +179,13 @@ namespace NavigationAssistant.Core.Services.Implementation
         private bool IsCorrect(FileSystemItem item)
         {
             List<Regex> excludeRegexes = GetExcludeRegexes(_excludeFolderTemplates);
-            return IsInRootFolder(item, _foldersToParse) && !ShouldBeExcluded(item, excludeRegexes);
+            return IsCorrect(item, _foldersToParse, excludeRegexes, _includeHiddenFolders);
+        }
+
+        private static bool IsCorrect(FileSystemItem item, List<string> rootFolders, List<Regex> excludeRegexes, bool includeHiddenFolders)
+        {
+            bool shouldExcludeAsHidden = !includeHiddenFolders && item.IsHidden;
+            return IsInRootFolder(item, rootFolders) && !ShouldBeExcluded(item, excludeRegexes) && !shouldExcludeAsHidden;
         }
 
         private static List<Regex> GetExcludeRegexes(List<string> excludeFolderTemplates)
