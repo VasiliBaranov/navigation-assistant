@@ -15,7 +15,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             _fileSystemWatchers = new List<FileSystemWatcher>();
         }
 
-        public event EventHandler<FileSystemChangeEventArgs> FileSystemChanged;
+        public event EventHandler<FileSystemChangeEventArgs> FolderSystemChanged;
 
         public void StartListening(List<string> foldersToListen)
         {
@@ -76,9 +76,9 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         protected virtual void OnFileSystemChanged(string oldPath, string newPath)
         {
-            if (FileSystemChanged != null)
+            if (FolderSystemChanged != null)
             {
-                FileSystemChanged(this, new FileSystemChangeEventArgs(oldPath, newPath));
+                FolderSystemChanged(this, new FileSystemChangeEventArgs(oldPath, newPath));
             }
         }
     }

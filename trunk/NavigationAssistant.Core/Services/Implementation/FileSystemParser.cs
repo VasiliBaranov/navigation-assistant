@@ -134,7 +134,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private void RunListener()
         {
-            _fileSystemListener.FileSystemChanged += HandleFileSystemChanged;
+            _fileSystemListener.FolderSystemChanged += HandleFolderSystemChanged;
 
             _fileSystemChangeEvents = new List<FileSystemChangeEventArgs>();
 
@@ -147,7 +147,7 @@ namespace NavigationAssistant.Core.Services.Implementation
         }
 
         //All these events will be called after the full system parsing is finished
-        private void HandleFileSystemChanged(object sender, FileSystemChangeEventArgs e)
+        private void HandleFolderSystemChanged(object sender, FileSystemChangeEventArgs e)
         {
             _fileSystemChangeEvents.Add(e);
         }

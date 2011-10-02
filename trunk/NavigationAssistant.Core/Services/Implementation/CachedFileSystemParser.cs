@@ -82,7 +82,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             bool fullCacheUpToDate = ReadFullCache();
 
             // Listen to the changes in the whole system to update the fullCache.
-            _fileSystemListener.FileSystemChanged += HandleFileSystemChanged;
+            _fileSystemListener.FolderSystemChanged += HandleFolderSystemChanged;
             _fileSystemListener.StartListening(null); 
 
             //Set up a timer for initial cache update
@@ -144,7 +144,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             return fullCacheUpToDate;
         }
 
-        private void HandleFileSystemChanged(object sender, FileSystemChangeEventArgs e)
+        private void HandleFolderSystemChanged(object sender, FileSystemChangeEventArgs e)
         {
             lock (_fullCacheSync)
             {
