@@ -21,8 +21,6 @@ namespace NavigationAssistant.Core.Model
 
         public List<string> FoldersToParse { get; set; }
 
-        public bool IncludeHiddenFolders { get; set; }
-
         public List<string> ExcludeFolderTemplates { get; set; }
 
         public int CacheUpdateDelayInSeconds { get; set; }

@@ -27,11 +27,9 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         #endregion
 
-        //Note: currently these proeprties are not used in this class, as it is always called with nulls.
         #region Properties
 
-        public bool IncludeHiddenFolders { get; set; }
-
+        //Note: currently these proeprties are not used in this class, as it is always called with nulls.
         public List<string> ExcludeFolderTemplates { get; set; }
 
         public List<string> FoldersToParse { get; set; }
@@ -67,22 +65,16 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public static void UpdateFolders(List<FileSystemItem> folders, FileSystemChangeEventArgs e, Predicate<FileSystemItem> isCorrectPredicate)
         {
-            bool handled = HandleAttributesChange(folders, e);
-            if (handled)
+            if (!String.IsNullOrEmpty(e.OldFullPath))
             {
-                return;
-            }
-
-            if (!string.IsNullOrEmpty(e.OldFullPath))
-            {
-                FileSystemItem deletedItem = DirectoryUtility.FindItem(folders, e.OldFullPath);
+                FileSystemItem deletedItem = FindItem(folders, e.OldFullPath);
                 if (deletedItem != null)
                 {
                     folders.Remove(deletedItem);
                 }
             }
 
-            if (!string.IsNullOrEmpty(e.NewFullPath))
+            if (!String.IsNullOrEmpty(e.NewFullPath))
             {
                 FileSystemItem addedItem = new FileSystemItem(e.NewFullPath);
 
@@ -91,7 +83,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                 //and try to update the list for each of the events after parsing.
                 //But if an added folder was parsed after the event for this folder had occurred,
                 //the duplicate will be present.
-                FileSystemItem duplicate = DirectoryUtility.FindItem(folders, e.NewFullPath);
+                FileSystemItem duplicate = FindItem(folders, e.NewFullPath);
 
                 bool isCorrect = (isCorrectPredicate == null) || isCorrectPredicate(addedItem);
                 if (isCorrect && duplicate == null)
@@ -124,33 +116,6 @@ namespace NavigationAssistant.Core.Services.Implementation
         #endregion
 
         #region Non Public Methods
-
-        private static bool HandleAttributesChange(List<FileSystemItem> folders, FileSystemChangeEventArgs e)
-        {
-            bool propertiesChanged =
-                !string.IsNullOrEmpty(e.OldFullPath) &&
-                !string.IsNullOrEmpty(e.NewFullPath) &&
-                string.Equals(e.OldFullPath, e.NewFullPath, StringComparison.Ordinal);
-            if (!propertiesChanged)
-            {
-                return false;
-            }
-
-            FileSystemItem changedItem = DirectoryUtility.FindItem(folders, e.OldFullPath);
-            if (changedItem != null)
-            {
-                try
-                {
-                    DirectoryInfo directoryInfo = new DirectoryInfo(e.NewFullPath);
-                    changedItem.IsHidden = directoryInfo.IsHidden();
-                }
-                catch (Exception)
-                {
-                    //Not enough rights
-                }
-            }
-            return true;
-        }
 
         private void RunListener()
         {
@@ -195,12 +160,24 @@ namespace NavigationAssistant.Core.Services.Implementation
                 }
 
                 subfolders.AddRange(GetFoldersRecursively(rootFolderInfo));
-                subfolders.Add(DirectoryUtility.GetFileSystemItem(rootFolderInfo));
+                subfolders.Add(GetFileSystemItem(rootFolderInfo));
             }
 
             return subfolders;
         }
 
+        private static FileSystemItem GetFileSystemItem(DirectoryInfo directoryInfo)
+        {
+            return new FileSystemItem(directoryInfo.FullName);
+        }
+
+        private static FileSystemItem FindItem(List<FileSystemItem> items, string fullPath)
+        {
+            FileSystemItem item = items.FirstOrDefault(i => String.Equals(i.FullPath, fullPath, StringComparison.Ordinal));
+            return item;
+        }
+
+        //BTW, using DirectoryInfo.GetDirectories is almost two times faster than Directory.GetDirectories.
         private static List<FileSystemItem> GetFoldersRecursively(DirectoryInfo folder)
         {
             List<FileSystemItem> subfolders = new List<FileSystemItem>();
@@ -225,7 +202,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                 //That's why we can not simply use Directory.GetDirectories(folderPath, "*", SearchOption.AllDirectories);
             }
 
-            IEnumerable<FileSystemItem> subfolderItems = subfolders.Select(DirectoryUtility.GetFileSystemItem);
+            IEnumerable<FileSystemItem> subfolderItems = subfolders.Select(GetFileSystemItem);
             folders.AddRange(subfolderItems);
 
             foreach (DirectoryInfo subfolder in subfolders)

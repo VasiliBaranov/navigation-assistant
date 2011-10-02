@@ -54,24 +54,5 @@ namespace NavigationAssistant.Core.Utilities
 
             return folders;
         }
-
-        public static FileSystemItem GetFileSystemItem(DirectoryInfo directoryInfo)
-        {
-            return new FileSystemItem(directoryInfo.FullName)
-                       {
-                           IsHidden = directoryInfo.IsHidden()
-                       };
-        }
-
-        public static bool IsHidden(this DirectoryInfo directoryInfo)
-        {
-            return (directoryInfo.Attributes & FileAttributes.Hidden) != 0;
-        }
-
-        public static FileSystemItem FindItem(List<FileSystemItem> items, string fullPath)
-        {
-            FileSystemItem item = items.FirstOrDefault(i => String.Equals(i.FullPath, fullPath, StringComparison.Ordinal));
-            return item;
-        }
     }
 }

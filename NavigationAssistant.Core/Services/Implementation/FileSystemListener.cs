@@ -9,13 +9,11 @@ namespace NavigationAssistant.Core.Services.Implementation
     public class FileSystemListener : IFileSystemListener
     {
         private readonly List<FileSystemWatcher> _fileSystemWatchers;
-        private readonly bool _listenToAttributes;
         private bool _stopped = true;
 
-        public FileSystemListener(bool listenToAttributes)
+        public FileSystemListener()
         {
             _fileSystemWatchers = new List<FileSystemWatcher>();
-            _listenToAttributes = listenToAttributes;
         }
 
         public event EventHandler<FileSystemChangeEventArgs> FolderSystemChanged;
@@ -37,11 +35,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                 FileSystemWatcher fileSystemWatcher = new FileSystemWatcher();
                 fileSystemWatcher.Path = path;
 
-                //It's impossible to distinguish between folder and file attributes;
-                //so it's necessary to check whether the change has occurred to a file or folder every time for ANY file/folder change.
-                NotifyFilters filters = _listenToAttributes
-                                            ? NotifyFilters.DirectoryName | NotifyFilters.Attributes
-                                            : NotifyFilters.DirectoryName;
+                NotifyFilters filters = NotifyFilters.DirectoryName;
 
                 fileSystemWatcher.NotifyFilter = filters;
                 fileSystemWatcher.IncludeSubdirectories = true;
@@ -50,10 +44,6 @@ namespace NavigationAssistant.Core.Services.Implementation
                 fileSystemWatcher.Created += HandleFolderCreated;
                 fileSystemWatcher.Deleted += HandleFolderDeleted;
                 fileSystemWatcher.Renamed += HandleFolderRenamed;
-                if (_listenToAttributes)
-                {
-                    fileSystemWatcher.Changed += HandleFolderChanged;
-                }
 
                 _fileSystemWatchers.Add(fileSystemWatcher);
 
@@ -72,10 +62,6 @@ namespace NavigationAssistant.Core.Services.Implementation
                 fileSystemWatcher.Created -= HandleFolderCreated;
                 fileSystemWatcher.Deleted -= HandleFolderDeleted;
                 fileSystemWatcher.Renamed -= HandleFolderRenamed;
-                if (_listenToAttributes)
-                {
-                    fileSystemWatcher.Changed -= HandleFolderChanged;
-                }
             }
 
             _fileSystemWatchers.Clear();
@@ -116,24 +102,6 @@ namespace NavigationAssistant.Core.Services.Implementation
         private void HandleFolderCreated(object sender, FileSystemEventArgs e)
         {
             OnFolderSystemChanged(null, e.FullPath);
-        }
-
-        private void HandleFolderChanged(object sender, FileSystemEventArgs e)
-        {
-            bool directoryExists = false;
-            try
-            {
-                directoryExists = Directory.Exists(e.FullPath);
-            }
-            catch (Exception)
-            {
-                //No permissions
-            }
-
-            if (directoryExists)
-            {
-                OnFolderSystemChanged(e.FullPath, e.FullPath);
-            }
         }
 
         protected virtual void OnFolderSystemChanged(string oldPath, string newPath)
