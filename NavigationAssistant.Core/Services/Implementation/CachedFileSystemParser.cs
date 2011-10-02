@@ -148,57 +148,12 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             lock (_fullCacheSync)
             {
-                UpdateFullCache(_fullCache, e);
-                _fullCache = _fullCache.OrderBy(item => item.ItemPath).ToList();
+                FileSystemParser.UpdateFolders(_fullCache, e, null);
+                _fullCache = _fullCache.OrderBy(item => item.FullPath).ToList();
                 _cacheSerializer.SerializeCache(_fullCache);
 
-                UpdateCache(_cache, e);
+                FileSystemParser.UpdateFolders(_cache, e, IsCorrect);
             }
-        }
-
-        private static void UpdateFullCache(List<FileSystemItem> fullCache, FileSystemChangeEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(e.OldPath))
-            {
-                FileSystemItem deletedItem = FindItem(fullCache, e.OldPath);
-                if (deletedItem != null)
-                {
-                    fullCache.Remove(deletedItem);
-                }
-            }
-            if (!string.IsNullOrEmpty(e.NewPath))
-            {
-                FileSystemItem addedItem = new FileSystemItem(e.NewPath);
-                fullCache.Add(addedItem);
-            }
-        }
-
-        private void UpdateCache(List<FileSystemItem> cache, FileSystemChangeEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(e.OldPath))
-            {
-                FileSystemItem deletedItem = FindItem(cache, e.OldPath);
-                if (deletedItem != null)
-                {
-                    cache.Remove(deletedItem);
-                }
-            }
-            if (!string.IsNullOrEmpty(e.NewPath))
-            {
-                FileSystemItem addedItem = new FileSystemItem(e.NewPath);
-                bool isCorrect = IsCorrect(addedItem, _foldersToParse, _excludeFolderTemplates, _includeHiddenFolders);
-
-                if (isCorrect)
-                {
-                    cache.Add(addedItem);
-                }
-            }
-        }
-
-        private static FileSystemItem FindItem(List<FileSystemItem> cache, string fullPath)
-        {
-            FileSystemItem item = cache.FirstOrDefault(i => string.Equals(i.ItemPath, fullPath, StringComparison.Ordinal));
-            return item;
         }
 
         private void ResetCache()
@@ -218,10 +173,10 @@ namespace NavigationAssistant.Core.Services.Implementation
             return filteredItems;
         }
 
-        private static bool IsCorrect(FileSystemItem item, List<string> rootFolders, List<string> excludeFolderTemplates, bool includeHiddenFolders)
+        private bool IsCorrect(FileSystemItem item)
         {
-            List<Regex> excludeRegexes = GetExcludeRegexes(excludeFolderTemplates);
-            return IsInRootFolder(item, rootFolders) && !ShouldBeExcluded(item, excludeRegexes);
+            List<Regex> excludeRegexes = GetExcludeRegexes(_excludeFolderTemplates);
+            return IsInRootFolder(item, _foldersToParse) && !ShouldBeExcluded(item, excludeRegexes);
         }
 
         private static List<Regex> GetExcludeRegexes(List<string> excludeFolderTemplates)
@@ -237,12 +192,12 @@ namespace NavigationAssistant.Core.Services.Implementation
                 return true;
             }
 
-            return rootFolders.Any(rootFolder => item.ItemPath.StartsWith(rootFolder));
+            return rootFolders.Any(rootFolder => item.FullPath.StartsWith(rootFolder));
         }
 
         private static bool ShouldBeExcluded(FileSystemItem item, List<Regex> excludeRegexes)
         {
-            List<string> foldersInPath = DirectoryUtility.SplitPath(item.ItemPath);
+            List<string> foldersInPath = DirectoryUtility.SplitPath(item.FullPath);
 
             foreach (string folder in foldersInPath)
             {

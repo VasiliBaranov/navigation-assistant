@@ -4,24 +4,24 @@ namespace NavigationAssistant.Core.Model
 {
     public class FileSystemItem
     {
-        public string ItemName { get; set; }
+        public string Name { get; set; }
 
-        public string ItemPath { get; set; }
+        public string FullPath { get; set; }
 
         public FileSystemItem()
         {
         }
 
-        public FileSystemItem(string itemName, string itemPath)
+        public FileSystemItem(string name, string path)
         {
-            ItemName = itemName;
-            ItemPath = itemPath;
+            Name = name;
+            FullPath = Path.GetFullPath(path);
         }
 
-        public FileSystemItem(string itemPath)
+        public FileSystemItem(string path)
         {
-            ItemName = Path.GetFileName(itemPath);
-            ItemPath = itemPath;
+            Name = Path.GetFileName(path);
+            FullPath = Path.GetFullPath(path);
         }
     }
 }

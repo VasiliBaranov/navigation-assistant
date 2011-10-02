@@ -22,7 +22,7 @@ namespace NavigationAssistant.Core.Services.Implementation
         public void SerializeCache(List<FileSystemItem> cache)
         {
             //File system path can not contain ?, so this format is not ambiguous
-            string[] lines = cache.Select(i => string.Format(CultureInfo.InvariantCulture, "{0}{1}{2}", i.ItemPath, Separator, i.ItemName) ).ToArray();
+            string[] lines = cache.Select(i => string.Format(CultureInfo.InvariantCulture, "{0}{1}{2}", i.FullPath, Separator, i.Name) ).ToArray();
             File.WriteAllLines(_cacheFilePath, lines);
         }
 
