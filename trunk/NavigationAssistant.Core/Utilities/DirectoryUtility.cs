@@ -7,38 +7,6 @@ namespace NavigationAssistant.Core.Utilities
 {
     public static class DirectoryUtility
     {
-        public static List<string> GetFoldersRecursively(string folderPath)
-        {
-            List<string> subfolders = new List<string>();
-            GetFoldersRecursively(folderPath, subfolders);
-
-            return subfolders;
-        }
-
-        private static void GetFoldersRecursively(string folderPath, List<string> folders)
-        {
-            string[] subfolders;
-            try
-            {
-                subfolders = Directory.GetDirectories(folderPath);
-            }
-            catch
-            {
-                return;
-                // Do nothing intentionally to gather as many folders as possible.
-                // Exception may be thrown if the program is not run as administrator,
-                //and the caller doesn't have enough rights for a specific folder.
-                //That's why we can not simply use Directory.GetDirectories(folderPath, "*", SearchOption.AllDirectories);
-            }
-
-            folders.AddRange(subfolders);
-
-            foreach (string subfolder in subfolders)
-            {
-                GetFoldersRecursively(subfolder, folders);
-            }
-        }
-
         public static List<string> GetHardDriveRootFolders()
         {
             return

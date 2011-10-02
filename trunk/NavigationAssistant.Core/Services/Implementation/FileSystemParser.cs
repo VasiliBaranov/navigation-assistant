@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using NavigationAssistant.Core.Model;
 using System.Linq;
@@ -9,16 +10,22 @@ namespace NavigationAssistant.Core.Services.Implementation
 {
     public class FileSystemParser : IFileSystemParser
     {
+        #region Fields
+
         private readonly IFileSystemListener _fileSystemListener;
 
-        private List<FileSystemItem> _subfolders;
-
         private List<FileSystemChangeEventArgs> _fileSystemChangeEvents;
+
+        #endregion
+
+        #region Constructors
 
         public FileSystemParser(IFileSystemListener fileSystemListener)
         {
             _fileSystemListener = fileSystemListener;
         }
+
+        #endregion
 
         //Note: currently these proeprties are not used in this class, as it is always called with nulls.
         #region Properties
@@ -38,10 +45,11 @@ namespace NavigationAssistant.Core.Services.Implementation
             Thread fileSystemListenerThread = new Thread(RunListener);
             fileSystemListenerThread.Start();
 
+            List<FileSystemItem> subfolders;
             try
             {
-                _subfolders = GetSubfolderDirectly(FoldersToParse);
-                _subfolders = ProcessSubFolders(_subfolders);
+                subfolders = GetSubfolderDirectly(FoldersToParse);
+                subfolders = ProcessSubFolders(subfolders);
             }
             finally
             {
@@ -49,35 +57,35 @@ namespace NavigationAssistant.Core.Services.Implementation
                 _fileSystemListener.StopListening();
             }
 
-            foreach (FileSystemChangeEventArgs fileSystemChangeEvent in _fileSystemChangeEvents)
+            foreach (FileSystemChangeEventArgs fileSystemChangeArg in _fileSystemChangeEvents)
             {
-                UpdateFolders(_subfolders, fileSystemChangeEvent, null);
+                UpdateFolders(subfolders, fileSystemChangeArg, null);
             }
 
-            return _subfolders;
+            return subfolders;
         }
 
         public static void UpdateFolders(List<FileSystemItem> folders, FileSystemChangeEventArgs e, Predicate<FileSystemItem> isCorrectPredicate)
         {
-            if (!String.IsNullOrEmpty(e.OldPath))
+            if (!string.IsNullOrEmpty(e.OldFullPath))
             {
-                FileSystemItem deletedItem = FindItem(folders, e.OldPath);
+                FileSystemItem deletedItem = FindItem(folders, e.OldFullPath);
                 if (deletedItem != null)
                 {
                     folders.Remove(deletedItem);
                 }
             }
 
-            if (!String.IsNullOrEmpty(e.NewPath))
+            if (!string.IsNullOrEmpty(e.NewFullPath))
             {
-                FileSystemItem addedItem = new FileSystemItem(e.NewPath);
+                FileSystemItem addedItem = new FileSystemItem(e.NewFullPath);
 
                 //Duplicates may appear in certain cases. Example:
                 //We store all the file system events gathered while parsing the system in a special list,
                 //and try to update the list for each of the events after parsing.
                 //But if an added folder was parsed after the event for this folder had occurred,
                 //the duplicate will be present.
-                FileSystemItem duplicate = FindItem(folders, e.NewPath);
+                FileSystemItem duplicate = FindItem(folders, e.NewFullPath);
 
                 bool isCorrect = (isCorrectPredicate == null) || isCorrectPredicate(addedItem);
                 if (isCorrect && duplicate == null)
@@ -111,11 +119,6 @@ namespace NavigationAssistant.Core.Services.Implementation
             _fileSystemChangeEvents.Add(e);
         }
 
-        private static FileSystemItem GetFileSystemInfo(string path)
-        {
-            return new FileSystemItem(path);
-        }
-
         private static List<FileSystemItem> GetSubfolderDirectly(List<string> rootFolders)
         {
             if (ListUtility.IsNullOrEmpty(rootFolders))
@@ -123,23 +126,61 @@ namespace NavigationAssistant.Core.Services.Implementation
                 rootFolders = DirectoryUtility.GetHardDriveRootFolders();
             }
 
-            List<string> folders = new List<string>();
+            List<FileSystemItem> subfolders = new List<FileSystemItem>();
 
             foreach (string rootFolder in rootFolders)
             {
-                folders.AddRange(DirectoryUtility.GetFoldersRecursively(rootFolder));
-                folders.Add(rootFolder);
+                DirectoryInfo rootFolderInfo = new DirectoryInfo(rootFolder);
+
+                subfolders.AddRange(GetFoldersRecursively(rootFolderInfo));
+                subfolders.Add(GetFileSystemItem(rootFolderInfo));
             }
 
-            List<FileSystemItem> result = folders.Select(GetFileSystemInfo).ToList();
-
-            return result;
+            return subfolders;
         }
 
-        private static FileSystemItem FindItem(List<FileSystemItem> cache, string fullPath)
+        private static FileSystemItem FindItem(List<FileSystemItem> items, string fullPath)
         {
-            FileSystemItem item = cache.FirstOrDefault(i => String.Equals(i.FullPath, fullPath, StringComparison.Ordinal));
+            FileSystemItem item = items.FirstOrDefault(i => String.Equals(i.FullPath, fullPath, StringComparison.Ordinal));
             return item;
+        }
+
+        private static List<FileSystemItem> GetFoldersRecursively(DirectoryInfo folder)
+        {
+            List<FileSystemItem> subfolders = new List<FileSystemItem>();
+            GetFoldersRecursively(folder, subfolders);
+
+            return subfolders;
+        }
+
+        private static void GetFoldersRecursively(DirectoryInfo folder, List<FileSystemItem> folders)
+        {
+            DirectoryInfo[] subfolders;
+            try
+            {
+                subfolders = folder.GetDirectories();
+            }
+            catch
+            {
+                return;
+                // Do nothing intentionally to gather as many folders as possible.
+                // Exception may be thrown if the program is not run as administrator,
+                //and the caller doesn't have enough rights for a specific folder.
+                //That's why we can not simply use Directory.GetDirectories(folderPath, "*", SearchOption.AllDirectories);
+            }
+
+            IEnumerable<FileSystemItem> subfolderItems = subfolders.Select(GetFileSystemItem);
+            folders.AddRange(subfolderItems);
+
+            foreach (DirectoryInfo subfolder in subfolders)
+            {
+                GetFoldersRecursively(subfolder, folders);
+            }
+        }
+
+        private static FileSystemItem GetFileSystemItem(DirectoryInfo directoryInfo)
+        {
+            return new FileSystemItem(directoryInfo.FullName);
         }
 
         #endregion

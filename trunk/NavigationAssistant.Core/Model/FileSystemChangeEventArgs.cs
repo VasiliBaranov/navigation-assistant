@@ -5,24 +5,30 @@ namespace NavigationAssistant.Core.Model
 {
     public class FileSystemChangeEventArgs : EventArgs
     {
-        private readonly string _oldPath;
+        private readonly string _oldFullPath;
 
-        private readonly string _newPath;
+        private readonly string _newFullPath;
 
         public FileSystemChangeEventArgs(string oldPath, string newPath)
         {
-            _oldPath = oldPath;
-            _newPath = newPath;
+            if (oldPath != null)
+            {
+                _oldFullPath = Path.GetFullPath(oldPath);
+            }
+            if (newPath != null)
+            {
+                _newFullPath = Path.GetFullPath(newPath);
+            }
         }
 
-        public string OldPath
+        public string OldFullPath
         {
-            get { return _oldPath; }
+            get { return _oldFullPath; }
         }
 
-        public string NewPath
+        public string NewFullPath
         {
-            get { return _newPath; }
+            get { return _newFullPath; }
         }
     }
 }

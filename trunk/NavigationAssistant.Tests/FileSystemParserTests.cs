@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using NUnit.Framework;
@@ -53,7 +54,7 @@ namespace NavigationAssistant.Tests
         [Test]
         public void GetSubFolders_FolderCreatedWhileOperation_FolderIncludedInOutput()
         {
-            _parser = new FileSystemParserWithDelay(new FileSystemListener());
+            _parser = new FileSystemParserWithAction(new FileSystemListener(), ()=>Directory.CreateDirectory(FolderName + "\\1"));
             _parser.FoldersToParse = new List<string> { FolderName };
 
             List<FileSystemItem> subfolders = _parser.GetSubFolders();
@@ -62,27 +63,34 @@ namespace NavigationAssistant.Tests
             Assert.That(subfolders[1].FullPath, Is.EqualTo(Path.GetFullPath(FolderName + "\\1")));
         }
 
-        public void GetSubFolders_FolderRenamedWhileOperation_FolderRenamedInOutput()
-        {
-
-        }
-
+        [Test]
         public void GetSubFolders_FolderDeletedWhileOperation_FolderDeletedInOutput()
         {
+            const string newFolderName = FolderName + "\\1";
+            Directory.CreateDirectory(newFolderName);
 
+            _parser = new FileSystemParserWithAction(new FileSystemListener(), () => Directory.Delete(newFolderName, true));
+            _parser.FoldersToParse = new List<string> { FolderName };
+
+            List<FileSystemItem> subfolders = _parser.GetSubFolders();
+
+            Assert.That(subfolders.Count, Is.EqualTo(1));
+            Assert.That(subfolders[0].FullPath, Is.EqualTo(Path.GetFullPath(FolderName)));
         }
 
-        protected class FileSystemParserWithDelay : FileSystemParser
+        protected class FileSystemParserWithAction : FileSystemParser
         {
-            public FileSystemParserWithDelay(IFileSystemListener fileSystemListener) : base(fileSystemListener)
-            {
+            private readonly Action _action;
 
+            public FileSystemParserWithAction(IFileSystemListener fileSystemListener, Action action) : base(fileSystemListener)
+            {
+                _action = action;
             }
 
             protected override List<FileSystemItem> ProcessSubFolders(List<FileSystemItem> subfolders)
             {
-                Directory.CreateDirectory(FolderName + "\\1");
-                Thread.Sleep(200);
+                _action();
+                Thread.Sleep(200); //To let file system handlers handle the action.
 
                 return subfolders;
             }
