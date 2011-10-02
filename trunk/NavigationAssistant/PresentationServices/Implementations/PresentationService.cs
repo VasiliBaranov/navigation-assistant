@@ -6,10 +6,10 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
-using Core.Model;
-using Core.Services;
-using Core.Services.Implementation;
-using Core.Utilities;
+using NavigationAssistant.Core.Model;
+using NavigationAssistant.Core.Services;
+using NavigationAssistant.Core.Services.Implementation;
+using NavigationAssistant.Core.Utilities;
 using NavigationAssistant.ViewModel;
 using Application = System.Windows.Application;
 

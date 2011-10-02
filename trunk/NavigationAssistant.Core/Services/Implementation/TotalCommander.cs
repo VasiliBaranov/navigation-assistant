@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 using System.IO;
-using Core.Model;
+using NavigationAssistant.Core.Model;
 
-namespace Core.Services.Implementation
+namespace NavigationAssistant.Core.Services.Implementation
 {
     //Command line arguments can be found here: http://www.ghisler.ch/wiki/index.php/Command_line_parameters
     //If eventually you need a more sophisticated interaction, 

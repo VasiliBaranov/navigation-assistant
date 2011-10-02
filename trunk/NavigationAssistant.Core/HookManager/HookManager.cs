@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace Core.HookManager 
+namespace NavigationAssistant.Core.HookManager 
 {
     /// <summary>
     /// This class monitors all mouse activities globally (also outside of the application) 

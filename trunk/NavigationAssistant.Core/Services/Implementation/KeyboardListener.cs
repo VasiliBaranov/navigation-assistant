@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
-using Core.Utilities;
+using NavigationAssistant.Core.Utilities;
 
-namespace Core.Services.Implementation
+namespace NavigationAssistant.Core.Services.Implementation
 {
     public class KeyboardListener : IKeyboardListener
     {

@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Core.Model;
+using NavigationAssistant.Core.Model;
 using NavigationAssistant.PresentationServices;
 
 namespace NavigationAssistant.ViewModel

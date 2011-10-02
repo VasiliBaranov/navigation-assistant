@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Core.Model;
-using Core.Utilities;
+using NavigationAssistant.Core.Model;
+using NavigationAssistant.Core.Utilities;
 
-namespace Core.Services.Implementation
+namespace NavigationAssistant.Core.Services.Implementation
 {
     public class NavigationService : INavigationService
     {

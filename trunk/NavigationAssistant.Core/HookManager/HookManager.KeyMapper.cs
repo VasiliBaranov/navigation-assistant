@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace Core.HookManager
+namespace NavigationAssistant.Core.HookManager
 {
     public static class KeyMapper
     {

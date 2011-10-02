@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace Core.Utilities
+namespace NavigationAssistant.Core.Utilities
 {
     public static class EnumUtility
     {

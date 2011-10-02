@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Core.Model
+namespace NavigationAssistant.Core.Model
 {
     public class MatchString : List<MatchSubstring>
     {

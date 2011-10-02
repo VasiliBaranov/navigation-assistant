@@ -5,8 +5,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
-using Core.Model;
-using Core.Utilities;
+using NavigationAssistant.Core.Model;
+using NavigationAssistant.Core.Utilities;
 using NavigationAssistant.Properties;
 using NavigationAssistant.ViewModel;
 

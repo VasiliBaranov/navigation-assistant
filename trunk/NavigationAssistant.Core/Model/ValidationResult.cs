@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Core.Utilities;
+using NavigationAssistant.Core.Utilities;
 
-namespace Core.Model
+namespace NavigationAssistant.Core.Model
 {
     public class ValidationResult
     {

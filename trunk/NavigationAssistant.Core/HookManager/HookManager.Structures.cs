@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace Core.HookManager 
+namespace NavigationAssistant.Core.HookManager 
 {
     public static partial class HookManager 
     {

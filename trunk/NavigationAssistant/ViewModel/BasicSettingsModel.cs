@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using Core.Model;
+using NavigationAssistant.Core.Model;
 
 namespace NavigationAssistant.ViewModel
 {

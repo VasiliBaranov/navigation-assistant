@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Core.Model;
+using NavigationAssistant.Core.Model;
 using System.Linq;
-using Core.Utilities;
+using NavigationAssistant.Core.Utilities;
 
-namespace Core.Services.Implementation
+namespace NavigationAssistant.Core.Services.Implementation
 {
     public class FileSystemParser : IFileSystemParser
     {

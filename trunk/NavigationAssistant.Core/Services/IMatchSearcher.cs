@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Core.Model;
+using NavigationAssistant.Core.Model;
 
-namespace Core.Services
+namespace NavigationAssistant.Core.Services
 {
     public interface IMatchSearcher
     {

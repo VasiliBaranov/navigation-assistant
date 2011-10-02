@@ -2,8 +2,8 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Windows.Input;
-using Core.Services;
-using Core.Services.Implementation;
+using NavigationAssistant.Core.Services;
+using NavigationAssistant.Core.Services.Implementation;
 using NavigationAssistant.ViewModel;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 

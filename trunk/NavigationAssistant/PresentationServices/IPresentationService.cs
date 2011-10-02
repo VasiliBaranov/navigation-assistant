@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Core.Model;
-using Core.Services;
+using NavigationAssistant.Core.Model;
+using NavigationAssistant.Core.Services;
 using NavigationAssistant.ViewModel;
 
 namespace NavigationAssistant.PresentationServices

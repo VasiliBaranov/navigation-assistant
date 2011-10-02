@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using Core.Model;
+using NavigationAssistant.Core.Model;
 using NavigationAssistant.Properties;
 using NavigationAssistant.Utilities;
 

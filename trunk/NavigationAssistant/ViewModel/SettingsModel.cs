@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Windows.Input;
-using Core.Model;
-using Core.Services;
-using Core.Services.Implementation;
+using NavigationAssistant.Core.Model;
+using NavigationAssistant.Core.Services;
+using NavigationAssistant.Core.Services.Implementation;
 
 namespace NavigationAssistant.ViewModel
 {

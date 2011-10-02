@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace Core.HookManager
+namespace NavigationAssistant.Core.HookManager
 {
     /// <summary>
     /// Provides data for the MouseClickExt and MouseMoveExt events. It also provides a property Handled.
