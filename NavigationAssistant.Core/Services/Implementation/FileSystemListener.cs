@@ -28,13 +28,14 @@ namespace NavigationAssistant.Core.Services.Implementation
             {
                 FileSystemWatcher fileSystemWatcher = new FileSystemWatcher();
                 fileSystemWatcher.Path = path;
-                fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName;
+                fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.Attributes;
                 fileSystemWatcher.IncludeSubdirectories = true;
 
                 // Add event handlers.
                 fileSystemWatcher.Created += HandleFolderCreated;
                 fileSystemWatcher.Deleted += HandleFolderDeleted;
                 fileSystemWatcher.Renamed += HandleFolderRenamed;
+                fileSystemWatcher.Changed += HandleFolderChanged;
 
                 _fileSystemWatchers.Add(fileSystemWatcher);
 
@@ -66,6 +67,11 @@ namespace NavigationAssistant.Core.Services.Implementation
         private void HandleFolderCreated(object sender, FileSystemEventArgs e)
         {
             OnFileSystemChanged(null, e.FullPath);
+        }
+
+        private void HandleFolderChanged(object sender, FileSystemEventArgs e)
+        {
+            OnFileSystemChanged(e.FullPath, e.FullPath);
         }
 
         protected virtual void OnFileSystemChanged(string oldPath, string newPath)
