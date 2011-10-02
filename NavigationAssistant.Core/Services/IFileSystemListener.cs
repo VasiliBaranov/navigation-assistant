@@ -6,7 +6,7 @@ namespace NavigationAssistant.Core.Services
 {
     public interface IFileSystemListener
     {
-        event EventHandler<FileSystemChangeEventArgs> FileSystemChanged;
+        event EventHandler<FileSystemChangeEventArgs> FolderSystemChanged;
 
         void StartListening(List<string> foldersToListen);
 

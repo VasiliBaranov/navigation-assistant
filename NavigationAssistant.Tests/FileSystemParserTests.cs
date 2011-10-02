@@ -127,6 +127,17 @@ namespace NavigationAssistant.Tests
             Assert.That(subfolder.IsHidden, Is.False);
         }
 
+        [Test]
+        public void GetSubFolders_FileCreatedWhileOperation_FileNotIncludedInOutput()
+        {
+            _parser = new FileSystemParserWithAction(new FileSystemListener(), () => File.WriteAllText(Folder + "\\temp.txt", "text"));
+            _parser.FoldersToParse = new List<string> { Folder };
+
+            List<FileSystemItem> subfolders = _parser.GetSubFolders();
+
+            Assert.That(subfolders.Count, Is.EqualTo(1));
+        }
+
         private static void MakeSubFolderHidden()
         {
             DirectoryInfo folder = new DirectoryInfo(SubFolder);
