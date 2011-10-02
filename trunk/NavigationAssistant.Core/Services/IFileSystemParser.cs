@@ -6,8 +6,6 @@ namespace NavigationAssistant.Core.Services
 {
     public interface IFileSystemParser : IDisposable
     {
-        bool IncludeHiddenFolders { get; set; }
-
         List<string> ExcludeFolderTemplates { get; set; }
 
         List<string> FoldersToParse { get; set; }

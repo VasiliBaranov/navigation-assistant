@@ -8,8 +8,6 @@ namespace NavigationAssistant.Core.Model
 
         public string FullPath { get; set; }
 
-        public bool IsHidden { get; set; }
-
         public FileSystemItem()
         {
         }

@@ -107,7 +107,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             {
                 if (_cache == null)
                 {
-                    _cache = FilterCache(_fullCache, _foldersToParse, _excludeFolderTemplates, _includeHiddenFolders);
+                    _cache = FilterCache(_fullCache, _foldersToParse, _excludeFolderTemplates);
                 }
 
                 return _cache;
@@ -207,12 +207,12 @@ namespace NavigationAssistant.Core.Services.Implementation
         }
 
         private static List<FileSystemItem> FilterCache(List<FileSystemItem> items,
-            List<string> rootFolders, List<string> excludeFolderTemplates, bool includeHiddenFolders)
+            List<string> rootFolders, List<string> excludeFolderTemplates)
         {
             List<Regex> excludeRegexes = GetExcludeRegexes(excludeFolderTemplates);
 
             List<FileSystemItem> filteredItems = items
-                .Where(item => IsCorrect(item, rootFolders, excludeRegexes, includeHiddenFolders))
+                .Where(item => IsCorrect(item, rootFolders, excludeRegexes))
                 .ToList();
 
             return filteredItems;
@@ -221,13 +221,12 @@ namespace NavigationAssistant.Core.Services.Implementation
         private bool IsCorrect(FileSystemItem item)
         {
             List<Regex> excludeRegexes = GetExcludeRegexes(_excludeFolderTemplates);
-            return IsCorrect(item, _foldersToParse, excludeRegexes, _includeHiddenFolders);
+            return IsCorrect(item, _foldersToParse, excludeRegexes);
         }
 
-        private static bool IsCorrect(FileSystemItem item, List<string> rootFolders, List<Regex> excludeRegexes, bool includeHiddenFolders)
+        private static bool IsCorrect(FileSystemItem item, List<string> rootFolders, List<Regex> excludeRegexes)
         {
-            bool shouldExcludeAsHidden = !includeHiddenFolders && item.IsHidden;
-            return IsInRootFolder(item, rootFolders) && !ShouldBeExcluded(item, excludeRegexes) && !shouldExcludeAsHidden;
+            return IsInRootFolder(item, rootFolders) && !ShouldBeExcluded(item, excludeRegexes);
         }
 
         private static List<Regex> GetExcludeRegexes(List<string> excludeFolderTemplates)

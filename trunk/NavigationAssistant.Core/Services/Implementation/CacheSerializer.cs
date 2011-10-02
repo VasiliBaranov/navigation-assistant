@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -48,36 +47,27 @@ namespace NavigationAssistant.Core.Services.Implementation
         }
         private static string GetLine(FileSystemItem item)
         {
-            int hiddenIndicator = item.IsHidden ? 1 : 0;
-            return string.Format(CultureInfo.InvariantCulture, "{1}{0}{2}{0}{3}", Separator, item.FullPath, item.Name, hiddenIndicator);
+            return string.Format(CultureInfo.InvariantCulture, "{1}{0}{2}", Separator, item.FullPath, item.Name);
         }
 
         private static FileSystemItem ParseLine(string line)
         {
-            string[] parts = line.Split(new[] {Separator}, StringSplitOptions.None);
+            int separatorIndex = line.IndexOf(Separator);
 
-            FileSystemItem fileSystemItem = new FileSystemItem();
-            fileSystemItem.FullPath = parts[0];
-
-            if (parts.Length > 1)
+            if (separatorIndex < 0)
             {
-                fileSystemItem.Name = parts[1];
+                return new FileSystemItem(string.Empty, line);
             }
 
-            if (parts.Length > 2)
+            string itemPath = line.Substring(0, separatorIndex);
+            string itemName = string.Empty;
+
+            if (line.Length > separatorIndex + 1)
             {
-                string hiddenIndicator = parts[2];
-                if (string.IsNullOrEmpty(hiddenIndicator))
-                {
-                    fileSystemItem.IsHidden = false;
-                }
-                else
-                {
-                    fileSystemItem.IsHidden = string.Equals(hiddenIndicator, "1", StringComparison.Ordinal);
-                }
+                itemName = line.Substring(separatorIndex + 1);
             }
 
-            return fileSystemItem;
+            return new FileSystemItem(itemName, itemPath);
         }
     }
 }

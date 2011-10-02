@@ -101,11 +101,10 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             //NOTE: We turn off listening for attributes changes, as it may be too slow;
             //and we also do not display IncludeHiddenFolders option in the UI. So attributes are never used.
-            IFileSystemParser basicParser = new FileSystemParser(new FileSystemListener(false));
+            IFileSystemParser basicParser = new FileSystemParser(new FileSystemListener());
             ICacheSerializer cacheSerializer = new CacheSerializer(settings.CacheFolder);
-            IFileSystemParser cachedParser = new CachedFileSystemParser(basicParser, cacheSerializer, new FileSystemListener(false),
+            IFileSystemParser cachedParser = new CachedFileSystemParser(basicParser, cacheSerializer, new FileSystemListener(),
                 settings.CacheUpdateDelayInSeconds);
-            cachedParser.IncludeHiddenFolders = settings.IncludeHiddenFolders;
             cachedParser.ExcludeFolderTemplates = settings.ExcludeFolderTemplates;
             cachedParser.FoldersToParse = settings.FoldersToParse;
 
@@ -196,7 +195,6 @@ namespace NavigationAssistant.Core.Services.Implementation
                                         CacheUpdateDelayInSeconds = 60*10,
                                         ExcludeFolderTemplates = new List<string> {"obj", "bin", ".svn"},
                                         FoldersToParse = null,
-                                        IncludeHiddenFolders = true,
                                         PrimaryNavigator = Navigators.WindowsExplorer,
                                         TotalCommanderPath = GetTotalCommanderPath(),
                                         GlobalKeyCombination = Keys.Control | Keys.Shift | Keys.M
