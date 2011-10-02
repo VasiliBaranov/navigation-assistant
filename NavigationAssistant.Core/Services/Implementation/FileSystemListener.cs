@@ -55,20 +55,20 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private void HandleFolderRenamed(object sender, RenamedEventArgs e)
         {
-            OnPropertyChanged(e.OldFullPath, e.FullPath);
+            OnFileSystemChanged(e.OldFullPath, e.FullPath);
         }
 
         private void HandleFolderDeleted(object sender, FileSystemEventArgs e)
         {
-            OnPropertyChanged(e.FullPath, null);
+            OnFileSystemChanged(e.FullPath, null);
         }
 
         private void HandleFolderCreated(object sender, FileSystemEventArgs e)
         {
-            OnPropertyChanged(null, e.FullPath);
+            OnFileSystemChanged(null, e.FullPath);
         }
 
-        protected virtual void OnPropertyChanged(string oldPath, string newPath)
+        protected virtual void OnFileSystemChanged(string oldPath, string newPath)
         {
             if (FileSystemChanged != null)
             {
