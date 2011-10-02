@@ -12,10 +12,10 @@ namespace NavigationAssistant.Core.Services.Implementation
         private readonly IExplorerManager _primaryExplorerManager;
         private readonly List<IExplorerManager> _supportedExplorerManagers;
 
-        public NavigationService(IFileSystemParser fileSystemParser, 
-            IMatchSearcher matchSearcher, 
-            IExplorerManager primaryExplorerManager,
-            List<IExplorerManager> supportedExplorerManagers)
+        public NavigationService(IFileSystemParser fileSystemParser,
+                                 IMatchSearcher matchSearcher,
+                                 IExplorerManager primaryExplorerManager,
+                                 List<IExplorerManager> supportedExplorerManagers)
         {
             _fileSystemParser = fileSystemParser;
             _matchSearcher = matchSearcher;
@@ -62,6 +62,27 @@ namespace NavigationAssistant.Core.Services.Implementation
             IntPtr handle = WinApi.GetForegroundWindow();
 
             return new ApplicationWindow(handle);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // get rid of managed resources
+                _fileSystemParser.Dispose();
+            }
+            // get rid of unmanaged resources
+        }
+
+        ~NavigationService()
+        {
+            Dispose(false);
         }
     }
 }

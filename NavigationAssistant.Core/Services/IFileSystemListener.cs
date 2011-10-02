@@ -4,7 +4,7 @@ using NavigationAssistant.Core.Model;
 
 namespace NavigationAssistant.Core.Services
 {
-    public interface IFileSystemListener
+    public interface IFileSystemListener : IDisposable
     {
         event EventHandler<FileSystemChangeEventArgs> FolderSystemChanged;
 

@@ -34,6 +34,10 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private List<string> _foldersToParse;
 
+        private const int UpdatesCountToWrite = 500;
+
+        private int _updatesCount;
+
         #endregion
 
         #region Properties
@@ -110,6 +114,37 @@ namespace NavigationAssistant.Core.Services.Implementation
             }
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // get rid of managed resources
+                try
+                {
+                    lock (_fullCacheSync)
+                    {
+                        _cacheSerializer.SerializeCache(_fullCache);
+                    }
+                }
+                catch
+                {
+                    // no exceptions in disposing
+                }
+            }
+            // get rid of unmanaged resources
+        }
+
+        ~CachedFileSystemParser()
+        {
+            Dispose(false);
+        }
+
         #endregion
 
         #region Non Public Methods
@@ -150,7 +185,14 @@ namespace NavigationAssistant.Core.Services.Implementation
             {
                 FileSystemParser.UpdateFolders(_fullCache, e, null);
                 _fullCache = _fullCache.OrderBy(item => item.FullPath).ToList();
-                _cacheSerializer.SerializeCache(_fullCache);
+
+                _updatesCount++;
+
+                if (_updatesCount > UpdatesCountToWrite)
+                {
+                    _cacheSerializer.SerializeCache(_fullCache);
+                    _updatesCount = 0;
+                }
 
                 if (_cache != null)
                 {

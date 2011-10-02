@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NavigationAssistant.Core.Model;
 
 namespace NavigationAssistant.Core.Services
 {
-    public interface IFileSystemParser
+    public interface IFileSystemParser : IDisposable
     {
         bool IncludeHiddenFolders { get; set; }
 

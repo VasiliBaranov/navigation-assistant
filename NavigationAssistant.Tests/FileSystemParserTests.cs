@@ -22,7 +22,7 @@ namespace NavigationAssistant.Tests
         {
             DirectoryUtility.EnsureClearFolder(Folder);
 
-            _parser = new FileSystemParser(new FileSystemListener());
+            _parser = new FileSystemParser(new FileSystemListener(true));
             _parser.FoldersToParse = new List<string> {Folder};
         }
 
@@ -76,7 +76,7 @@ namespace NavigationAssistant.Tests
         [Test]
         public void GetSubFolders_FolderCreatedWhileOperation_FolderIncludedInOutput()
         {
-            _parser = new FileSystemParserWithAction(new FileSystemListener(), () => Directory.CreateDirectory(SubFolder));
+            _parser = new FileSystemParserWithAction(new FileSystemListener(true), () => Directory.CreateDirectory(SubFolder));
             _parser.FoldersToParse = new List<string> { Folder };
 
             List<FileSystemItem> subfolders = _parser.GetSubFolders();
@@ -90,7 +90,7 @@ namespace NavigationAssistant.Tests
         {
             Directory.CreateDirectory(SubFolder);
 
-            _parser = new FileSystemParserWithAction(new FileSystemListener(), () => Directory.Delete(SubFolder, true));
+            _parser = new FileSystemParserWithAction(new FileSystemListener(true), () => Directory.Delete(SubFolder, true));
             _parser.FoldersToParse = new List<string> { Folder };
 
             List<FileSystemItem> subfolders = _parser.GetSubFolders();
@@ -103,7 +103,7 @@ namespace NavigationAssistant.Tests
         public void GetSubFolders_FolderMadeHiddenWhileOperation_FolderIsHiddenInOutput()
         {
             Directory.CreateDirectory(SubFolder);
-            _parser = new FileSystemParserWithAction(new FileSystemListener(), MakeSubFolderHidden);
+            _parser = new FileSystemParserWithAction(new FileSystemListener(true), MakeSubFolderHidden);
             _parser.FoldersToParse = new List<string> { Folder };
 
             List<FileSystemItem> subfolders = _parser.GetSubFolders();
@@ -118,7 +118,7 @@ namespace NavigationAssistant.Tests
             Directory.CreateDirectory(SubFolder);
             MakeSubFolderHidden();
 
-            _parser = new FileSystemParserWithAction(new FileSystemListener(), MakeSubFolderVisible);
+            _parser = new FileSystemParserWithAction(new FileSystemListener(true), MakeSubFolderVisible);
             _parser.FoldersToParse = new List<string> { Folder };
 
             List<FileSystemItem> subfolders = _parser.GetSubFolders();
@@ -131,7 +131,7 @@ namespace NavigationAssistant.Tests
         public void GetSubFolders_FileCreatedWhileOperation_FileNotIncludedInOutput()
         {
             DirectoryUtility.EnsureClearFolder(SubFolder);
-            _parser = new FileSystemParserWithAction(new FileSystemListener(), () => File.WriteAllText(SubFolder + "\\temp.txt", "text"));
+            _parser = new FileSystemParserWithAction(new FileSystemListener(true), () => File.WriteAllText(SubFolder + "\\temp.txt", "text"));
             _parser.FoldersToParse = new List<string> { Folder };
 
             List<FileSystemItem> subfolders = _parser.GetSubFolders();
@@ -144,7 +144,7 @@ namespace NavigationAssistant.Tests
         {
             DirectoryUtility.EnsureClearFolder(SubFolder);
             File.WriteAllText(SubFolder + "\\temp.txt", "text");
-            _parser = new FileSystemParserWithAction(new FileSystemListener(), () => File.WriteAllText(SubFolder + "\\temp.txt", "text"));
+            _parser = new FileSystemParserWithAction(new FileSystemListener(true), () => File.WriteAllText(SubFolder + "\\temp.txt", "text"));
             _parser.FoldersToParse = new List<string> { Folder };
 
             List<FileSystemItem> subfolders = _parser.GetSubFolders();
@@ -157,7 +157,7 @@ namespace NavigationAssistant.Tests
         {
             DirectoryUtility.EnsureClearFolder(SubFolder);
             File.WriteAllText(SubFolder + "\\temp.txt", "text");
-            _parser = new FileSystemParserWithAction(new FileSystemListener(), () => File.Delete(SubFolder + "\\temp.txt"));
+            _parser = new FileSystemParserWithAction(new FileSystemListener(true), () => File.Delete(SubFolder + "\\temp.txt"));
             _parser.FoldersToParse = new List<string> { Folder };
 
             List<FileSystemItem> subfolders = _parser.GetSubFolders();
@@ -170,7 +170,7 @@ namespace NavigationAssistant.Tests
         {
             DirectoryUtility.EnsureClearFolder(SubFolder);
             File.WriteAllText(SubFolder + "\\temp.txt", "text");
-            _parser = new FileSystemParserWithAction(new FileSystemListener(),
+            _parser = new FileSystemParserWithAction(new FileSystemListener(true),
                                                      () =>
                                                          {
                                                              FileInfo fileInfo = new FileInfo(SubFolder + "\\temp.txt");

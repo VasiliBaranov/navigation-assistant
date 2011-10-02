@@ -9,16 +9,24 @@ namespace NavigationAssistant.Core.Services.Implementation
     public class FileSystemListener : IFileSystemListener
     {
         private readonly List<FileSystemWatcher> _fileSystemWatchers;
+        private readonly bool _listenToAttributes;
+        private bool _stopped = true;
 
-        public FileSystemListener()
+        public FileSystemListener(bool listenToAttributes)
         {
             _fileSystemWatchers = new List<FileSystemWatcher>();
+            _listenToAttributes = listenToAttributes;
         }
 
         public event EventHandler<FileSystemChangeEventArgs> FolderSystemChanged;
 
         public void StartListening(List<string> foldersToListen)
         {
+            if (!_stopped)
+            {
+                throw new InvalidOperationException("Call Stop before starting listening.");
+            }
+
             if (ListUtility.IsNullOrEmpty(foldersToListen))
             {
                 foldersToListen = DirectoryUtility.GetHardDriveRootFolders();
@@ -28,20 +36,31 @@ namespace NavigationAssistant.Core.Services.Implementation
             {
                 FileSystemWatcher fileSystemWatcher = new FileSystemWatcher();
                 fileSystemWatcher.Path = path;
-                fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName | NotifyFilters.Attributes;
+
+                //It's impossible to distinguish between folder and file attributes;
+                //so it's necessary to check whether the change has occurred to a file or folder every time for ANY file/folder change.
+                NotifyFilters filters = _listenToAttributes
+                                            ? NotifyFilters.DirectoryName | NotifyFilters.Attributes
+                                            : NotifyFilters.DirectoryName;
+
+                fileSystemWatcher.NotifyFilter = filters;
                 fileSystemWatcher.IncludeSubdirectories = true;
 
                 // Add event handlers.
                 fileSystemWatcher.Created += HandleFolderCreated;
                 fileSystemWatcher.Deleted += HandleFolderDeleted;
                 fileSystemWatcher.Renamed += HandleFolderRenamed;
-                fileSystemWatcher.Changed += HandleFolderChanged;
+                if (_listenToAttributes)
+                {
+                    fileSystemWatcher.Changed += HandleFolderChanged;
+                }
 
                 _fileSystemWatchers.Add(fileSystemWatcher);
 
                 // Begin watching.
                 fileSystemWatcher.EnableRaisingEvents = true;
             }
+            _stopped = false;
         }
 
         public void StopListening()
@@ -49,9 +68,39 @@ namespace NavigationAssistant.Core.Services.Implementation
             foreach (FileSystemWatcher fileSystemWatcher in _fileSystemWatchers)
             {
                 fileSystemWatcher.EnableRaisingEvents = false;
+
+                fileSystemWatcher.Created -= HandleFolderCreated;
+                fileSystemWatcher.Deleted -= HandleFolderDeleted;
+                fileSystemWatcher.Renamed -= HandleFolderRenamed;
+                if (_listenToAttributes)
+                {
+                    fileSystemWatcher.Changed -= HandleFolderChanged;
+                }
             }
 
             _fileSystemWatchers.Clear();
+            _stopped = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // get rid of managed resources
+                StopListening();
+            }
+            // get rid of unmanaged resources
+        }
+
+        ~FileSystemListener()
+        {
+            Dispose(false);
         }
 
         private void HandleFolderRenamed(object sender, RenamedEventArgs e)

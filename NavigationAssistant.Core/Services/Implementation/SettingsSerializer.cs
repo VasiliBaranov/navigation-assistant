@@ -99,9 +99,11 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public INavigationService BuildNavigationService(Settings settings)
         {
-            IFileSystemParser basicParser = new FileSystemParser(new FileSystemListener());
+            //NOTE: We turn off listening for attributes changes, as it may be too slow;
+            //and we also do not display IncludeHiddenFolders option in the UI. So attributes are never used.
+            IFileSystemParser basicParser = new FileSystemParser(new FileSystemListener(false));
             ICacheSerializer cacheSerializer = new CacheSerializer(settings.CacheFolder);
-            IFileSystemParser cachedParser = new CachedFileSystemParser(basicParser, cacheSerializer, new FileSystemListener(),
+            IFileSystemParser cachedParser = new CachedFileSystemParser(basicParser, cacheSerializer, new FileSystemListener(false),
                 settings.CacheUpdateDelayInSeconds);
             cachedParser.IncludeHiddenFolders = settings.IncludeHiddenFolders;
             cachedParser.ExcludeFolderTemplates = settings.ExcludeFolderTemplates;

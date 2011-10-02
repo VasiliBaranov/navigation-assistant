@@ -253,9 +253,22 @@ namespace NavigationAssistant.ViewModel
 
         public void UpdateSettings()
         {
+            if (_navigationAssistant != null)
+            {
+                _navigationAssistant.Dispose();
+            }
+
             ISettingsSerializer settingsSerializer = new SettingsSerializer();
             Settings settings = settingsSerializer.Deserialize();
             _navigationAssistant = settingsSerializer.BuildNavigationService(settings);
+        }
+
+        public void Close()
+        {
+            if (_navigationAssistant != null)
+            {
+                _navigationAssistant.Dispose();
+            }
         }
 
         #endregion
