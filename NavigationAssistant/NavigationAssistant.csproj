@@ -141,9 +141,9 @@
     <None Include="TrayIcon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj">
+    <ProjectReference Include="..\Core\NavigationAssistant.Core.csproj">
       <Project>{F3A384AD-E711-4322-9950-101946AB51DA}</Project>
-      <Name>Core</Name>
+      <Name>NavigationAssistant.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
