@@ -25,7 +25,7 @@ namespace NavigationAssistant.Core.Model
 
         public List<string> ExcludeFolderTemplates { get; set; }
 
-        public int CacheUpdateIntervalInSeconds { get; set; }
+        public int CacheUpdateDelayInSeconds { get; set; }
 
         public string CacheFolder { get; set; }
 

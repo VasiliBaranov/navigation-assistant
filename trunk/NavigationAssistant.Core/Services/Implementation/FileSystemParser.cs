@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using NavigationAssistant.Core.Model;
 using System.Linq;
 using NavigationAssistant.Core.Utilities;
@@ -51,7 +49,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private static FileSystemItem GetFileSystemInfo(string path)
         {
-            return new FileSystemItem(Path.GetFileName(path), path);
+            return new FileSystemItem(path);
         }
 
         #endregion

@@ -1,4 +1,6 @@
-﻿namespace NavigationAssistant.Core.Model
+﻿using System.IO;
+
+namespace NavigationAssistant.Core.Model
 {
     public class FileSystemItem
     {
@@ -13,6 +15,12 @@
         public FileSystemItem(string itemName, string itemPath)
         {
             ItemName = itemName;
+            ItemPath = itemPath;
+        }
+
+        public FileSystemItem(string itemPath)
+        {
+            ItemName = Path.GetFileName(itemPath);
             ItemPath = itemPath;
         }
     }
