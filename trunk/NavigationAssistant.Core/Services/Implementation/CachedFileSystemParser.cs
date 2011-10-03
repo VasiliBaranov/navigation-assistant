@@ -22,7 +22,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private List<FileSystemItem> _fullCache; 
 
-        private Timer _delayTimer;
+        private readonly Timer _delayTimer;
 
         private delegate void UpdateCacheDelegate();
 
@@ -82,6 +82,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             _fileSystemParser = fileSystemParser;
             _cacheSerializer = cacheSerializer;
             _fileSystemListener = fileSystemListener;
+            _delayTimer = new Timer();
 
             bool fullCacheUpToDate = ReadFullCache();
 
@@ -131,6 +132,10 @@ namespace NavigationAssistant.Core.Services.Implementation
                     {
                         _cacheSerializer.SerializeCache(_fullCache);
                     }
+
+                    _fileSystemParser.Dispose();
+                    _fileSystemListener.Dispose();
+                    _delayTimer.Dispose();
                 }
                 catch
                 {
@@ -151,7 +156,6 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private void RegisterCacheUpdate(int delayIntervalInSeconds)
         {
-            _delayTimer = new Timer();
             _delayTimer.Interval = delayIntervalInSeconds * 1000;
             _delayTimer.Elapsed += HandleDelayFinished;
 

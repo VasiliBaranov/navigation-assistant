@@ -104,6 +104,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             if (disposing)
             {
                 // get rid of managed resources
+                _fileSystemListener.Dispose();
             }
             // get rid of unmanaged resources
         }
