@@ -36,7 +36,7 @@ namespace NavigationAssistant.Views
 
         private readonly IPresentationService _presentationService;
 
-        private readonly NavigationModel _model;
+        private readonly NavigationModel _viewModel;
 
         private readonly DispatcherTimer _delayTimer;
 
@@ -60,9 +60,9 @@ namespace NavigationAssistant.Views
 
             _presentationService = new PresentationService();
 
-            _model = new NavigationModel(_presentationService);
-            _model.SearchTextChanged += HandleSearchTextChanged;
-            DataContext = _model;
+            _viewModel = new NavigationModel(_presentationService);
+            _viewModel.SearchTextChanged += HandleSearchTextChanged;
+            DataContext = _viewModel;
 
             _delayTimer = new DispatcherTimer();
             _delayTimer.Interval = TimeSpan.FromMilliseconds(DelayInMilliseconds);
@@ -73,7 +73,6 @@ namespace NavigationAssistant.Views
             _presenter = new NavigationPresenter(this,
                                                  new SettingsSerializer(),
                                                  new KeyboardListener(),
-                                                 new PresentationService(),
                                                  new TrayIconPresenter(new TrayView(), new SettingsSerializer()),
                                                  new MatchModelMapper());
         }
@@ -92,8 +91,8 @@ namespace NavigationAssistant.Views
 
         public void ShowMatches(List<MatchModel> matches)
         {
-            _model.Matches = new ObservableCollection<MatchModel>(matches);
-            _model.SelectedMatch = matches[0];
+            _viewModel.Matches = new ObservableCollection<MatchModel>(matches);
+            _viewModel.SelectedMatch = matches[0];
         }
 
         public void ShowView()
@@ -116,13 +115,13 @@ namespace NavigationAssistant.Views
 
         private void MoveSelectionUp()
         {
-            MatchModel selectedMatch = _presentationService.MoveSelectionUp(_model.Matches, _model.SelectedMatch);
+            MatchModel selectedMatch = _presentationService.MoveSelectionUp(_viewModel.Matches, _viewModel.SelectedMatch);
             UpdateSelectedMatch(selectedMatch);
         }
 
         private void MoveSelectionDown()
         {
-            MatchModel selectedMatch = _presentationService.MoveSelectionDown(_model.Matches, _model.SelectedMatch);
+            MatchModel selectedMatch = _presentationService.MoveSelectionDown(_viewModel.Matches, _viewModel.SelectedMatch);
             UpdateSelectedMatch(selectedMatch);
         }
 
@@ -133,12 +132,12 @@ namespace NavigationAssistant.Views
                 return;
             }
 
-            _model.SelectedMatch = selectedMatch;
+            _viewModel.SelectedMatch = selectedMatch;
         }
 
         private void Navigate()
         {
-            FireEvent(FolderSelected, new ItemEventArgs<string>(_model.SelectedMatch.Path));
+            FireEvent(FolderSelected, new ItemEventArgs<string>(_viewModel.SelectedMatch.Path));
         }
 
         private void FireEvent<T>(EventHandler<T> handler, T args) where T : EventArgs
@@ -167,7 +166,7 @@ namespace NavigationAssistant.Views
         {
             _delayTimer.Stop(); //Would like to handle tick just once
 
-            FireEvent(TextChanged, new ItemEventArgs<string>(_model.SearchText));
+            FireEvent(TextChanged, new ItemEventArgs<string>(_viewModel.SearchText));
         }
 
         private void HandleClose(object sender, CancelEventArgs args)

@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using NavigationAssistant.Core.Model;
 
 namespace NavigationAssistant.ViewModel
 {
-    public class BasicSettingsModel : INotifyPropertyChanged
+    public class BasicSettingsModel : BaseViewModel
     {
         #region Fields
 
-        private readonly Settings _settings;
+        private Settings _settings;
 
         private ObservableCollection<NavigatorModel> _primaryNavigatorModels;
 
@@ -18,25 +17,37 @@ namespace NavigationAssistant.ViewModel
 
         private bool _totalCommanderEnabled;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         #endregion
 
         #region Constructors
 
-        public BasicSettingsModel(Settings settings)
-        {
-            _settings = settings;
-
-            _supportedNavigatorModels = CreateSupportedNavigatorModels(_settings);
-
-            //Can not use the same objects, as their properties may be changed independently.
-            _primaryNavigatorModels = CreatePrimaryNavigatorModels(_settings);
-        }
-
         #endregion
 
         #region Properties
+
+        public Settings Settings
+        {
+            get
+            {
+                return _settings;
+            }
+            set
+            {
+                _settings = value;
+
+                UnsubscribeFromNavigatorModels();
+
+                _supportedNavigatorModels = CreateSupportedNavigatorModels(_settings);
+
+                //Can not use the same objects, as their properties may be changed independently.
+                _primaryNavigatorModels = CreatePrimaryNavigatorModels(_settings);
+
+                OnPropertyChanged("PrimaryNavigatorModels");
+                OnPropertyChanged("SupportedNavigatorModels");
+                OnPropertyChanged("TotalCommanderPath");
+                OnPropertyChanged("TotalCommanderEnabled");
+            }
+        }
 
         public ObservableCollection<NavigatorModel> PrimaryNavigatorModels
         {
@@ -94,6 +105,25 @@ namespace NavigationAssistant.ViewModel
 
         #region Non Public Methods
 
+        private void UnsubscribeFromNavigatorModels()
+        {
+            if (_supportedNavigatorModels != null)
+            {
+                foreach (NavigatorModel navigatorModel in _supportedNavigatorModels)
+                {
+                    navigatorModel.IsSelectedChanged -= HandleSupportedNavigatorChanged;
+                }
+            }
+
+            if (_primaryNavigatorModels != null)
+            {
+                foreach (NavigatorModel navigator in _primaryNavigatorModels)
+                {
+                    navigator.IsSelectedChanged -= HandlePrimaryNavigatorChanged;
+                }
+            }
+        }
+
         private ObservableCollection<NavigatorModel> CreateSupportedNavigatorModels(Settings settings)
         {
             ObservableCollection<NavigatorModel> supportedNavigatorModels = CreateNavigatorModels();
@@ -150,7 +180,7 @@ namespace NavigationAssistant.ViewModel
             return primaryNavigatorModels;
         }
 
-        private ObservableCollection<NavigatorModel> CreateNavigatorModels()
+        private static ObservableCollection<NavigatorModel> CreateNavigatorModels()
         {
             ObservableCollection<NavigatorModel> navigators = new ObservableCollection<NavigatorModel>
                               {
@@ -184,14 +214,6 @@ namespace NavigationAssistant.ViewModel
             else
             {
                 supportedNavigatorModel.IsEnabled = true;
-            }
-        }
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 

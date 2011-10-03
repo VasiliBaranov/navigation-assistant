@@ -1,31 +1,45 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Windows.Forms;
 using NavigationAssistant.Core.Model;
 using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.ViewModel
 {
-    public class AdvancedSettingsModel : INotifyPropertyChanged
+    public class AdvancedSettingsModel : BaseViewModel
     {
         #region Fields
 
-        private readonly Settings _settings;
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        private Settings _settings;
 
         #endregion
 
         #region Constructors
 
-        public AdvancedSettingsModel(Settings settings)
-        {
-            _settings = settings;
-        }
-
         #endregion
 
         #region Properties
+
+        public Settings Settings
+        {
+            get
+            {
+                return _settings;
+            }
+            set
+            {
+                _settings = value;
+
+                OnPropertyChanged("RunOnStartup");
+                OnPropertyChanged("CacheUpdateDelayInSeconds");
+                OnPropertyChanged("CacheFolder");
+                OnPropertyChanged("FoldersToParse");
+                OnPropertyChanged("ExcludeFolderTemplates");
+                OnPropertyChanged("RequireControl");
+                OnPropertyChanged("RequireShift");
+                OnPropertyChanged("RequireAlt");
+                OnPropertyChanged("Key");
+            }
+        }
 
         public bool RunOnStartup
         {
@@ -146,18 +160,6 @@ namespace NavigationAssistant.ViewModel
                 Keys key = (Keys) Enum.Parse(typeof(Keys), value);
                 _settings.GlobalKeyCombination = EnumUtility.AddKey(modifiers, key);
                 OnPropertyChanged("Key");
-            }
-        }
-
-        #endregion
-
-        #region Non Public Methods
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 
