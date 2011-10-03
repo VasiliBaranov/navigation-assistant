@@ -1,32 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Windows.Threading;
-using NavigationAssistant.Core.Model;
-using NavigationAssistant.Core.Services;
-using NavigationAssistant.Core.Services.Implementation;
 using NavigationAssistant.PresentationServices;
-using NavigationAssistant.PresentationServices.Implementations;
-using NavigationAssistant.Properties;
 
 namespace NavigationAssistant.ViewModel
 {
-    public class NavigationModel : INotifyPropertyChanged
+    public class NavigationModel : BaseViewModel
     {
         #region Supplemetary Fields
 
-        private INavigationService _navigationAssistant;
-
-        private readonly IMatchModelMapper _matchModelMapper;
-
         private readonly IPresentationService _presentationService;
 
-        private readonly DispatcherTimer _delayTimer;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private const int DelayInMilliseconds = 200;
+        public event EventHandler SearchTextChanged;
 
         private bool _matchesChanging;
 
@@ -52,18 +36,9 @@ namespace NavigationAssistant.ViewModel
 
         #region Constructors
 
-        public NavigationModel()
+        public NavigationModel(IPresentationService presentationService)
         {
-            _matchModelMapper = new MatchModelMapper();
-            _presentationService = new PresentationService();
-            
-            UpdateSettings();
-
-            _delayTimer = new DispatcherTimer();
-            _delayTimer.Interval = TimeSpan.FromMilliseconds(DelayInMilliseconds);
-            _delayTimer.Tick += HandleDelayElapsed;
-
-            Matches = new ObservableCollection<MatchModel> { new MatchModel(_matchModelMapper, Resources.InitialMatchesMessage) };
+            _presentationService = presentationService;
         }
 
         #endregion
@@ -79,13 +54,8 @@ namespace NavigationAssistant.ViewModel
             set
             {
                 _searchText = value;
-
-                //To avoid too frequent updates we run a timer to take a pause.
-                //If search text is not updated during this pause, matches will be rendered.
-
-                //Need to stop the execution from the previous setter.
-                _delayTimer.Stop();
-                _delayTimer.Start();
+                OnPropertyChanged("SearchText");
+                FireEvent(SearchTextChanged);
             }
         }
 
@@ -216,106 +186,6 @@ namespace NavigationAssistant.ViewModel
                 double maxMatchesListWidth = _presentationService.GetMaxMatchesListWidth(0);
                 MatchesListBoxWidth = Math.Min(_matchesListBoxActualWidth + 20, maxMatchesListWidth);
             }
-        }
-
-        public ApplicationWindow HostWindow { get; set; }
-
-        #endregion
-
-        #region Public Methods
-
-        public bool CanNavigate()
-        {
-            return !string.IsNullOrEmpty(SelectedMatch.Path) && HostWindow != null;
-        }
-
-        public void Navigate()
-        {
-            _navigationAssistant.NavigateTo(SelectedMatch.Path, HostWindow);
-        }
-
-        public void MoveSelectionUp()
-        {
-            MatchModel selectedMatch = _presentationService.MoveSelectionUp(Matches, SelectedMatch);
-            UpdateSelectedMatch(selectedMatch);
-        }
-
-        public void MoveSelectionDown()
-        {
-            MatchModel selectedMatch = _presentationService.MoveSelectionDown(Matches, SelectedMatch);
-            UpdateSelectedMatch(selectedMatch);
-        }
-
-        public void UpdateHostWindow()
-        {
-            HostWindow = _navigationAssistant.GetActiveWindow();
-        }
-
-        public void UpdateSettings()
-        {
-            if (_navigationAssistant != null)
-            {
-                _navigationAssistant.Dispose();
-            }
-
-            ISettingsSerializer settingsSerializer = new SettingsSerializer();
-            Settings settings = settingsSerializer.Deserialize();
-            _navigationAssistant = settingsSerializer.BuildNavigationService(settings);
-        }
-
-        public void Close()
-        {
-            if (_navigationAssistant != null)
-            {
-                _navigationAssistant.Dispose();
-            }
-        }
-
-        #endregion
-
-        #region Non Public Methods
-
-        private void UpdateSelectedMatch(MatchModel selectedMatch)
-        {
-            if (selectedMatch == null)
-            {
-                return;
-            }
-
-            SelectedMatch = selectedMatch;
-        }
-
-        private void HandleDelayElapsed(object sender, EventArgs e)
-        {
-            Matches = GetMatchModels(_searchText);
-            SelectedMatch = Matches[0];
-            _delayTimer.Stop(); //Would like to handle tick just once
-
-            OnPropertyChanged("SearchText");
-        }
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        private ObservableCollection<MatchModel> GetMatchModels(string searchText)
-        {
-            if (string.IsNullOrEmpty(searchText))
-            {
-                return new ObservableCollection<MatchModel>
-                           {
-                               new MatchModel(_matchModelMapper, Resources.InitialMatchesMessage)
-                           };
-            }
-
-            List<MatchedFileSystemItem> folderMatches = _navigationAssistant.GetFolderMatches(searchText);
-
-            List<MatchModel> matchModels = _matchModelMapper.GetMatchModels(folderMatches);
-            return new ObservableCollection<MatchModel>(matchModels);
         }
 
         #endregion
