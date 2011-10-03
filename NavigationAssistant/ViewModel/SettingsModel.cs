@@ -1,48 +1,41 @@
-﻿using System.ComponentModel;
-using System.Windows.Input;
-using NavigationAssistant.Core.Model;
-using NavigationAssistant.Core.Services;
-using NavigationAssistant.Core.Services.Implementation;
+﻿using NavigationAssistant.Core.Model;
 
 namespace NavigationAssistant.ViewModel
 {
-    public class SettingsModel : INotifyPropertyChanged
+    public class SettingsModel : BaseViewModel
     {
         #region Fields
 
-        private readonly ISettingsSerializer _settingsSerializer;
+        private Settings _settings;
 
-        private readonly Settings _settings;
+        private readonly BasicSettingsModel _basicSettings = new BasicSettingsModel();
 
-        private readonly ICommand _saveCommand;
-
-        private readonly ICommand _cancelCommand;
-
-        private readonly BasicSettingsModel _basicSettings;
-
-        private readonly AdvancedSettingsModel _advancedSettings;
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        private readonly AdvancedSettingsModel _advancedSettings = new AdvancedSettingsModel();
 
         #endregion
 
         #region Constructors
 
-        public SettingsModel()
-        {
-            _settingsSerializer = new SettingsSerializer();
-            _settings = _settingsSerializer.Deserialize();
-
-            _saveCommand = new SaveSettingsCommand(this);
-            _cancelCommand = new CancelSettingsCommand();
-
-            _basicSettings = new BasicSettingsModel(_settings);
-            _advancedSettings = new AdvancedSettingsModel(_settings);
-        }
-
         #endregion
 
         #region Properties
+
+        public Settings Settings
+        {
+            get
+            {
+                return _settings;
+            }
+            set
+            {
+                _settings = value;
+                _basicSettings.Settings = value;
+                _advancedSettings.Settings = value;
+
+                OnPropertyChanged("BasicSettings");
+                OnPropertyChanged("AdvancedSettings");
+            }
+        }
 
         public BasicSettingsModel BasicSettings
         {
@@ -57,37 +50,6 @@ namespace NavigationAssistant.ViewModel
             get
             {
                 return _advancedSettings;
-            }
-        }
-
-        public ICommand SaveCommand
-        {
-            get { return _saveCommand; }
-        }
-
-        public ICommand CancelCommand
-        {
-            get { return _cancelCommand; }
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        public ValidationResult Save()
-        {
-            return _settingsSerializer.Serialize(_settings);
-        }
-
-        #endregion
-
-        #region Non Public Methods
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 

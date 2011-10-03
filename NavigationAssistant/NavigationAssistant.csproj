@@ -71,6 +71,7 @@
     </Compile>
     <Compile Include="Constants.cs" />
     <Compile Include="Views\INavigationView.cs" />
+    <Compile Include="Views\ISettingsView.cs" />
     <Compile Include="Views\ITrayView.cs" />
     <Compile Include="Views\IView.cs" />
     <Compile Include="Views\SettingsWindow.xaml.cs">
@@ -98,11 +99,9 @@
     </Compile>
     <Compile Include="ViewModel\AdvancedSettingsModel.cs" />
     <Compile Include="ViewModel\BasicSettingsModel.cs" />
-    <Compile Include="ViewModel\CancelSettingsCommand.cs" />
     <Compile Include="ViewModel\MatchModel.cs" />
     <Compile Include="ViewModel\NavigationModel.cs" />
     <Compile Include="ViewModel\NavigatorModel.cs" />
-    <Compile Include="ViewModel\SaveSettingsCommand.cs" />
     <Compile Include="ViewModel\SettingsModel.cs" />
     <Compile Include="Views\TrayView.cs" />
     <Page Include="Views\AdvancedSettingsControl.xaml">

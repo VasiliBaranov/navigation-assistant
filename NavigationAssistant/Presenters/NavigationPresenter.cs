@@ -24,8 +24,6 @@ namespace NavigationAssistant.Presenters
 
         private readonly IKeyboardListener _keyboardListener;
 
-        private readonly IPresentationService _presentationService;
-
         private readonly IPresenter _trayIconPresenter;
 
         private INavigationService _navigationAssistant;
@@ -45,14 +43,12 @@ namespace NavigationAssistant.Presenters
         public NavigationPresenter(INavigationView view, 
             ISettingsSerializer settingsSerializer, 
             IKeyboardListener keyboardListener, 
-            IPresentationService presentationService, 
             IPresenter trayIconPresenter,
             IMatchModelMapper matchModelMapper)
         {
             _view = view;
             _settingsSerializer = settingsSerializer;
             _keyboardListener = keyboardListener;
-            _presentationService = presentationService;
             _trayIconPresenter = trayIconPresenter;
             _matchModelMapper = matchModelMapper;
 
