@@ -30,9 +30,14 @@ namespace NavigationAssistant.Views
 
         #region Public Methods
 
-        public void Show()
+        public void ShowView()
         {
             _notifyIcon.Visible = true;
+        }
+
+        public void HideView()
+        {
+            _notifyIcon.Visible = false;
         }
 
         public void Dispose()
@@ -106,6 +111,14 @@ namespace NavigationAssistant.Views
             return contextMenu;
         }
 
+        private void FireEvent(EventHandler handler)
+        {
+            if (handler != null)
+            {
+                handler(this, new EventArgs());
+            }
+        }
+
         #endregion
 
         #region Event Handlers
@@ -137,14 +150,6 @@ namespace NavigationAssistant.Views
             if (e.Button == MouseButtons.Left)
             {
                 FireEvent(ShowMainClicked);
-            }
-        }
-
-        private void FireEvent(EventHandler handler)
-        {
-            if (handler != null)
-            {
-                handler(this, new EventArgs());
             }
         }
 

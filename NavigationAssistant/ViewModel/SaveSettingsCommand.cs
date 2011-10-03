@@ -31,12 +31,12 @@ namespace NavigationAssistant.ViewModel
 
             Utility.CloseWindow<SettingsWindow>();
 
-            MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
-            if (mainWindow != null)
+            NavigationWindow navigationWindow = Application.Current.MainWindow as NavigationWindow;
+            if (navigationWindow != null)
             {
-                mainWindow.CurrentNavigationModel.UpdateSettings();
-                mainWindow.UpdateIconMenu();
-                mainWindow.UpdateKeyListening();
+                //navigationWindow.CurrentNavigationModel.UpdateSettings();
+                //navigationWindow.UpdateIconMenu();
+                //navigationWindow.UpdateKeyListening();
             }
 
             return;

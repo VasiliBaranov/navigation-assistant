@@ -5,7 +5,10 @@ namespace NavigationAssistant.Views
 {
     public interface IView : IDisposable
     {
-        void Show();
+        //Names chosen to avoid conflicts with standard Window methods
+        void ShowView();
+
+        void HideView();
 
         event EventHandler SettingsChanged;
 

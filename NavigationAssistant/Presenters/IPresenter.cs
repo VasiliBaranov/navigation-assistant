@@ -1,16 +1,18 @@
 ﻿using System;
+using NavigationAssistant.Core.Model;
+using NavigationAssistant.Utilities;
 
 namespace NavigationAssistant.Presenters
 {
     public interface IPresenter : IDisposable
     {
-        event EventHandler SettingsChanged;
+        event EventHandler<ItemEventArgs<Settings>> SettingsChanged;
 
-        event EventHandler<RequestShowingEventArgs> RequestShowing;
+        event EventHandler<ItemEventArgs<Type>> RequestWindowShow;
 
         event EventHandler Exited;
 
-        void UpdateSettings();
+        void UpdateSettings(Settings settings);
 
         void Show();
     }

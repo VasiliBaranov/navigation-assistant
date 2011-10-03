@@ -1,7 +1,6 @@
-﻿<Window x:Class="NavigationAssistant.Views.MainWindow"
+﻿<Window x:Class="NavigationAssistant.Views.NavigationWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ViewModel="clr-namespace:NavigationAssistant.ViewModel"
         xmlns:Utilities="clr-namespace:NavigationAssistant.Utilities"
         Title="Navigation Assistant" 
         SizeToContent="WidthAndHeight"
@@ -18,7 +17,6 @@
     But it wont show up if running in debug from VS.
     Running externally or without attaching (ctrl + f5): the icon displays as expected.-->
     <Window.Resources>
-        <ViewModel:NavigationModel x:Key="NavigationModel"/>
         <!--Technique taken from 
         http://stackoverflow.com/questions/698830/wpf-listbox-change-selected-and-unfocused-style-to-not-be-grayed-out.
         Other techniques, e.g. from 
@@ -34,7 +32,7 @@
             </Style.Resources>
         </Style>
     </Window.Resources>
-    <StackPanel DataContext="{StaticResource NavigationModel}" Width="Auto" Height="Auto" VerticalAlignment="Top" 
+    <StackPanel Width="Auto" Height="Auto" VerticalAlignment="Top" 
                 KeyDown="HandlePanelKeyDown">
         <TextBox x:Name="SearchTextBox" 
                  HorizontalAlignment="Stretch" 

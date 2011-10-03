@@ -1,16 +1,18 @@
 ﻿using System;
+using NavigationAssistant.Core.Model;
 using NavigationAssistant.Core.Services;
+using NavigationAssistant.Utilities;
 using NavigationAssistant.Views;
 
 namespace NavigationAssistant.Presenters
 {
-    public class TrayIconPresenter : IPresenter
+    public class TrayIconPresenter : BasePresenter, IPresenter
     {
         #region Fields
 
-        public event EventHandler SettingsChanged;
+        public event EventHandler<ItemEventArgs<Settings>> SettingsChanged;
 
-        public event EventHandler<RequestShowingEventArgs> RequestShowing;
+        public event EventHandler<ItemEventArgs<Type>> RequestWindowShow;
 
         public event EventHandler Exited;
 
@@ -38,14 +40,14 @@ namespace NavigationAssistant.Presenters
 
         #region Public Methods
 
-        public void UpdateSettings()
+        public void UpdateSettings(Settings settings)
         {
-            _view.CurrentSettings = _settingsSerializer.Deserialize();
+            _view.CurrentSettings = settings;
         }
 
         public void Show()
         {
-            _view.Show();
+            _view.ShowView();
         }
 
         public void Dispose()
@@ -66,14 +68,13 @@ namespace NavigationAssistant.Presenters
 
         private void HandleShowMainClicked(object sender, EventArgs e)
         {
-            RequestShowingEventArgs eventArgs = new RequestShowingEventArgs(typeof(NavigationPresenter));
-            FireEvent(RequestShowing, eventArgs);
+            FireEvent(RequestWindowShow, typeof(NavigationPresenter));
         }
 
         private void HandleSettingsChanged(object sender, EventArgs e)
         {
             _settingsSerializer.Serialize(_view.CurrentSettings);
-            FireEvent(SettingsChanged);
+            FireEvent(SettingsChanged, _view.CurrentSettings);
         }
 
         private void HandleExitClicked(object sender, EventArgs e)
@@ -83,24 +84,7 @@ namespace NavigationAssistant.Presenters
 
         private void HandleShowSettingsClicked(object sender, EventArgs e)
         {
-            RequestShowingEventArgs eventArgs = new RequestShowingEventArgs(typeof(SettingsPresenter));
-            FireEvent(RequestShowing, eventArgs);
-        }
-
-        private void FireEvent(EventHandler handler)
-        {
-            if (handler != null)
-            {
-                handler(this, new EventArgs());
-            }
-        }
-
-        private void FireEvent<T>(EventHandler<T> handler, T args) where T : EventArgs
-        {
-            if (handler != null)
-            {
-                handler(this, args);
-            }
+            FireEvent(RequestWindowShow, typeof(SettingsPresenter));
         }
 
         #endregion
