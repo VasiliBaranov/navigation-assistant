@@ -22,8 +22,8 @@ namespace NavigationAssistant.PresentationServices.Implementations
             }
 
             List<MatchModel> matchRepresentations = folderMatches
+                .OrderBy(m => m.FullPath.Length + m.FullPath)
                 .Take(Constants.MaxMatchesToDisplay)
-                .OrderBy(m => m.FullPath.Length)
                 .Select(GetMatchModel)
                 .ToList();
 
