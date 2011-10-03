@@ -73,9 +73,6 @@
     <Compile Include="Utilities\FocusExtension.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Utilities\Hotkey.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Utilities\NumericExtension.cs" />
     <Compile Include="Utilities\ScrollExtension.cs">
       <SubType>Code</SubType>

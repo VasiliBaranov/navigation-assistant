@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using NavigationAssistant.Core.Model;
-using NavigationAssistant.Core.Services;
+﻿using System.Collections.ObjectModel;
+using System.Windows;
 using NavigationAssistant.ViewModel;
 
 namespace NavigationAssistant.PresentationServices
@@ -17,5 +15,7 @@ namespace NavigationAssistant.PresentationServices
         double GetMaxMatchesListWidth(double searchTextBoxLeft);
 
         bool ApplicationIsRunning();
+
+        void MakeForeground(Window window);
     }
 }

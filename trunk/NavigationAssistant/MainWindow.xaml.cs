@@ -4,6 +4,8 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using NavigationAssistant.Core.Services;
 using NavigationAssistant.Core.Services.Implementation;
+using NavigationAssistant.PresentationServices;
+using NavigationAssistant.PresentationServices.Implementations;
 using NavigationAssistant.ViewModel;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
@@ -23,6 +25,8 @@ namespace NavigationAssistant
         private readonly ISettingsSerializer _settingsSerializer;
 
         private readonly IKeyboardListener _keyboardListener;
+
+        private readonly IPresentationService _presentationService;
 
         #endregion
 
@@ -46,6 +50,8 @@ namespace NavigationAssistant
             _keyboardListener = new KeyboardListener();
             _keyboardListener.KeyCombinationPressed += GlobalKeyCombinationPressed;
             _keyboardListener.StartListening(_settingsSerializer.Deserialize().GlobalKeyCombination);
+
+            _presentationService = new PresentationService();
 
             _notifyIcon = CreateNotifyIcon();
             _notifyIcon.Visible = true;
@@ -117,9 +123,7 @@ namespace NavigationAssistant
         {
             CurrentNavigationModel.UpdateHostWindow();
 
-            //Both calls are necessary, as visibility and being a foreground window are independent
-            Show();
-            Activate();
+            _presentationService.MakeForeground(this);
         }
 
         private void DeactivateToTray()
