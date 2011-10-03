@@ -6,6 +6,7 @@ using System.Windows.Input;
 using NavigationAssistant.Core.Model;
 using NavigationAssistant.Properties;
 using NavigationAssistant.Utilities;
+using NavigationAssistant.Views;
 
 namespace NavigationAssistant.ViewModel
 {

@@ -9,7 +9,7 @@ using NavigationAssistant.PresentationServices.Implementations;
 using NavigationAssistant.ViewModel;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
-namespace NavigationAssistant
+namespace NavigationAssistant.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

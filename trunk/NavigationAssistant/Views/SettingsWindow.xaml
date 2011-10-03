@@ -1,10 +1,10 @@
-﻿<Window x:Class="NavigationAssistant.SettingsWindow"
+﻿<Window x:Class="NavigationAssistant.Views.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:NavigationAssistant" 
         xmlns:ViewModel="clr-namespace:NavigationAssistant.ViewModel"
-        xmlns:Utilities="clr-namespace:NavigationAssistant.Utilities" 
-        Title="Navigation Assistant Settings" 
+        xmlns:Utilities="clr-namespace:NavigationAssistant.Utilities"
+        xmlns:Views="clr-namespace:NavigationAssistant.Views" Title="Navigation Assistant Settings" 
         Height="300"
         Width="400"
         WindowStartupLocation="CenterScreen"
@@ -40,10 +40,10 @@
         </Grid.ColumnDefinitions>
         <TabControl Name="SettingsTabControl" Style="{StaticResource SettingsTab}">
             <TabItem Header="Basic" Name="BasicSettingsTab">
-                <local:BasicSettingsControl DataContext="{Binding Path=BasicSettings}"/>
+                <Views:BasicSettingsControl DataContext="{Binding Path=BasicSettings}"/>
             </TabItem>
             <TabItem Header="Advanced" Name="AdvancedSettingsTab">
-                <local:AdvancedSettingsControl DataContext="{Binding Path=AdvancedSettings}"/>
+                <Views:AdvancedSettingsControl DataContext="{Binding Path=AdvancedSettings}"/>
             </TabItem>
         </TabControl>
         <StackPanel Grid.Row="2" Name="ButtonsStackPanel" Style="{StaticResource ButtonsPanel}">
