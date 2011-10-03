@@ -1,11 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Windows.Forms;
 using System.Windows.Input;
 using NavigationAssistant.Core.Services;
 using NavigationAssistant.Core.Services.Implementation;
 using NavigationAssistant.PresentationServices;
 using NavigationAssistant.PresentationServices.Implementations;
+using NavigationAssistant.Presenters;
 using NavigationAssistant.ViewModel;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
@@ -18,15 +18,15 @@ namespace NavigationAssistant.Views
     {
         #region Fields
 
-        private NotifyIcon _notifyIcon;
-
-        private bool _isClosingCompletely;
-
         private readonly ISettingsSerializer _settingsSerializer;
 
         private readonly IKeyboardListener _keyboardListener;
 
         private readonly IPresentationService _presentationService;
+
+        private readonly IPresenter _trayIconPresenter;
+
+        private bool _closingCompletely;
 
         #endregion
 
@@ -53,8 +53,10 @@ namespace NavigationAssistant.Views
 
             _presentationService = new PresentationService();
 
-            _notifyIcon = CreateNotifyIcon();
-            _notifyIcon.Visible = true;
+            _trayIconPresenter = new TrayIconPresenter(new TrayView(), new SettingsSerializer());
+            _trayIconPresenter.Exited += HandleExited;
+            _trayIconPresenter.RequestShowing += HandleRequestShowing;
+            _trayIconPresenter.Show();
 
             DeactivateToTray();
         }
@@ -67,57 +69,12 @@ namespace NavigationAssistant.Views
             _keyboardListener.StartListening(_settingsSerializer.Deserialize().GlobalKeyCombination);
         }
 
-        #region Private Methods
-
-        private NotifyIcon CreateNotifyIcon()
-        {
-            NotifyIcon notifyIcon = new NotifyIcon();
-            notifyIcon.BalloonTipText = Properties.Resources.NotifyIconBalloonText;
-            notifyIcon.BalloonTipTitle = Properties.Resources.NotifyIconBalloonTitle;
-            notifyIcon.Text = Properties.Resources.NotifyIconText;
-            notifyIcon.Icon = Properties.Resources.TrayIcon;
-            notifyIcon.MouseClick += HandleNotifyIconClick;
-
-            // The ContextMenu property sets the menu that will
-            // appear when the systray icon is right clicked.
-            notifyIcon.ContextMenu = CreateIconContextMenu();
-
-            return notifyIcon;
-        }
-
-        private ContextMenu CreateIconContextMenu()
-        {
-            ContextMenu contextMenu = new ContextMenu();
-            MenuItem exitMenuItem = new MenuItem();
-            MenuItem settingsMenuItem = new MenuItem();
-            MenuItem runOnStartupMenuItem = new MenuItem();
-
-            // Initialize exitMenuItem
-            exitMenuItem.Text = Properties.Resources.ExitMenuItemText;
-            exitMenuItem.Click += HandleExitMenuItemClick;
-
-            // Initialize settingsMenuItem
-            settingsMenuItem.Text = Properties.Resources.SettingsMenuItemText;
-            settingsMenuItem.Click += HandleSettingsMenuItemClick;
-
-            // Initialize startupMenuItem
-            runOnStartupMenuItem.Text = Properties.Resources.StartupMenuItemText;
-            runOnStartupMenuItem.Checked = _settingsSerializer.GetRunOnStartup();
-            runOnStartupMenuItem.Click += HandleRunOnStartupMenuItemClick;
-
-            // Initialize contextMenu
-            contextMenu.MenuItems.Add(settingsMenuItem);
-            contextMenu.MenuItems.Add(runOnStartupMenuItem);
-            contextMenu.MenuItems.Add(exitMenuItem);
-
-            return contextMenu;
-        }
-
-        //This method will be moved to icon view and presenter
         public void UpdateIconMenu()
         {
-            _notifyIcon.ContextMenu.MenuItems[1].Checked = _settingsSerializer.GetRunOnStartup();
+            _trayIconPresenter.UpdateSettings();
         }
+
+        #region Private Methods
 
         private void ActivateFromTray()
         {
@@ -148,32 +105,33 @@ namespace NavigationAssistant.Views
 
         #region Event Handlers
 
-        #region Menu Handlers
-
-        private void HandleExitMenuItemClick(object sender, EventArgs e)
+        private void HandleRequestShowing(object sender, RequestShowingEventArgs e)
         {
-            _isClosingCompletely = true;
+            if (e.PresenterToShow == typeof(SettingsPresenter))
+            {
+                //Don't close the main window, as it should be hidden (due to deactivation) when the tray menu appears.
+                SettingsWindow settings = new SettingsWindow();
+                settings.Show();
+                return;
+            }
 
+            if (e.PresenterToShow == typeof(NavigationPresenter))
+            {
+                ActivateFromTray();
+                return;
+            }
+        }
+
+        private void HandleExited(object sender, EventArgs e)
+        {
+            _keyboardListener.StopListening();
+            CurrentNavigationModel.Close();
+
+            _trayIconPresenter.Dispose();
+
+            _closingCompletely = true;
             Close();
         }
-
-        private void HandleSettingsMenuItemClick(object sender, EventArgs e)
-        {
-            //Don't close the main window, as it should be hidden (due to deactivation) when the tray menu appears.
-
-            SettingsWindow settings = new SettingsWindow();
-            settings.Show();
-        }
-
-        private void HandleRunOnStartupMenuItemClick(object sender, EventArgs e)
-        {
-            MenuItem startupMenuItem = sender as MenuItem;
-            startupMenuItem.Checked = !startupMenuItem.Checked;
-
-            _settingsSerializer.SetRunOnStartup(startupMenuItem.Checked);
-        }
-
-        #endregion
 
         private void GlobalKeyCombinationPressed(object sender, EventArgs e)
         {
@@ -182,30 +140,13 @@ namespace NavigationAssistant.Views
 
         private void HandleClose(object sender, CancelEventArgs args)
         {
-            if (_isClosingCompletely)
+            if (_closingCompletely)
             {
-                _notifyIcon.Dispose();
-                _notifyIcon = null;
+                return;
+            }
 
-                _keyboardListener.StopListening();
-                CurrentNavigationModel.Close();
-            }
-            else
-            {
-                DeactivateToTray();
-                args.Cancel = true;
-            }
-        }
-
-        //This method is subscribed to the MouseClick event. We can not subscribe to the Click event,
-        //as then the handler will be closed even if context menu items are clicked, and before them.
-        //This handler is also called before menu item handlers, but e.Button is Right for menu clicks.
-        private void HandleNotifyIconClick(object sender, System.Windows.Forms.MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                ActivateFromTray();
-            }
+            DeactivateToTray();
+            args.Cancel = true;
         }
 
         private void HandleDeactivated(object sender, EventArgs e)
