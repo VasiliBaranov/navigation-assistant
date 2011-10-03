@@ -56,6 +56,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Presenters\IPresenter.cs" />
+    <Compile Include="Presenters\NavigationPresenter.cs" />
+    <Compile Include="Presenters\RequestShowingEventArgs.cs" />
+    <Compile Include="Presenters\SettingsPresenter.cs" />
+    <Compile Include="Presenters\TrayIconPresenter.cs" />
     <Compile Include="Views\AdvancedSettingsControl.xaml.cs">
       <DependentUpon>AdvancedSettingsControl.xaml</DependentUpon>
     </Compile>
@@ -63,6 +68,8 @@
       <DependentUpon>BasicSettingsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Constants.cs" />
+    <Compile Include="Views\ITrayView.cs" />
+    <Compile Include="Views\IView.cs" />
     <Compile Include="Views\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
@@ -94,6 +101,7 @@
     <Compile Include="ViewModel\NavigatorModel.cs" />
     <Compile Include="ViewModel\SaveSettingsCommand.cs" />
     <Compile Include="ViewModel\SettingsModel.cs" />
+    <Compile Include="Views\TrayView.cs" />
     <Page Include="Views\AdvancedSettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

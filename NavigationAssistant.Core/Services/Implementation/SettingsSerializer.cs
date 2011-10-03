@@ -19,6 +19,8 @@ namespace NavigationAssistant.Core.Services.Implementation
     {
         private const string SettingsFileName = "UserSettings.config";
 
+        private static readonly object SettingsSync = new object();
+
         #region Public Methods
 
         public Settings Deserialize()
@@ -33,10 +35,13 @@ namespace NavigationAssistant.Core.Services.Implementation
             }
             else
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(Settings));
-                using (StreamReader reader = new StreamReader(settingsFileName))
+                lock (SettingsSync)
                 {
-                    settings = serializer.Deserialize(reader) as Settings;
+                    XmlSerializer serializer = new XmlSerializer(typeof(Settings));
+                    using (StreamReader reader = new StreamReader(settingsFileName))
+                    {
+                        settings = serializer.Deserialize(reader) as Settings;
+                    }
                 }
             }
 
@@ -59,12 +64,15 @@ namespace NavigationAssistant.Core.Services.Implementation
 
             XmlSerializer serializer = new XmlSerializer(typeof (Settings));
 
-            using (StreamWriter writer = new StreamWriter(settingsFileName, false))
+            lock (SettingsSync)
             {
-                serializer.Serialize(writer, settings);
+                using (StreamWriter writer = new StreamWriter(settingsFileName, false))
+                {
+                    serializer.Serialize(writer, settings);
+                }
             }
 
-             SetRunOnStartup(settings.RunOnStartup);
+            SetRunOnStartup(settings.RunOnStartup);
 
             return validationResult;
         }
