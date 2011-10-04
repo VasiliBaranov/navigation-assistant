@@ -32,7 +32,7 @@ namespace NavigationAssistant.Core.Model
         [XmlIgnore]
         public Keys GlobalKeyCombination { get; set; }
 
-        public string GlobalKeyCombinationString 
+        public string GlobalKeyCombinationString
         {
             get
             {

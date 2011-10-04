@@ -24,7 +24,9 @@ namespace NavigationAssistant.Presenters
 
         private readonly IKeyboardListener _keyboardListener;
 
-        private INavigationService _navigationAssistant;
+        private readonly INavigationService _navigationAssistant;
+
+        private readonly INavigationServiceBuilder _navigationServiceBuilder;
 
         private readonly IMatchModelMapper _matchModelMapper;
 
@@ -41,12 +43,14 @@ namespace NavigationAssistant.Presenters
         public NavigationPresenter(INavigationView view,
             ISettingsSerializer settingsSerializer,
             IKeyboardListener keyboardListener,
-            IMatchModelMapper matchModelMapper)
+            IMatchModelMapper matchModelMapper,
+            INavigationServiceBuilder navigationServiceBuilder)
         {
             _view = view;
             _settingsSerializer = settingsSerializer;
             _keyboardListener = keyboardListener;
             _matchModelMapper = matchModelMapper;
+            _navigationServiceBuilder = navigationServiceBuilder;
 
             _view.CurrentSettings = _settingsSerializer.Deserialize();
             _view.TextChanged += HandleTextChanged;
@@ -55,7 +59,7 @@ namespace NavigationAssistant.Presenters
             _keyboardListener.KeyCombinationPressed += GlobalKeyCombinationPressed;
             _keyboardListener.StartListening(_view.CurrentSettings.GlobalKeyCombination);
 
-            _navigationAssistant = _settingsSerializer.BuildNavigationService(_view.CurrentSettings);
+            _navigationAssistant = _navigationServiceBuilder.BuildNavigationService(_view.CurrentSettings);
 
             _view.ShowMatches(new List<MatchModel> { new MatchModel(_matchModelMapper, Resources.InitialMatchesMessage) });
         }
@@ -89,12 +93,7 @@ namespace NavigationAssistant.Presenters
             _keyboardListener.StopListening();
             _keyboardListener.StartListening(settings.GlobalKeyCombination);
 
-            if (_navigationAssistant != null)
-            {
-                _navigationAssistant.Dispose();
-            }
-
-            _navigationAssistant = _settingsSerializer.BuildNavigationService(settings);
+            _navigationServiceBuilder.UpdateNavigationSettings(_navigationAssistant, settings);
         }
 
         public void Show()

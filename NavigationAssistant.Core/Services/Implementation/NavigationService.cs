@@ -7,10 +7,16 @@ namespace NavigationAssistant.Core.Services.Implementation
 {
     public class NavigationService : INavigationService
     {
+        #region Fields
+
         private readonly IFileSystemParser _fileSystemParser;
         private readonly IMatchSearcher _matchSearcher;
-        private readonly IExplorerManager _primaryExplorerManager;
-        private readonly List<IExplorerManager> _supportedExplorerManagers;
+        private IExplorerManager _primaryExplorerManager;
+        private List<IExplorerManager> _supportedExplorerManagers;
+
+        #endregion
+
+        #region Constructors
 
         public NavigationService(IFileSystemParser fileSystemParser,
                                  IMatchSearcher matchSearcher,
@@ -22,6 +28,36 @@ namespace NavigationAssistant.Core.Services.Implementation
             _primaryExplorerManager = primaryExplorerManager;
             _supportedExplorerManagers = supportedExplorerManagers;
         }
+
+        #endregion
+
+        #region Properties
+
+        public IFileSystemParser FileSystemParser
+        {
+            get { return _fileSystemParser; }
+        }
+
+        public IMatchSearcher MatchSearcher
+        {
+            get { return _matchSearcher; }
+        }
+
+        public IExplorerManager PrimaryExplorerManager
+        {
+            get { return _primaryExplorerManager; }
+            set { _primaryExplorerManager = value; }
+        }
+
+        public List<IExplorerManager> SupportedExplorerManagers
+        {
+            get { return _supportedExplorerManagers; }
+            set { _supportedExplorerManagers = value; }
+        }
+
+        #endregion
+
+        #region Public Methods
 
         public List<MatchedFileSystemItem> GetFolderMatches(string searchText)
         {
@@ -68,5 +104,7 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             _fileSystemParser.Dispose();
         }
+
+        #endregion
     }
 }

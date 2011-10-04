@@ -38,6 +38,8 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private int _updatesCount;
 
+        private int _delayIntervalInSeconds;
+
         #endregion
 
         #region Properties
@@ -72,28 +74,52 @@ namespace NavigationAssistant.Core.Services.Implementation
             }
         }
 
+        public IFileSystemParser FileSystemParser
+        {
+            get { return _fileSystemParser; }
+        }
+
+        public ICacheSerializer CacheSerializer
+        {
+            get { return _cacheSerializer; }
+        }
+
+        public IFileSystemListener FileSystemListener
+        {
+            get { return _fileSystemListener; }
+        }
+
+        public int DelayIntervalInSeconds
+        {
+            get { return _delayIntervalInSeconds; }
+            set { _delayIntervalInSeconds = value; }
+        }
+
         #endregion
 
         #region Constructors
 
-        public CachedFileSystemParser(IFileSystemParser fileSystemParser, ICacheSerializer cacheSerializer, IFileSystemListener fileSystemListener,
+        public CachedFileSystemParser(IFileSystemParser fileSystemParser,
+            ICacheSerializer cacheSerializer,
+            IFileSystemListener fileSystemListener,
             int delayIntervalInSeconds)
         {
             _fileSystemParser = fileSystemParser;
             _cacheSerializer = cacheSerializer;
             _fileSystemListener = fileSystemListener;
+            _delayIntervalInSeconds = delayIntervalInSeconds;
             _delayTimer = new Timer();
 
             bool fullCacheUpToDate = ReadFullCache();
 
             // Listen to the changes in the whole system to update the fullCache.
             _fileSystemListener.FolderSystemChanged += HandleFolderSystemChanged;
-            _fileSystemListener.StartListening(null); 
+            _fileSystemListener.StartListening(null);
 
             //Set up a timer for initial cache update
             if (!fullCacheUpToDate)
             {
-                RegisterCacheUpdate(delayIntervalInSeconds);
+                RegisterCacheUpdate(_delayIntervalInSeconds);
             }
         }
 
@@ -187,7 +213,7 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             lock (_fullCacheSync)
             {
-                FileSystemParser.UpdateFolders(_fullCache, e, null);
+                Implementation.FileSystemParser.UpdateFolders(_fullCache, e, null);
                 _fullCache = _fullCache.OrderBy(item => item.FullPath).ToList();
 
                 _updatesCount++;
@@ -200,7 +226,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
                 if (_cache != null)
                 {
-                    FileSystemParser.UpdateFolders(_cache, e, IsCorrect);
+                    Implementation.FileSystemParser.UpdateFolders(_cache, e, IsCorrect);
                 }
             }
         }

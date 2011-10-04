@@ -8,5 +8,7 @@ namespace NavigationAssistant.Core.Services
         void SerializeCache(List<FileSystemItem> cache);
 
         List<FileSystemItem> DeserializeCache();
+
+        string CacheFolder { get; set; }
     }
 }
