@@ -5,10 +5,8 @@ using System.ComponentModel;
 using System.Windows.Input;
 using System.Windows.Threading;
 using NavigationAssistant.Core.Model;
-using NavigationAssistant.Core.Services.Implementation;
 using NavigationAssistant.PresentationServices;
 using NavigationAssistant.PresentationServices.Implementations;
-using NavigationAssistant.Presenters;
 using NavigationAssistant.Utilities;
 using NavigationAssistant.ViewModel;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
@@ -42,8 +40,6 @@ namespace NavigationAssistant.Views
 
         private const int DelayInMilliseconds = 200;
 
-        private IPresenter _presenter;
-
         #endregion
 
         #region Properties
@@ -69,12 +65,6 @@ namespace NavigationAssistant.Views
             _delayTimer.Tick += HandleDelayElapsed;
 
             HideView();
-
-            _presenter = new NavigationPresenter(this,
-                                                 new SettingsSerializer(),
-                                                 new KeyboardListener(),
-                                                 new TrayIconPresenter(new TrayView(), new SettingsSerializer()),
-                                                 new MatchModelMapper());
         }
 
         #endregion

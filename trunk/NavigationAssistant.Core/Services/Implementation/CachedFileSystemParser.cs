@@ -126,23 +126,23 @@ namespace NavigationAssistant.Core.Services.Implementation
             if (disposing)
             {
                 // get rid of managed resources
-                try
-                {
-                    lock (_fullCacheSync)
-                    {
-                        _cacheSerializer.SerializeCache(_fullCache);
-                    }
+                _fileSystemParser.Dispose();
+                _fileSystemListener.Dispose();
+                _delayTimer.Dispose();
+            }
 
-                    _fileSystemParser.Dispose();
-                    _fileSystemListener.Dispose();
-                    _delayTimer.Dispose();
-                }
-                catch
+            // get rid of unmanaged resources
+            try
+            {
+                lock (_fullCacheSync)
                 {
-                    // no exceptions in disposing
+                    _cacheSerializer.SerializeCache(_fullCache);
                 }
             }
-            // get rid of unmanaged resources
+            catch
+            {
+                // no exceptions in finalizer
+            }
         }
 
         ~CachedFileSystemParser()

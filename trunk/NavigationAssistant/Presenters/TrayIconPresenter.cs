@@ -34,6 +34,9 @@ namespace NavigationAssistant.Presenters
             _view.SettingsChanged += HandleSettingsChanged;
             _view.ShowMainClicked += HandleShowMainClicked;
             _view.ShowSettingsClicked +=HandleShowSettingsClicked;
+
+            //Show tray icon at once
+            _view.ShowView();
         }
 
         #endregion

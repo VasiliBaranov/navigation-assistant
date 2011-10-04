@@ -58,7 +58,9 @@
     </ApplicationDefinition>
     <Compile Include="Presenters\BasePresenter.cs" />
     <Compile Include="Presenters\IPresenter.cs" />
+    <Compile Include="Presenters\IPresenterManager.cs" />
     <Compile Include="Presenters\NavigationPresenter.cs" />
+    <Compile Include="Presenters\PresenterManager.cs" />
     <Compile Include="Presenters\SettingsPresenter.cs" />
     <Compile Include="Presenters\TrayIconPresenter.cs" />
     <Compile Include="Utilities\ItemEventArgs.cs" />
