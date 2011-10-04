@@ -24,8 +24,6 @@ namespace NavigationAssistant.Presenters
 
         private readonly IKeyboardListener _keyboardListener;
 
-        private readonly IPresenter _trayIconPresenter;
-
         private INavigationService _navigationAssistant;
 
         private readonly IMatchModelMapper _matchModelMapper;
@@ -40,21 +38,15 @@ namespace NavigationAssistant.Presenters
 
         #region Constructors
 
-        public NavigationPresenter(INavigationView view, 
-            ISettingsSerializer settingsSerializer, 
-            IKeyboardListener keyboardListener, 
-            IPresenter trayIconPresenter,
+        public NavigationPresenter(INavigationView view,
+            ISettingsSerializer settingsSerializer,
+            IKeyboardListener keyboardListener,
             IMatchModelMapper matchModelMapper)
         {
             _view = view;
             _settingsSerializer = settingsSerializer;
             _keyboardListener = keyboardListener;
-            _trayIconPresenter = trayIconPresenter;
             _matchModelMapper = matchModelMapper;
-
-            _trayIconPresenter.Exited += HandleExited;
-            _trayIconPresenter.RequestWindowShow += HandleRequestWindowShow;
-            _trayIconPresenter.Show();
 
             _view.CurrentSettings = _settingsSerializer.Deserialize();
             _view.TextChanged += HandleTextChanged;
@@ -66,11 +58,6 @@ namespace NavigationAssistant.Presenters
             _navigationAssistant = _settingsSerializer.BuildNavigationService(_view.CurrentSettings);
 
             _view.ShowMatches(new List<MatchModel> { new MatchModel(_matchModelMapper, Resources.InitialMatchesMessage) });
-        }
-
-        private void HandleExited(object sender, EventArgs e)
-        {
-            Dispose();
         }
 
         private void HandleFolderSelected(object sender, ItemEventArgs<string> e)
@@ -102,8 +89,6 @@ namespace NavigationAssistant.Presenters
             _keyboardListener.StopListening();
             _keyboardListener.StartListening(settings.GlobalKeyCombination);
 
-            _trayIconPresenter.UpdateSettings(settings);
-
             if (_navigationAssistant != null)
             {
                 _navigationAssistant.Dispose();
@@ -120,7 +105,6 @@ namespace NavigationAssistant.Presenters
         public void Dispose()
         {
             _view.Dispose();
-            _trayIconPresenter.Dispose();
             _navigationAssistant.Dispose();
 
             _keyboardListener.StopListening();
@@ -149,23 +133,6 @@ namespace NavigationAssistant.Presenters
 
             List<MatchModel> matchModels = _matchModelMapper.GetMatchModels(folderMatches);
             return matchModels;
-        }
-
-        private void HandleRequestWindowShow(object sender, ItemEventArgs<Type> e)
-        {
-            if (e.Item == typeof(SettingsPresenter))
-            {
-                //Don't close the main window, as it should be hidden (due to deactivation) when the tray menu appears.
-                SettingsWindow settings = new SettingsWindow();
-                settings.Show();
-                return;
-            }
-
-            if (e.Item == typeof(NavigationPresenter))
-            {
-                _view.ShowView();
-                return;
-            }
         }
     }
 }
