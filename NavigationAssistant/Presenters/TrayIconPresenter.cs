@@ -61,8 +61,6 @@ namespace NavigationAssistant.Presenters
             _view.ShowSettingsClicked -= HandleShowSettingsClicked;
 
             _view.Dispose();
-
-            GC.SuppressFinalize(this);
         }
 
         #endregion

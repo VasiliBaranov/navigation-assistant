@@ -54,8 +54,6 @@ namespace NavigationAssistant.Presenters
         public void Dispose()
         {
             _view.Dispose();
-
-            GC.SuppressFinalize(this);
         }
     }
 }

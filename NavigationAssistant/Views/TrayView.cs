@@ -44,8 +44,6 @@ namespace NavigationAssistant.Views
         {
             _notifyIcon.Dispose();
             _notifyIcon = null;
-
-            GC.SuppressFinalize(this);
         }
 
         public event EventHandler SettingsChanged;

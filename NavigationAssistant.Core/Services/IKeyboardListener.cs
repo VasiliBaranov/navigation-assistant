@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace NavigationAssistant.Core.Services
 {
-    public interface IKeyboardListener
+    public interface IKeyboardListener : IDisposable
     {
         event EventHandler KeyCombinationPressed;
 

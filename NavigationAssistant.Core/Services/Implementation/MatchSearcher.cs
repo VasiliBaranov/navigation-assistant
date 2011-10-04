@@ -93,7 +93,8 @@ namespace NavigationAssistant.Core.Services.Implementation
                 return null;
             }
 
-            string template = string.Join("[^\\s]*\\s+", substrings.ToArray());
+            substrings = substrings.Select(Regex.Escape).ToArray();
+            string template = string.Join("[^\\s]*\\s+", substrings);
             template = "\\b" + template; //Word boundary for the first word; for other words we require preceding spaces
 
             Regex matchRegex = new Regex(template, RegexOptions.IgnoreCase);
