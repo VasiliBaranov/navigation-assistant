@@ -11,5 +11,13 @@ namespace NavigationAssistant.Core.Services
         void NavigateTo(string path, ApplicationWindow hostWindow);
 
         ApplicationWindow GetActiveWindow();
+
+        IFileSystemParser FileSystemParser { get; }
+
+        IMatchSearcher MatchSearcher { get; }
+
+        IExplorerManager PrimaryExplorerManager { get; set; }
+
+        List<IExplorerManager> SupportedExplorerManagers { get; set; }
     }
 }

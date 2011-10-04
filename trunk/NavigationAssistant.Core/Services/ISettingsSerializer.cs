@@ -11,7 +11,5 @@ namespace NavigationAssistant.Core.Services
         bool GetRunOnStartup();
 
         void SetRunOnStartup(bool value);
-
-        INavigationService BuildNavigationService(Settings settings);
     }
 }

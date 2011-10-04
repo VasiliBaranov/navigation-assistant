@@ -74,12 +74,14 @@
     <Compile Include="Services\Implementation\KeyboardListener.cs" />
     <Compile Include="Services\Implementation\MatchSearcher.cs" />
     <Compile Include="Services\Implementation\NavigationService.cs" />
+    <Compile Include="Services\Implementation\NavigationServiceBuilder.cs" />
     <Compile Include="Services\Implementation\SettingsSerializer.cs" />
     <Compile Include="Services\Implementation\TotalCommander.cs" />
     <Compile Include="Services\Implementation\TotalCommanderManager.cs" />
     <Compile Include="Services\Implementation\WindowsExplorer.cs" />
     <Compile Include="Services\Implementation\WindowsExplorerManager.cs" />
     <Compile Include="Services\INavigationService.cs" />
+    <Compile Include="Services\INavigationServiceBuilder.cs" />
     <Compile Include="Services\ISettingsSerializer.cs" />
     <Compile Include="Utilities\EnumUtility.cs" />
     <Compile Include="Utilities\ListUtility.cs" />

@@ -37,7 +37,8 @@ namespace NavigationAssistant
             IPresenter navigationPresenter = new NavigationPresenter(navigationWindow,
                                      new SettingsSerializer(),
                                      new KeyboardListener(),
-                                     new MatchModelMapper());
+                                     new MatchModelMapper(),
+                                     new NavigationServiceBuilder());
 
             TrayView trayView = new TrayView();
             IPresenter trayPresenter = new TrayIconPresenter(trayView, new SettingsSerializer());

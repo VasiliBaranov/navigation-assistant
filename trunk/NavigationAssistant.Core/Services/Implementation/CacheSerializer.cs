@@ -8,18 +8,42 @@ namespace NavigationAssistant.Core.Services.Implementation
 {
     public class CacheSerializer : ICacheSerializer
     {
+        #region Fields
+
         //Xml is too verbose
         //Binary formatting is not readable
-        private readonly string _cacheFilePath;
+        private string _cacheFilePath;
 
         private const string Separator = "?";
 
+        //Actually, different serializers can write to different paths,
+        //but currently we syncronize them with one object (quick and dirty solution).
         private static readonly object CacheSync = new object();
+
+        #endregion
+
+        #region Constructors
 
         public CacheSerializer(string cacheFolder)
         {
             _cacheFilePath = Path.Combine(cacheFolder, "Cache.txt");
         }
+
+        #endregion
+
+        public string CacheFolder
+        {
+            get
+            {
+                return Path.GetDirectoryName(_cacheFilePath);
+            }
+            set
+            {
+                _cacheFilePath = Path.Combine(value, "Cache.txt");
+            }
+        }
+
+        #region Public Methods
 
         public void SerializeCache(List<FileSystemItem> cache)
         {
@@ -45,6 +69,11 @@ namespace NavigationAssistant.Core.Services.Implementation
 
             return result;
         }
+
+        #endregion
+
+        #region Non Public Methods
+
         private static string GetLine(FileSystemItem item)
         {
             return string.Format(CultureInfo.InvariantCulture, "{1}{0}{2}", Separator, item.FullPath, item.Name);
@@ -69,5 +98,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
             return new FileSystemItem(itemName, itemPath);
         }
+
+        #endregion
     }
 }

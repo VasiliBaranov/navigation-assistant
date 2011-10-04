@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -105,53 +104,11 @@ namespace NavigationAssistant.Core.Services.Implementation
             }
         }
 
-        public INavigationService BuildNavigationService(Settings settings)
-        {
-            //NOTE: We turn off listening for attributes changes, as it may be too slow;
-            //and we also do not display IncludeHiddenFolders option in the UI. So attributes are never used.
-            IFileSystemParser basicParser = new FileSystemParser(new FileSystemListener());
-            ICacheSerializer cacheSerializer = new CacheSerializer(settings.CacheFolder);
-            IFileSystemParser cachedParser = new CachedFileSystemParser(basicParser, cacheSerializer, new FileSystemListener(),
-                settings.CacheUpdateDelayInSeconds);
-            cachedParser.ExcludeFolderTemplates = settings.ExcludeFolderTemplates;
-            cachedParser.FoldersToParse = settings.FoldersToParse;
-
-            List<Navigators> additionalNavigators = new List<Navigators>(settings.SupportedNavigators);
-            additionalNavigators.Remove(settings.PrimaryNavigator);
-
-            List<IExplorerManager> supportedExplorerManagers =
-                additionalNavigators
-                    .Select(navigator => CreateExplorerManager(navigator, settings))
-                    .ToList();
-
-            IExplorerManager primaryExplorerManager = CreateExplorerManager(settings.PrimaryNavigator, settings);
-            supportedExplorerManagers.Add(primaryExplorerManager);
-
-            INavigationService navigationAssistant = new NavigationService(cachedParser, new MatchSearcher(), primaryExplorerManager, supportedExplorerManagers);
-
-            //Warming up (to fill caches, etc)
-            navigationAssistant.GetFolderMatches("temp");
-
-            return navigationAssistant;
-        }
-
         #endregion
 
         #region Non Public Methods
 
-        private IExplorerManager CreateExplorerManager(Navigators navigator, Settings settings)
-        {
-            if (navigator == Navigators.TotalCommander)
-            {
-                return new TotalCommanderManager(settings.TotalCommanderPath);
-            }
-            else
-            {
-                return new WindowsExplorerManager();
-            }
-        }
-
-        private ValidationResult ValidateSettings(Settings settings)
+        private static ValidationResult ValidateSettings(Settings settings)
         {
             List<string> errorKeys = new List<string>();
 
@@ -167,7 +124,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             return new ValidationResult(errorKeys);
         }
 
-        private string GetSettingsFileName(bool ensureFolder)
+        private static string GetSettingsFileName(bool ensureFolder)
         {
             string settingsFolder = Application.LocalUserAppDataPath;
             if (ensureFolder)
