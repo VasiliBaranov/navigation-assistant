@@ -106,10 +106,7 @@ namespace NavigationAssistant.Presenters
         {
             _view.Dispose();
             _navigationAssistant.Dispose();
-
-            _keyboardListener.StopListening();
-
-            GC.SuppressFinalize(this);
+            _keyboardListener.Dispose();
         }
 
         private void GlobalKeyCombinationPressed(object sender, EventArgs e)

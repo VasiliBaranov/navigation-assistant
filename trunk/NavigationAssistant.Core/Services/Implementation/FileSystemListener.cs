@@ -70,23 +70,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                // get rid of managed resources
-                StopListening();
-            }
-            // get rid of unmanaged resources
-        }
-
-        ~FileSystemListener()
-        {
-            Dispose(false);
+            StopListening();
         }
 
         private void HandleFolderRenamed(object sender, RenamedEventArgs e)

@@ -35,6 +35,11 @@ namespace NavigationAssistant.Core.Services.Implementation
             HookManager.HookManager.KeyUp -= HandleGlobalKeyUp;
         }
 
+        public void Dispose()
+        {
+            StopListening();
+        }
+
         #endregion
 
         #region Non Public Methods
@@ -71,6 +76,5 @@ namespace NavigationAssistant.Core.Services.Implementation
         }
 
         #endregion
-
     }
 }

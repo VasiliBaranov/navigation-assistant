@@ -75,8 +75,6 @@ namespace NavigationAssistant.Views
         {
             _closingCompletely = true;
             Close();
-
-            GC.SuppressFinalize(this);
         }
 
         public void ShowMatches(List<MatchModel> matches)

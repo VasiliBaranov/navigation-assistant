@@ -95,23 +95,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                // get rid of managed resources
-                _fileSystemListener.Dispose();
-            }
-            // get rid of unmanaged resources
-        }
-
-        ~FileSystemParser()
-        {
-            Dispose(false);
+            _fileSystemListener.Dispose();
         }
 
         #endregion
