@@ -32,13 +32,12 @@ namespace NavigationAssistant.Presenters
             if (validationResult.IsValid)
             {
                 _view.HideView();
+                FireEvent(SettingsChanged, _view.CurrentSettings);
             }
             else
             {
                 _view.ShowValidationResult(validationResult);
             }
-
-            FireEvent(SettingsChanged, _view.CurrentSettings);
         }
 
         public void UpdateSettings(Settings settings)

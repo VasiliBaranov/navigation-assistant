@@ -21,6 +21,13 @@ namespace NavigationAssistant.Views
 
         private bool _isDisposing;
 
+        //Settings are restored to this value when closing the window.
+        //We do not update initial settings when firing save method,
+        //as some saving errors may appear, and initial settings may become invalid.
+        //If saving is successful, CurrentSettings property setter will be called by the presenter (TODO: avoid this hidden dependency),
+        //and _initialSettings will be updated.
+        private Settings _initialSettings;
+
         #endregion
 
         #region Constructors
@@ -47,6 +54,7 @@ namespace NavigationAssistant.Views
             }
             set
             {
+                _initialSettings = value.Clone() as Settings;
                 _viewModel.Settings = value;
             }
         }
@@ -90,7 +98,8 @@ namespace NavigationAssistant.Views
                 return;
             }
 
-            HideView();
+            Hide();
+            CurrentSettings = _initialSettings;
             e.Cancel = true;
         }
 
@@ -123,6 +132,7 @@ namespace NavigationAssistant.Views
         private void HandleCancelButtonClick(object sender, RoutedEventArgs e)
         {
             Hide();
+            CurrentSettings = _initialSettings;
         }
 
         #endregion
