@@ -8,6 +8,7 @@ using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
+    //Use this class with Singleton lifetime from IoC
     public class CachedFileSystemParser : IFileSystemParser
     {
         #region Fields

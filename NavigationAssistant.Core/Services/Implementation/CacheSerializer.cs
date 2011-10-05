@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using NavigationAssistant.Core.Model;
+using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
+    //Use this class with Singleton lifetime from IoC
     public class CacheSerializer : ICacheSerializer
     {
         #region Fields
@@ -39,6 +42,19 @@ namespace NavigationAssistant.Core.Services.Implementation
             }
             set
             {
+                string oldCacheFolder = Path.GetFullPath(Path.GetDirectoryName(_cacheFilePath));
+                bool folderChanged = !string.Equals(Path.GetFullPath(value), oldCacheFolder, StringComparison.Ordinal);
+                if (folderChanged)
+                {
+                    lock (CacheSync)
+                    {
+                        if (File.Exists(_cacheFilePath))
+                        {
+                            File.Delete(_cacheFilePath);
+                        }
+                    }
+                }
+
                 _cacheFilePath = Path.Combine(value, "Cache.txt");
             }
         }
@@ -52,6 +68,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
             lock (CacheSync)
             {
+                DirectoryUtility.EnsureFolder(Path.GetDirectoryName(_cacheFilePath));
                 File.WriteAllLines(_cacheFilePath, lines);
             }
         }
