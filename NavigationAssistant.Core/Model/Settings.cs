@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 
 namespace NavigationAssistant.Core.Model
 {
-    public class Settings
+    public class Settings : ICloneable
     {
         #region Basic
 
@@ -49,5 +49,22 @@ namespace NavigationAssistant.Core.Model
         public bool RunOnStartup { get; set; }
 
         #endregion
+
+        public object Clone()
+        {
+            Settings clone = new Settings();
+
+            clone.PrimaryNavigator = PrimaryNavigator;
+            clone.SupportedNavigators = SupportedNavigators;
+            clone.TotalCommanderPath = TotalCommanderPath;
+            clone.FoldersToParse = FoldersToParse;
+            clone.ExcludeFolderTemplates = ExcludeFolderTemplates;
+            clone.CacheUpdateDelayInSeconds = CacheUpdateDelayInSeconds;
+            clone.CacheFolder = CacheFolder;
+            clone.GlobalKeyCombination = GlobalKeyCombination;
+            clone.RunOnStartup = RunOnStartup;
+
+            return clone;
+        }
     }
 }

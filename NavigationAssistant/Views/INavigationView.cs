@@ -12,5 +12,7 @@ namespace NavigationAssistant.Views
         event EventHandler<ItemEventArgs<string>> FolderSelected;
 
         void ShowMatches(List<MatchModel> matches);
+
+        bool ShowInitializingScreen { get; set; }
     }
 }

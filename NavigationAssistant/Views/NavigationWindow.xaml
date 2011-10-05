@@ -32,15 +32,28 @@
             </Style.Resources>
         </Style>
     </Window.Resources>
-    <StackPanel Width="Auto" Height="Auto" VerticalAlignment="Top" 
+    <StackPanel Width="Auto" 
+                Height="Auto" 
+                VerticalAlignment="Top" 
                 KeyDown="HandlePanelKeyDown">
+        <TextBlock x:Name="InitializingTextBlock" 
+                    Width="300"
+                    Height="Auto"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Margin="10"
+                    Text="Please wait while the computer folders are being parsed. This may take several minutes."
+                    TextWrapping="Wrap"
+                    Visibility="{Binding Path=InitializingScreenVisiblity}"/>
         <TextBox x:Name="SearchTextBox" 
                  HorizontalAlignment="Stretch" 
-                 Width="Auto" MinWidth="300" 
+                 Width="Auto"
+                 MinWidth="300" 
                  Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"
                  PreviewKeyDown="HandleSearchTextPreviewKeyDown"
                  Utilities:SizeExtension.Observe="True"
-                 Utilities:SizeExtension.ObservedHeight="{Binding Path=SearchTextBoxHeight, Mode=OneWayToSource}" />
+                 Utilities:SizeExtension.ObservedHeight="{Binding Path=SearchTextBoxHeight, Mode=OneWayToSource}"
+                 Visibility="{Binding Path=MainScreenVisiblity}"/>
         <ListBox x:Name="MatchesListBox" 
                  HorizontalAlignment="Left"
                  ItemsSource="{Binding Path=Matches}" 
@@ -48,11 +61,14 @@
                  IsSynchronizedWithCurrentItem="True" 
                  MouseUp="HandleMatchesListMouseUp"
                  ItemContainerStyle="{StaticResource ListBoxItemStyle}"
-                 Height="Auto" MaxHeight="{Binding Path=MaxMatchesListBoxHeight, Mode=OneWay}"
-                 Width="{Binding Path=MatchesListBoxWidth}" MinWidth="300"
+                 Height="Auto"
+                 MaxHeight="{Binding Path=MaxMatchesListBoxHeight, Mode=OneWay}"
+                 Width="{Binding Path=MatchesListBoxWidth}"
+                 MinWidth="300"
                  Utilities:SizeExtension.Observe="True"
                  Utilities:SizeExtension.ObservedWidth="{Binding Path=MatchesListBoxActualWidth, Mode=OneWayToSource}"
-                 Utilities:ScrollExtension.AutoScrollToCurrentItem="True">
+                 Utilities:ScrollExtension.AutoScrollToCurrentItem="True"
+                 Visibility="{Binding Path=MainScreenVisiblity}">
             <!--AutoScrollToCurrentItem is set as far we allow selection change with up/down keys even if the control is not focused.-->
             <ListBox.ItemTemplate>
                 <DataTemplate>
