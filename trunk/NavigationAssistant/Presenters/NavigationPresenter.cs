@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows;
 using NavigationAssistant.Core.Model;
 using NavigationAssistant.Core.Services;
 using NavigationAssistant.PresentationServices;
@@ -12,19 +13,23 @@ namespace NavigationAssistant.Presenters
 {
     public class NavigationPresenter : BasePresenter, IPresenter
     {
-        #region Fields
+        #region Events
 
         public event EventHandler<ItemEventArgs<Settings>> SettingsChanged;
+
         public event EventHandler<ItemEventArgs<Type>> RequestWindowShow;
+
         public event EventHandler Exited;
 
-        private readonly INavigationView _view;
+        #endregion
+
+        #region Services
 
         private readonly ISettingsSerializer _settingsSerializer;
 
         private readonly IKeyboardListener _keyboardListener;
 
-        private readonly INavigationService _navigationAssistant;
+        private INavigationService _navigationAssistant;
 
         private readonly INavigationServiceBuilder _navigationServiceBuilder;
 
@@ -34,7 +39,15 @@ namespace NavigationAssistant.Presenters
 
         #region Fields
 
+        private readonly INavigationView _view;
+
         private ApplicationWindow _hostWindow;
+
+        private readonly object _syncObject = new object();
+
+        private bool _disposed;
+
+        private delegate INavigationService InitializeDelegate(Settings settings);
 
         #endregion
 
@@ -52,18 +65,117 @@ namespace NavigationAssistant.Presenters
             _matchModelMapper = matchModelMapper;
             _navigationServiceBuilder = navigationServiceBuilder;
 
-            _view.CurrentSettings = _settingsSerializer.Deserialize();
-            _view.TextChanged += HandleTextChanged;
-            _view.FolderSelected += HandleFolderSelected;
+            Settings settings = _settingsSerializer.Deserialize();
 
             _keyboardListener.KeyCombinationPressed += GlobalKeyCombinationPressed;
-            _keyboardListener.StartListening(_view.CurrentSettings.GlobalKeyCombination);
+            _keyboardListener.StartListening(settings.GlobalKeyCombination);
 
-            _navigationAssistant = _navigationServiceBuilder.BuildNavigationService(_view.CurrentSettings);
+            _view.CurrentSettings = settings;
+            _view.ShowMatches(new List<MatchModel> {new MatchModel(_matchModelMapper, Resources.InitialMatchesMessage)});
+            _view.ShowInitializingScreen = true;
 
-            _view.ShowMatches(new List<MatchModel> { new MatchModel(_matchModelMapper, Resources.InitialMatchesMessage) });
+            //Clone settings to avoid any coupling
+            Settings settingsCopy = settings.Clone() as Settings;
+            InitializeDelegate initialize = Initialize;
+            initialize.BeginInvoke(settingsCopy, EndInitialize, initialize);
+
+            //Action asyncMethod = (() => Initialize());
+            //Application.Current.Dispatcher.BeginInvoke(asyncMethod);
         }
 
+        #endregion
+
+        #region Public Methods
+
+        public void UpdateSettings(Settings settings)
+        {
+            lock (_syncObject)
+            {
+                _view.CurrentSettings = settings;
+
+                _keyboardListener.StopListening();
+                _keyboardListener.StartListening(settings.GlobalKeyCombination);
+
+                if (_navigationAssistant != null)
+                {
+                    //This code will not be called, if _navigationServiceBuilder is used in the
+                    //Initialize function; so we don't need to synchronize _navigationServiceBuilder additionally.
+                    _navigationServiceBuilder.UpdateNavigationSettings(_navigationAssistant, settings);
+                }
+            }
+        }
+
+        public void Show()
+        {
+            lock (_syncObject)
+            {
+                _view.ShowView();
+            }
+        }
+
+        public void Dispose()
+        {
+            lock (_syncObject)
+            {
+                _disposed = true;
+
+                _view.Dispose();
+                _keyboardListener.Dispose();
+
+                if (_navigationAssistant != null)
+                {
+                    _navigationAssistant.Dispose();
+                }
+            }
+        }
+
+        #endregion
+
+        #region Non Public Methods
+
+        private INavigationService Initialize(Settings settings)
+        {
+            //Should not lock this operation, as otherwise all other methods will be locked.
+            //_navigationServiceBuilder can not be used anywhere else.
+            return _navigationServiceBuilder.BuildNavigationService(settings);
+        }
+
+        private void EndInitialize(IAsyncResult asyncResult)
+        {
+            InitializeDelegate initializeDelegate = (InitializeDelegate)asyncResult.AsyncState;
+            INavigationService navigationAssistant = initializeDelegate.EndInvoke(asyncResult);
+
+            lock (_syncObject)
+            {
+                if (_disposed)
+                {
+                    navigationAssistant.Dispose();
+                    return;
+                }
+
+                _navigationAssistant = navigationAssistant;
+                _navigationServiceBuilder.UpdateNavigationSettings(_navigationAssistant, _view.CurrentSettings);
+
+                _view.ShowInitializingScreen = false;
+                _view.TextChanged += HandleTextChanged;
+                _view.FolderSelected += HandleFolderSelected;
+            }
+        }
+
+        private void GlobalKeyCombinationPressed(object sender, EventArgs e)
+        {
+            lock (_syncObject)
+            {
+                if (_navigationAssistant != null)
+                {
+                    _hostWindow = _navigationAssistant.GetActiveWindow();
+                }
+
+                _view.ShowView();
+            }
+        }
+
+        //Called just if initialized
         private void HandleFolderSelected(object sender, ItemEventArgs<string> e)
         {
             string folderPath = e.Item;
@@ -77,6 +189,7 @@ namespace NavigationAssistant.Presenters
             }
         }
 
+        //Called just if initialized
         private void HandleTextChanged(object sender, ItemEventArgs<string> e)
         {
             List<MatchModel> matches = GetMatchModels(e.Item);
@@ -84,37 +197,7 @@ namespace NavigationAssistant.Presenters
             _view.ShowMatches(matches);
         }
 
-        #endregion
-
-        public void UpdateSettings(Settings settings)
-        {
-            _view.CurrentSettings = settings;
-
-            _keyboardListener.StopListening();
-            _keyboardListener.StartListening(settings.GlobalKeyCombination);
-
-            _navigationServiceBuilder.UpdateNavigationSettings(_navigationAssistant, settings);
-        }
-
-        public void Show()
-        {
-            _view.ShowView();
-        }
-
-        public void Dispose()
-        {
-            _view.Dispose();
-            _navigationAssistant.Dispose();
-            _keyboardListener.Dispose();
-        }
-
-        private void GlobalKeyCombinationPressed(object sender, EventArgs e)
-        {
-            _hostWindow = _navigationAssistant.GetActiveWindow();
-
-            _view.ShowView();
-        }
-
+        //Called just if initialized
         private List<MatchModel> GetMatchModels(string searchText)
         {
             if (string.IsNullOrEmpty(searchText))
@@ -130,5 +213,7 @@ namespace NavigationAssistant.Presenters
             List<MatchModel> matchModels = _matchModelMapper.GetMatchModels(folderMatches);
             return matchModels;
         }
+
+        #endregion
     }
 }

@@ -46,6 +46,12 @@ namespace NavigationAssistant.Views
 
         public Settings CurrentSettings { get; set; }
 
+        public bool ShowInitializingScreen
+        {
+            get { return _viewModel.ShowInitializingScreen; }
+            set { _viewModel.ShowInitializingScreen = value; }
+        }
+
         #endregion
 
         #region Constructors

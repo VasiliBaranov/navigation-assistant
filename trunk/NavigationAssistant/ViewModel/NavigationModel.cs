@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Windows;
 using NavigationAssistant.PresentationServices;
 
 namespace NavigationAssistant.ViewModel
@@ -32,6 +33,8 @@ namespace NavigationAssistant.ViewModel
 
         private double _maxMatchesListBoxHeight;
 
+        private bool _showInitializingScreen;
+
         #endregion
 
         #region Constructors
@@ -44,6 +47,37 @@ namespace NavigationAssistant.ViewModel
         #endregion
 
         #region Properties
+
+        public bool ShowInitializingScreen
+        {
+            get
+            {
+                return _showInitializingScreen;
+            }
+            set
+            {
+                _showInitializingScreen = value;
+                OnPropertyChanged("ShowInitializingScreen");
+                OnPropertyChanged("InitializingScreenVisiblity");
+                OnPropertyChanged("MainScreenVisiblity");
+            }
+        }
+
+        public Visibility InitializingScreenVisiblity
+        {
+            get
+            {
+                return _showInitializingScreen ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        public Visibility MainScreenVisiblity
+        {
+            get
+            {
+                return _showInitializingScreen ? Visibility.Collapsed : Visibility.Visible;
+            }
+        }
 
         public string SearchText
         {
