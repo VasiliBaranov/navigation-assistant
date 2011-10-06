@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -21,8 +22,8 @@ namespace NavigationAssistant.PresentationServices.Implementations
                 return new List<MatchModel> {new MatchModel(this, Resources.NoMatchesFound)};
             }
 
+            folderMatches.Sort(Compare);
             List<MatchModel> matchRepresentations = folderMatches
-                .OrderBy(m => m.FullPath.Length + m.FullPath)
                 .Take(Constants.MaxMatchesToDisplay)
                 .Select(GetMatchModel)
                 .ToList();
@@ -63,6 +64,78 @@ namespace NavigationAssistant.PresentationServices.Implementations
             }
 
             return textBlock;
+        }
+
+        public int Compare(MatchedFileSystemItem x, MatchedFileSystemItem y)
+        {
+            int? validityResult = CompareValidity(x, y);
+            if (validityResult != null)
+            {
+                return validityResult.Value;
+            }
+
+            bool xIsPerfectMatch = x.MatchedItemName.Count == 1;
+            bool yIsPerfectMatch = y.MatchedItemName.Count == 1;
+
+            if(xIsPerfectMatch && !yIsPerfectMatch)
+            {
+                return -1;
+            }
+
+            if (!xIsPerfectMatch && yIsPerfectMatch)
+            {
+                return 1;
+            }
+
+            if (x.FullPath.Length != y.FullPath.Length)
+            {
+                return x.FullPath.Length.CompareTo(y.FullPath.Length);
+            }
+
+            return string.Compare(x.FullPath, y.FullPath, StringComparison.CurrentCulture);
+        }
+
+        private static int? CompareValidity(MatchedFileSystemItem x, MatchedFileSystemItem y)
+        {
+            int? nullComparison = CompareByNull(x, y);
+            if (nullComparison != null)
+            {
+                return nullComparison.Value;
+            }
+
+            int? matchNullComparison = CompareByNull(x.MatchedItemName, y.MatchedItemName);
+            if (matchNullComparison != null)
+            {
+                return matchNullComparison.Value;
+            }
+
+            int? pathNullComparison = CompareByNull(x.FullPath, y.FullPath);
+            if (pathNullComparison != null)
+            {
+                return pathNullComparison.Value;
+            }
+
+            return null;
+        }
+
+        private static int? CompareByNull(object x, object y)
+        {
+            if (x == null && y == null)
+            {
+                return 0;
+            }
+
+            if (x == null && y != null)
+            {
+                return 1;
+            }
+
+            if (x != null && y == null)
+            {
+                return -1;
+            }
+
+            return null;
         }
     }
 }
