@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
 using NavigationAssistant.Core.Model;
 using NavigationAssistant.Core.Services;
@@ -96,6 +94,29 @@ namespace NavigationAssistant.Tests
                    string.Equals(actualSubstring.Value, expectedSubstring.Value, StringComparison.Ordinal);
         }
 
+        public IEnumerable<TestCaseData> GetTempMatchCases()
+        {
+            const string rootPath = @"C:\";
+
+            FileSystemItem item;
+            string searchText;
+            MatchString matchString;
+            MatchedFileSystemItem expectedMatch;
+            TestCaseData testCaseData;
+
+            item = new FileSystemItem(rootPath + "myOwnDoc");
+            searchText = "o do";
+            matchString = new MatchString
+                              {
+                                  new MatchSubstring("my", false),
+                                  new MatchSubstring("ownDo", true),
+                                  new MatchSubstring("c", false)
+                              };
+            expectedMatch = new MatchedFileSystemItem(item, matchString);
+            testCaseData = new TestCaseData(item, searchText, expectedMatch).SetName("Match camel/pascal casing in the middle");
+            yield return testCaseData;
+        }
+
         public IEnumerable<TestCaseData> GetMatchCases()
         {
             const string rootPath = @"C:\";
@@ -186,7 +207,39 @@ namespace NavigationAssistant.Tests
                                   new MatchSubstring("c", false)
                               };
             expectedMatch = new MatchedFileSystemItem(item, matchString);
-            testCaseData = new TestCaseData(item, searchText, expectedMatch).SetName("Ignore multiple spaces");
+            testCaseData = new TestCaseData(item, searchText, expectedMatch).SetName("Ignore multiple spaces in item name");
+            yield return testCaseData;
+
+            //9
+            item = new FileSystemItem(rootPath + "my Doc");
+            searchText = "m   do";
+            matchString = new MatchString
+                              {
+                                  new MatchSubstring("my Do", true),
+                                  new MatchSubstring("c", false)
+                              };
+            expectedMatch = new MatchedFileSystemItem(item, matchString);
+            testCaseData = new TestCaseData(item, searchText, expectedMatch).SetName("Ignore multiple spaces in search text");
+            yield return testCaseData;
+
+            //10
+            item = new FileSystemItem(rootPath + "myOwnDoc");
+            searchText = "o do";
+            matchString = new MatchString
+                              {
+                                  new MatchSubstring("my", false),
+                                  new MatchSubstring("OwnDo", true),
+                                  new MatchSubstring("c", false)
+                              };
+            expectedMatch = new MatchedFileSystemItem(item, matchString);
+            testCaseData = new TestCaseData(item, searchText, expectedMatch).SetName("Match camel/pascal casing in the middle");
+            yield return testCaseData;
+
+            //10
+            item = new FileSystemItem(rootPath + "mydoc");
+            searchText = "m do";
+            expectedMatch = null;
+            testCaseData = new TestCaseData(item, searchText, expectedMatch).SetName("Do not match words not separated with space or camel case");
             yield return testCaseData;
         }
     }
