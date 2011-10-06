@@ -35,6 +35,8 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private List<string> _foldersToParse;
 
+        private List<string> _foldersToParseInitial;
+
         private const int UpdatesCountToWrite = 500;
 
         private int _updatesCount;
@@ -47,7 +49,10 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public bool IncludeHiddenFolders
         {
-            get { return _includeHiddenFolders; }
+            get
+            {
+                return _includeHiddenFolders;
+            }
             set
             {
                 _includeHiddenFolders = value;
@@ -57,7 +62,10 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public List<string> ExcludeFolderTemplates
         {
-            get { return _excludeFolderTemplates; }
+            get
+            {
+                return _excludeFolderTemplates;
+            }
             set
             {
                 _excludeFolderTemplates = value;
@@ -67,10 +75,14 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public List<string> FoldersToParse
         {
-            get { return _foldersToParse; }
+            get
+            {
+                return _foldersToParseInitial;
+            }
             set
             {
-                _foldersToParse = value;
+                _foldersToParse = NormalizeFolders(value);
+                _foldersToParseInitial = value;
                 ResetCache();
             }
         }
@@ -327,6 +339,11 @@ namespace NavigationAssistant.Core.Services.Implementation
         private void HandleDelayFinished(object sender, ElapsedEventArgs e)
         {
             UpdateCacheAsynchronously();
+        }
+
+        private List<string> NormalizeFolders(IEnumerable<string> folders)
+        {
+            return folders.Select(StringUtility.MakeFirstLetterUppercase).ToList();
         }
 
         #endregion
