@@ -16,20 +16,20 @@ namespace NavigationAssistant.Core.Services.Implementation
                 return new List<MatchedFileSystemItem>();
             }
 
-            Regex matchRegex = GetMatchRegex(searchText);
+            Regex searchRegex = GetSearchRegex(searchText);
 
             List<MatchedFileSystemItem> matches =
                 items
-                    .Select(i => GetMatchedItem(i, matchRegex))
+                    .Select(i => GetMatchedItem(i, searchRegex))
                     .Where(mi => mi != null)
                     .ToList();
 
             return matches;
         }
 
-        private MatchedFileSystemItem GetMatchedItem(FileSystemItem item, Regex matchRegex)
+        private MatchedFileSystemItem GetMatchedItem(FileSystemItem item, Regex searchRegex)
         {
-            List<MatchSubstring> substrings = GetMatchSubstrings(item.Name, matchRegex);
+            List<MatchSubstring> substrings = GetMatchSubstrings(item.Name, searchRegex);
             if (substrings == null)
             {
                 return null;
@@ -40,9 +40,9 @@ namespace NavigationAssistant.Core.Services.Implementation
             return matchedItem;
         }
 
-        private List<MatchSubstring> GetMatchSubstrings(string input, Regex matchRegex)
+        private static List<MatchSubstring> GetMatchSubstrings(string input, Regex searchRegex)
         {
-            MatchCollection matches = matchRegex.Matches(input);
+            MatchCollection matches = searchRegex.Matches(input);
             List<MatchSubstring> substrings = new List<MatchSubstring>();
 
             bool hasSuccessfulMatches = matches.Cast<Match>().Any(m => m.Success);
@@ -83,10 +83,9 @@ namespace NavigationAssistant.Core.Services.Implementation
             return substrings;
         }
 
-        private static Regex GetMatchRegex(string match)
+        private static Regex GetSearchRegex(string searchText)
         {
-            //List<string> substrings = Utility.SplitStringByUpperChars(match);
-            string[] substrings = match.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+            string[] substrings = searchText.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 
             if (ListUtility.IsNullOrEmpty(substrings))
             {
@@ -94,12 +93,33 @@ namespace NavigationAssistant.Core.Services.Implementation
             }
 
             substrings = substrings.Select(Regex.Escape).ToArray();
-            string template = string.Join("[^\\s]*\\s+", substrings);
-            template = "\\b" + template; //Word boundary for the first word; for other words we require preceding spaces
 
-            Regex matchRegex = new Regex(template, RegexOptions.IgnoreCase);
+            string[] substringTemplates = substrings.Select(GetWordStartTemplate).ToArray();
 
-            return matchRegex;
+            string template = string.Join(@"[^\s]*", substringTemplates);
+            Regex searchRegex = new Regex(template);
+
+            return searchRegex;
+        }
+
+        private static string GetWordStartTemplate(string wordStart, int wordIndex)
+        {
+            string firstLetterTemplate = GetFirstLetterTemplate(wordStart[0], wordIndex);
+
+            string otherLettersTemplate = wordStart.Length > 1
+                                              ? string.Format("(?i:{0})", wordStart.Substring(1))
+                                              : string.Empty;
+
+            return firstLetterTemplate + otherLettersTemplate;
+        }
+
+        private static string GetFirstLetterTemplate(char firstLetter, int wordIndex)
+        {
+            string template = wordIndex == 0 
+                ? @"(?:\b[{0}{1}]|{1})" 
+                : @"(?:\s+[{0}{1}]|{1})";
+
+            return string.Format(template, char.ToLower(firstLetter), char.ToUpper(firstLetter));
         }
     }
 }
