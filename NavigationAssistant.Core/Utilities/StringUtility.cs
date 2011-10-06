@@ -124,5 +124,18 @@ namespace NavigationAssistant.Core.Utilities
 
             return value;
         }
+
+        public static string MakeFirstLetterUppercase(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+
+            char firstLetter = input[0];
+            string otherLetters = input.Length > 1 ? input.Substring(1) : string.Empty;
+
+            return char.ToUpper(firstLetter) + otherLetters;
+        }
     }
 }
