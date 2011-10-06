@@ -14,5 +14,7 @@ namespace NavigationAssistant.PresentationServices
         MatchModel GetMatchModel(MatchedFileSystemItem match);
 
         TextBlock GetTextBlock(MatchString matchedText, TextDecorationCollection matchDecoration, Brush matchColor);
+
+        int Compare(MatchedFileSystemItem x, MatchedFileSystemItem y);
     }
 }
