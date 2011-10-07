@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using NavigationAssistant.Core.Model;
 using NavigationAssistant.Core.Utilities;
 
@@ -15,7 +15,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         //Xml is too verbose
         //Binary formatting is not readable
-        private string _cacheFilePath;
+        private readonly string _cacheFilePath;
 
         private const string Separator = "?";
 
@@ -27,37 +27,12 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         #region Constructors
 
-        public CacheSerializer(string cacheFolder)
+        public CacheSerializer()
         {
-            _cacheFilePath = Path.Combine(cacheFolder, "Cache.txt");
+            _cacheFilePath = Path.Combine(Application.CommonAppDataPath, "Cache.txt");
         }
 
         #endregion
-
-        public string CacheFolder
-        {
-            get
-            {
-                return Path.GetDirectoryName(_cacheFilePath);
-            }
-            set
-            {
-                string oldCacheFolder = Path.GetFullPath(Path.GetDirectoryName(_cacheFilePath));
-                bool folderChanged = !string.Equals(Path.GetFullPath(value), oldCacheFolder, StringComparison.Ordinal);
-                if (folderChanged)
-                {
-                    lock (CacheSync)
-                    {
-                        if (File.Exists(_cacheFilePath))
-                        {
-                            File.Delete(_cacheFilePath);
-                        }
-                    }
-                }
-
-                _cacheFilePath = Path.Combine(value, "Cache.txt");
-            }
-        }
 
         #region Public Methods
 

@@ -39,8 +39,6 @@ namespace NavigationAssistant.Core.Services.Implementation
             {
                 parser.ExcludeFolderTemplates = settings.ExcludeFolderTemplates;
                 parser.FoldersToParse = settings.FoldersToParse;
-                parser.DelayIntervalInSeconds = settings.CacheUpdateDelayInSeconds;
-                parser.CacheSerializer.CacheFolder = settings.CacheFolder;
             }
 
             //Warming up (to fill caches, etc)
@@ -69,11 +67,10 @@ namespace NavigationAssistant.Core.Services.Implementation
         private static IFileSystemParser CreateParser(Settings settings)
         {
             IFileSystemParser basicParser = new FileSystemParser(new FileSystemListener());
-            ICacheSerializer cacheSerializer = new CacheSerializer(settings.CacheFolder);
+            ICacheSerializer cacheSerializer = new CacheSerializer();
             IFileSystemParser cachedParser = new CachedFileSystemParser(basicParser,
                                                                         cacheSerializer,
-                                                                        new FileSystemListener(),
-                                                                        settings.CacheUpdateDelayInSeconds);
+                                                                        new FileSystemListener());
 
             cachedParser.ExcludeFolderTemplates = settings.ExcludeFolderTemplates;
             cachedParser.FoldersToParse = settings.FoldersToParse;

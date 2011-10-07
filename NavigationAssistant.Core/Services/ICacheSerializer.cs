@@ -9,6 +9,6 @@ namespace NavigationAssistant.Core.Services
 
         List<FileSystemItem> DeserializeCache();
 
-        string CacheFolder { get; set; }
+        //DateTime LastCacheWriteTime { get; }
     }
 }
