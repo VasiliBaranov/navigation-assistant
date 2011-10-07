@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using NavigationAssistant.Core.Model;
 using NavigationAssistant.Properties;
 
-namespace NavigationAssistant.Views
+namespace NavigationAssistant.Views.Implementation
 {
     public class TrayView : ITrayView
     {

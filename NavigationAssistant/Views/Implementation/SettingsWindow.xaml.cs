@@ -6,7 +6,7 @@ using System.Windows;
 using NavigationAssistant.Core.Model;
 using NavigationAssistant.ViewModel;
 
-namespace NavigationAssistant.Views
+namespace NavigationAssistant.Views.Implementation
 {
     /// <summary>
     /// Interaction logic for SettingsWindow.xaml

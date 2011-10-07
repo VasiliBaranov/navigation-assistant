@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace NavigationAssistant.Views
+namespace NavigationAssistant.Views.Implementation
 {
     /// <summary>
     /// Interaction logic for BasicSettingsControl.xaml

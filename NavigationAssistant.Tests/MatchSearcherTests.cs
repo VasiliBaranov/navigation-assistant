@@ -94,28 +94,28 @@ namespace NavigationAssistant.Tests
                    string.Equals(actualSubstring.Value, expectedSubstring.Value, StringComparison.Ordinal);
         }
 
-        public IEnumerable<TestCaseData> GetTempMatchCases()
-        {
-            const string rootPath = @"C:\";
+        //public IEnumerable<TestCaseData> GetTempMatchCases()
+        //{
+        //    const string rootPath = @"C:\";
 
-            FileSystemItem item;
-            string searchText;
-            MatchString matchString;
-            MatchedFileSystemItem expectedMatch;
-            TestCaseData testCaseData;
+        //    FileSystemItem item;
+        //    string searchText;
+        //    MatchString matchString;
+        //    MatchedFileSystemItem expectedMatch;
+        //    TestCaseData testCaseData;
 
-            item = new FileSystemItem(rootPath + "myOwnDoc");
-            searchText = "o do";
-            matchString = new MatchString
-                              {
-                                  new MatchSubstring("my", false),
-                                  new MatchSubstring("ownDo", true),
-                                  new MatchSubstring("c", false)
-                              };
-            expectedMatch = new MatchedFileSystemItem(item, matchString);
-            testCaseData = new TestCaseData(item, searchText, expectedMatch).SetName("Match camel/pascal casing in the middle");
-            yield return testCaseData;
-        }
+        //    item = new FileSystemItem(rootPath + "myOwnDoc");
+        //    searchText = "o do";
+        //    matchString = new MatchString
+        //                      {
+        //                          new MatchSubstring("my", false),
+        //                          new MatchSubstring("ownDo", true),
+        //                          new MatchSubstring("c", false)
+        //                      };
+        //    expectedMatch = new MatchedFileSystemItem(item, matchString);
+        //    testCaseData = new TestCaseData(item, searchText, expectedMatch).SetName("Match camel/pascal casing in the middle");
+        //    yield return testCaseData;
+        //}
 
         public IEnumerable<TestCaseData> GetMatchCases()
         {
