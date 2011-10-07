@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Timers;
+using Microsoft.Win32;
 using NavigationAssistant.Core.Model;
 using NavigationAssistant.Core.Utilities;
 
@@ -11,7 +11,7 @@ namespace NavigationAssistant.Core.Services.Implementation
     //Use this class with Singleton lifetime from IoC
     public class CachedFileSystemParser : IFileSystemParser
     {
-        #region Fields
+        #region Services
 
         private readonly IFileSystemParser _fileSystemParser;
 
@@ -19,46 +19,42 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private readonly IFileSystemListener _fileSystemListener;
 
-        private List<FileSystemItem> _cache;
+        #endregion
 
-        private List<FileSystemItem> _fullCache; 
+        #region Supplementary Fields
 
-        private readonly Timer _delayTimer;
-
-        private delegate void UpdateCacheDelegate();
-
-        private readonly object _fullCacheSync = new object();
-
-        private bool _includeHiddenFolders;
-
-        private List<string> _excludeFolderTemplates;
-
-        private List<string> _foldersToParse;
+        private readonly object _cacheSync = new object();
 
         private List<string> _foldersToParseInitial;
 
         private const int UpdatesCountToWrite = 500;
 
+        private const int CacheValidityPeriodInSeconds = 60*2;
+
+        private readonly AsyncFileSystemParser _asyncFileSystemParser;
+
+        #endregion
+
+        #region Data Fields
+
+        private List<string> _excludeFolderTemplates;
+
+        private List<string> _foldersToParse;
+
         private int _updatesCount;
 
-        private const int DelayIntervalInSeconds = 60*5;
+        //Should be synchronized
+        private bool _fullCacheUpToDate;
+
+        //Should be synchronized
+        private List<FileSystemItem> _filteredCacheItems;
+
+        //Should be synchronized
+        private FileSystemCache _fullCache; 
 
         #endregion
 
         #region Properties
-
-        public bool IncludeHiddenFolders
-        {
-            get
-            {
-                return _includeHiddenFolders;
-            }
-            set
-            {
-                _includeHiddenFolders = value;
-                ResetCache();
-            }
-        }
 
         public List<string> ExcludeFolderTemplates
         {
@@ -69,7 +65,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             set
             {
                 _excludeFolderTemplates = value;
-                ResetCache();
+                ResetFilteredCacheItems();
             }
         }
 
@@ -83,7 +79,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             {
                 _foldersToParse = NormalizeFolders(value);
                 _foldersToParseInitial = value;
-                ResetCache();
+                ResetFilteredCacheItems();
             }
         }
 
@@ -110,21 +106,25 @@ namespace NavigationAssistant.Core.Services.Implementation
             ICacheSerializer cacheSerializer,
             IFileSystemListener fileSystemListener)
         {
-            _fileSystemParser = fileSystemParser;
             _cacheSerializer = cacheSerializer;
             _fileSystemListener = fileSystemListener;
-            _delayTimer = new Timer();
 
-            bool fullCacheUpToDate = ReadFullCache();
+            //It's possible to share one file system parser in this class and in AsyncFileSystemParser
+            //(though AsyncFileSystemParser will run on a different thread)
+            //as we will use either _fileSystemParser or _asyncFileSystemParser.
+            _fileSystemParser = fileSystemParser;
+            _asyncFileSystemParser = new AsyncFileSystemParser(_fileSystemParser);
+
+            _fullCacheUpToDate = ReadFullCache();
 
             // Listen to the changes in the whole system to update the fullCache.
             _fileSystemListener.FolderSystemChanged += HandleFolderSystemChanged;
             _fileSystemListener.StartListening(null);
 
             //Set up a timer for initial cache update
-            if (!fullCacheUpToDate)
+            if (!_fullCacheUpToDate)
             {
-                RegisterCacheUpdate(DelayIntervalInSeconds);
+                StartFileSystemParsing();
             }
         }
 
@@ -135,14 +135,19 @@ namespace NavigationAssistant.Core.Services.Implementation
         public List<FileSystemItem> GetSubFolders()
         {
             //Use synchronization to avoid conflicts with the cache update after expiration.
-            lock (_fullCacheSync)
+            lock (_cacheSync)
             {
-                if (_cache == null)
+                if (_filteredCacheItems == null)
                 {
-                    _cache = FilterCache(_fullCache, _foldersToParse, _excludeFolderTemplates);
+                    if (_fullCache != null && _fullCache.Items != null)
+                    {
+                        _filteredCacheItems = FileSystemFilterUtility.FilterCache(_fullCache.Items,
+                                                                                  _foldersToParse,
+                                                                                  _excludeFolderTemplates);
+                    }
                 }
 
-                return _cache;
+                return _filteredCacheItems;
             }
         }
 
@@ -159,14 +164,17 @@ namespace NavigationAssistant.Core.Services.Implementation
                 // get rid of managed resources
                 _fileSystemParser.Dispose();
                 _fileSystemListener.Dispose();
-                _delayTimer.Dispose();
             }
 
             // get rid of unmanaged resources
             try
             {
-                lock (_fullCacheSync)
+                lock (_cacheSync)
                 {
+                    if (_fullCacheUpToDate)
+                    {
+                        _fullCache.LastFullScanTime = DateTime.UtcNow;
+                    }
                     _cacheSerializer.SerializeCache(_fullCache);
                 }
             }
@@ -185,29 +193,68 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         #region Non Public Methods
 
-        private void RegisterCacheUpdate(int delayIntervalInSeconds)
+        private void StartFileSystemParsing()
         {
-            _delayTimer.Interval = delayIntervalInSeconds * 1000;
-            _delayTimer.Elapsed += HandleDelayFinished;
+            _asyncFileSystemParser.ParsingFinished += HandleParsingFinished;
+            _asyncFileSystemParser.BeginParsing();
+        }
 
-            //should raise the System.Timers.Timer.Elapsed event only once
-            _delayTimer.AutoReset = false;
+        private void HandleParsingFinished(object sender, ItemEventArgs<FileSystemCache> e)
+        {
+            lock (_cacheSync)
+            {
+                _fullCache = new FileSystemCache(_fileSystemParser.GetSubFolders(), DateTime.UtcNow);
+                _cacheSerializer.SerializeCache(_fullCache);
+                _fullCacheUpToDate = true;
+
+                ResetFilteredCacheItems();
+
+                _asyncFileSystemParser.ParsingFinished -= HandleParsingFinished;
+            }
+        }
+
+        private static bool CacheUpToDate(FileSystemCache cache)
+        {
+            DateTime lastShutDownTime = GetLastSystemShutDownTime();
+            DateTime lastCacheWriteTime = cache.LastFullScanTime;
+
+            TimeSpan timeDifference = lastShutDownTime - lastCacheWriteTime;
+            bool cacheValid = timeDifference.TotalSeconds < CacheValidityPeriodInSeconds;
+            return cacheValid;
+        }
+
+        private static DateTime GetLastSystemShutDownTime()
+        {
+            const string keyPath = @"System\CurrentControlSet\Control\Windows";
+            RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath);
+
+            const string valueName = "ShutdownTime";
+            byte[] val = (byte[]) key.GetValue(valueName);
+            long valueAsLong = BitConverter.ToInt64(val, 0);
+            return DateTime.FromFileTime(valueAsLong);
         }
 
         private bool ReadFullCache()
         {
-            bool fullCacheUpToDate = false;
+            bool fullCacheUpToDate;
 
             //Parse file system.
             //We always keep the full cache in memory for the following reasons:
             //1. not to re-read it
             //2. the cache file may be deleted while this class is operating
             _fullCache = _cacheSerializer.DeserializeCache();
-            if (_fullCache == null)
+            if (_fullCache != null)
+            {
+                fullCacheUpToDate = CacheUpToDate(_fullCache);
+            }
+            else
             {
                 //The application is loaded for the first time (no cache stored on disk).
+
                 //Run this method in the main thread, thus freezing it.
-                UpdateCacheUnsynchronized();
+                //Don't set any restrictions on this parsing, as want to grab the entire system.
+                _fullCache = new FileSystemCache(_fileSystemParser.GetSubFolders(), DateTime.UtcNow);
+                _cacheSerializer.SerializeCache(_fullCache);
                 fullCacheUpToDate = true;
             }
 
@@ -216,124 +263,43 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private void HandleFolderSystemChanged(object sender, FileSystemChangeEventArgs e)
         {
-            lock (_fullCacheSync)
+            lock (_cacheSync)
             {
-                Implementation.FileSystemParser.UpdateFolders(_fullCache, e, null);
-                _fullCache = _fullCache.OrderBy(item => item.FullPath).ToList();
+                Implementation.FileSystemParser.UpdateFolders(_fullCache.Items, e, null);
 
+                //Though we write the cache back to file system in finalizer,
+                //we try to write it periodically also (to minimize the effect of finalization errors,
+                //e.g. when the computer is shut down unexpectedly).
                 _updatesCount++;
-
                 if (_updatesCount > UpdatesCountToWrite)
                 {
                     _cacheSerializer.SerializeCache(_fullCache);
                     _updatesCount = 0;
                 }
 
-                if (_cache != null)
+                //Cache may be null if settings (FoldersToParse, etc. have been changed before this update).
+                if (_filteredCacheItems != null)
                 {
-                    Implementation.FileSystemParser.UpdateFolders(_cache, e, IsCorrect);
+                    Implementation.FileSystemParser.UpdateFolders(_filteredCacheItems, e, IsCorrect);
                 }
             }
         }
 
-        private void ResetCache()
+        private void ResetFilteredCacheItems()
         {
-            _cache = null;
-        }
-
-        private static List<FileSystemItem> FilterCache(List<FileSystemItem> items,
-            List<string> rootFolders, List<string> excludeFolderTemplates)
-        {
-            List<Regex> excludeRegexes = GetExcludeRegexes(excludeFolderTemplates);
-
-            List<FileSystemItem> filteredItems = items
-                .Where(item => IsCorrect(item, rootFolders, excludeRegexes))
-                .ToList();
-
-            return filteredItems;
+            lock (_cacheSync)
+            {
+                _filteredCacheItems = null;
+            }
         }
 
         private bool IsCorrect(FileSystemItem item)
         {
-            List<Regex> excludeRegexes = GetExcludeRegexes(_excludeFolderTemplates);
-            return IsCorrect(item, _foldersToParse, excludeRegexes);
+            List<Regex> excludeRegexes = FileSystemFilterUtility.GetExcludeRegexes(_excludeFolderTemplates);
+            return FileSystemFilterUtility.IsCorrect(item, _foldersToParse, excludeRegexes);
         }
 
-        private static bool IsCorrect(FileSystemItem item, List<string> rootFolders, List<Regex> excludeRegexes)
-        {
-            return IsInRootFolder(item, rootFolders) && !ShouldBeExcluded(item, excludeRegexes);
-        }
-
-        private static List<Regex> GetExcludeRegexes(List<string> excludeFolderTemplates)
-        {
-            List<Regex> excludeRegexes = excludeFolderTemplates.Select(t => new Regex(t, RegexOptions.IgnoreCase)).ToList();
-            return excludeRegexes;
-        }
-
-        private static bool IsInRootFolder(FileSystemItem item, List<string> rootFolders)
-        {
-            if (ListUtility.IsNullOrEmpty(rootFolders))
-            {
-                return true;
-            }
-
-            return rootFolders.Any(rootFolder => item.FullPath.StartsWith(rootFolder));
-        }
-
-        private static bool ShouldBeExcluded(FileSystemItem item, List<Regex> excludeRegexes)
-        {
-            List<string> foldersInPath = DirectoryUtility.SplitPath(item.FullPath);
-
-            foreach (string folder in foldersInPath)
-            {
-                foreach (Regex excludeRegex in excludeRegexes)
-                {
-                    if (excludeRegex.IsMatch(folder))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        private void UpdateCache()
-        {
-            lock (_fullCacheSync)
-            {
-                UpdateCacheUnsynchronized();
-            }
-        }
-
-        private void UpdateCacheUnsynchronized()
-        {
-            //Don't set any restrictions on this parsing, as want to grab the entire system.
-            _fullCache = _fileSystemParser.GetSubFolders();
-            _cacheSerializer.SerializeCache(_fullCache);
-        }
-
-        private static void HandleCacheUpdated(IAsyncResult asyncResult)
-        {
-            UpdateCacheDelegate updateCache = asyncResult.AsyncState as UpdateCacheDelegate;
-
-            //You may put additional exception handling here.
-            //Should always call EndInvoke (see Richter) to catch errors.
-            updateCache.EndInvoke(asyncResult);
-        }
-
-        private void UpdateCacheAsynchronously()
-        {
-            UpdateCacheDelegate updateCache = UpdateCache;
-            updateCache.BeginInvoke(HandleCacheUpdated, updateCache);
-        }
-
-        private void HandleDelayFinished(object sender, ElapsedEventArgs e)
-        {
-            UpdateCacheAsynchronously();
-        }
-
-        private List<string> NormalizeFolders(IEnumerable<string> folders)
+        private static List<string> NormalizeFolders(IEnumerable<string> folders)
         {
             return folders.Select(StringUtility.MakeFirstLetterUppercase).ToList();
         }

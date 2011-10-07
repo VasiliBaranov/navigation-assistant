@@ -65,6 +65,8 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public static void UpdateFolders(List<FileSystemItem> folders, FileSystemChangeEventArgs e, Predicate<FileSystemItem> isCorrectPredicate)
         {
+            bool changed = false;
+
             if (!String.IsNullOrEmpty(e.OldFullPath))
             {
                 FileSystemItem deletedItem = FindItem(folders, e.OldFullPath);
@@ -72,6 +74,8 @@ namespace NavigationAssistant.Core.Services.Implementation
                 {
                     folders.Remove(deletedItem);
                 }
+
+                changed = true;
             }
 
             if (!String.IsNullOrEmpty(e.NewFullPath))
@@ -90,6 +94,13 @@ namespace NavigationAssistant.Core.Services.Implementation
                 {
                     folders.Add(addedItem);
                 }
+
+                changed = true;
+            }
+
+            if (changed)
+            {
+                folders.Sort(CompareFileSystemItems);
             }
         }
 
@@ -101,6 +112,16 @@ namespace NavigationAssistant.Core.Services.Implementation
         #endregion
 
         #region Non Public Methods
+
+        private static int CompareFileSystemItems(FileSystemItem x, FileSystemItem y)
+        {
+            if (x == null || y == null)
+            {
+                return 0;
+            }
+
+            return string.CompareOrdinal(x.FullPath, y.FullPath);
+        }
 
         private void RunListener()
         {

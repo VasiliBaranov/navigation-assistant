@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Windows.Input;
 using System.Windows.Threading;
 using NavigationAssistant.Core.Model;
+using NavigationAssistant.Core.Utilities;
 using NavigationAssistant.PresentationServices;
 using NavigationAssistant.PresentationServices.Implementations;
 using NavigationAssistant.Utilities;

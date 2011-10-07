@@ -1,14 +1,11 @@
-﻿using System.Collections.Generic;
-using NavigationAssistant.Core.Model;
+﻿using NavigationAssistant.Core.Model;
 
 namespace NavigationAssistant.Core.Services
 {
     public interface ICacheSerializer
     {
-        void SerializeCache(List<FileSystemItem> cache);
+        void SerializeCache(FileSystemCache cache);
 
-        List<FileSystemItem> DeserializeCache();
-
-        //DateTime LastCacheWriteTime { get; }
+        FileSystemCache DeserializeCache();
     }
 }

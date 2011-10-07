@@ -63,7 +63,6 @@
     <Compile Include="Presenters\PresenterManager.cs" />
     <Compile Include="Presenters\SettingsPresenter.cs" />
     <Compile Include="Presenters\TrayIconPresenter.cs" />
-    <Compile Include="Utilities\ItemEventArgs.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="Views\Implementation\AdvancedSettingsControl.xaml.cs">
       <DependentUpon>AdvancedSettingsControl.xaml</DependentUpon>

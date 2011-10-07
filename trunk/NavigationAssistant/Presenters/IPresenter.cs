@@ -1,5 +1,6 @@
 ﻿using System;
 using NavigationAssistant.Core.Model;
+using NavigationAssistant.Core.Utilities;
 using NavigationAssistant.Utilities;
 
 namespace NavigationAssistant.Presenters
