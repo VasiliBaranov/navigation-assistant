@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Presenters
 {
@@ -40,7 +41,7 @@ namespace NavigationAssistant.Presenters
             FireEvent(Exited);
         }
 
-        private void HandleRequestWindowShow(object sender, Utilities.ItemEventArgs<Type> e)
+        private void HandleRequestWindowShow(object sender, ItemEventArgs<Type> e)
         {
             foreach (IPresenter presenter in _presenters)
             {
@@ -51,7 +52,7 @@ namespace NavigationAssistant.Presenters
             }
         }
 
-        private void HandleSettingsChanged(object sender, Utilities.ItemEventArgs<Core.Model.Settings> e)
+        private void HandleSettingsChanged(object sender, ItemEventArgs<Core.Model.Settings> e)
         {
             foreach (IPresenter presenter in _presenters)
             {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using NavigationAssistant.Core.Utilities;
 using NavigationAssistant.Utilities;
 using NavigationAssistant.ViewModel;
 

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NavigationAssistant.Utilities
+namespace NavigationAssistant.Core.Utilities
 {
     public class ItemEventArgs<T> : EventArgs
     {

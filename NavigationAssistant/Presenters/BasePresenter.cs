@@ -1,4 +1,5 @@
 ﻿using System;
+using NavigationAssistant.Core.Utilities;
 using NavigationAssistant.Utilities;
 
 namespace NavigationAssistant.Presenters

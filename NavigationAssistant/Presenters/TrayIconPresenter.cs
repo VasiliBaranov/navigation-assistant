@@ -1,6 +1,7 @@
 ﻿using System;
 using NavigationAssistant.Core.Model;
 using NavigationAssistant.Core.Services;
+using NavigationAssistant.Core.Utilities;
 using NavigationAssistant.Utilities;
 using NavigationAssistant.Views;
 

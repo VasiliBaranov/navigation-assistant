@@ -50,6 +50,8 @@
     <Compile Include="HookManager\HookManager.Structures.cs" />
     <Compile Include="HookManager\HookManager.Windows.cs" />
     <Compile Include="HookManager\MouseEventExtArgs.cs" />
+    <Compile Include="Model\FileSystemCache.cs" />
+    <Compile Include="Services\Implementation\FileSystemFilterUtility.cs" />
     <Compile Include="Model\FileSystemChangeEventArgs.cs" />
     <Compile Include="Model\FileSystemItem.cs" />
     <Compile Include="Model\MatchedFileSystemItem.cs" />
@@ -67,6 +69,7 @@
     <Compile Include="Services\IFileSystemParser.cs" />
     <Compile Include="Services\IKeyboardListener.cs" />
     <Compile Include="Services\IMatchSearcher.cs" />
+    <Compile Include="Services\Implementation\AsyncFileSystemParser.cs" />
     <Compile Include="Services\Implementation\CachedFileSystemParser.cs" />
     <Compile Include="Services\Implementation\CacheSerializer.cs" />
     <Compile Include="Services\Implementation\FileSystemListener.cs" />
@@ -84,6 +87,7 @@
     <Compile Include="Services\INavigationServiceBuilder.cs" />
     <Compile Include="Services\ISettingsSerializer.cs" />
     <Compile Include="Utilities\EnumUtility.cs" />
+    <Compile Include="Utilities\ItemEventArgs.cs" />
     <Compile Include="Utilities\ListUtility.cs" />
     <Compile Include="Utilities\StringUtility.cs" />
     <Compile Include="Utilities\DirectoryUtility.cs" />

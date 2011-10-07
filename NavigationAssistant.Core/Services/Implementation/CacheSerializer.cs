@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -36,19 +37,20 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         #region Public Methods
 
-        public void SerializeCache(List<FileSystemItem> cache)
+        public void SerializeCache(FileSystemCache cache)
         {
             //File system path can not contain ?, so this format is not ambiguous
-            string[] lines = cache.Select(GetLine).ToArray();
+            List<string> lines = cache.Items.Select(GetLine).ToList();
+            lines.Insert(0, cache.LastFullScanTime.ToString(CultureInfo.InvariantCulture));
 
             lock (CacheSync)
             {
                 DirectoryUtility.EnsureFolder(Path.GetDirectoryName(_cacheFilePath));
-                File.WriteAllLines(_cacheFilePath, lines);
+                File.WriteAllLines(_cacheFilePath, lines.ToArray());
             }
         }
 
-        public List<FileSystemItem> DeserializeCache()
+        public FileSystemCache DeserializeCache()
         {
             if (!File.Exists(_cacheFilePath))
             {
@@ -57,9 +59,11 @@ namespace NavigationAssistant.Core.Services.Implementation
 
             string[] lines = File.ReadAllLines(_cacheFilePath);
 
-            List<FileSystemItem> result = lines.Select(ParseLine).ToList();
+            List<FileSystemItem> items = lines.Skip(1).Select(ParseLine).ToList();
+            DateTime lastFullScanTime = DateTime.Parse(lines[0], CultureInfo.InvariantCulture);
+            FileSystemCache cache = new FileSystemCache(items, lastFullScanTime);
 
-            return result;
+            return cache;
         }
 
         #endregion
