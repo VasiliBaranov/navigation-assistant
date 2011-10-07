@@ -23,10 +23,6 @@ namespace NavigationAssistant.Core.Model
 
         public List<string> ExcludeFolderTemplates { get; set; }
 
-        public int CacheUpdateDelayInSeconds { get; set; }
-
-        public string CacheFolder { get; set; }
-
         //Keys enumeration is weird, and is serialize in a weird way.
         //E.g. "Control, Shift, M" is serialized as "LButton MButton XButton1 Back Tab Clear Return Enter A D E H I L M Shift Control"
         [XmlIgnore]
@@ -59,8 +55,6 @@ namespace NavigationAssistant.Core.Model
             clone.TotalCommanderPath = TotalCommanderPath;
             clone.FoldersToParse = FoldersToParse;
             clone.ExcludeFolderTemplates = ExcludeFolderTemplates;
-            clone.CacheUpdateDelayInSeconds = CacheUpdateDelayInSeconds;
-            clone.CacheFolder = CacheFolder;
             clone.GlobalKeyCombination = GlobalKeyCombination;
             clone.RunOnStartup = RunOnStartup;
 

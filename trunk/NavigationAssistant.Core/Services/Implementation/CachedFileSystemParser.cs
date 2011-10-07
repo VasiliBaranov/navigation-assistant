@@ -41,7 +41,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private int _updatesCount;
 
-        private int _delayIntervalInSeconds;
+        private const int DelayIntervalInSeconds = 60*5;
 
         #endregion
 
@@ -102,25 +102,17 @@ namespace NavigationAssistant.Core.Services.Implementation
             get { return _fileSystemListener; }
         }
 
-        public int DelayIntervalInSeconds
-        {
-            get { return _delayIntervalInSeconds; }
-            set { _delayIntervalInSeconds = value; }
-        }
-
         #endregion
 
         #region Constructors
 
         public CachedFileSystemParser(IFileSystemParser fileSystemParser,
             ICacheSerializer cacheSerializer,
-            IFileSystemListener fileSystemListener,
-            int delayIntervalInSeconds)
+            IFileSystemListener fileSystemListener)
         {
             _fileSystemParser = fileSystemParser;
             _cacheSerializer = cacheSerializer;
             _fileSystemListener = fileSystemListener;
-            _delayIntervalInSeconds = delayIntervalInSeconds;
             _delayTimer = new Timer();
 
             bool fullCacheUpToDate = ReadFullCache();
@@ -132,7 +124,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             //Set up a timer for initial cache update
             if (!fullCacheUpToDate)
             {
-                RegisterCacheUpdate(_delayIntervalInSeconds);
+                RegisterCacheUpdate(DelayIntervalInSeconds);
             }
         }
 

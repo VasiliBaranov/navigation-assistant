@@ -30,8 +30,6 @@ namespace NavigationAssistant.ViewModel
                 _settings = value;
 
                 OnPropertyChanged("RunOnStartup");
-                OnPropertyChanged("CacheUpdateDelayInSeconds");
-                OnPropertyChanged("CacheFolder");
                 OnPropertyChanged("FoldersToParse");
                 OnPropertyChanged("ExcludeFolderTemplates");
                 OnPropertyChanged("RequireControl");
@@ -51,32 +49,6 @@ namespace NavigationAssistant.ViewModel
             {
                 _settings.RunOnStartup = value;
                 OnPropertyChanged("RunOnStartup");
-            }
-        }
-
-        public int CacheUpdateDelayInMinutes
-        {
-            get
-            {
-                return _settings.CacheUpdateDelayInSeconds / 60;
-            }
-            set
-            {
-                _settings.CacheUpdateDelayInSeconds = value * 60;
-                OnPropertyChanged("CacheUpdateDelayInSeconds");
-            }
-        }
-
-        public string CacheFolder
-        {
-            get
-            {
-                return _settings.CacheFolder;
-            }
-            set
-            {
-                _settings.CacheFolder = value;
-                OnPropertyChanged("CacheFolder");
             }
         }
 

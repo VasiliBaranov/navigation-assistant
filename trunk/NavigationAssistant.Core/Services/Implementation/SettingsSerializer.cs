@@ -156,8 +156,6 @@ namespace NavigationAssistant.Core.Services.Implementation
             Settings settings = new Settings
                                     {
                                         SupportedNavigators = new List<Navigators> {Navigators.TotalCommander, Navigators.WindowsExplorer},
-                                        CacheFolder = Application.CommonAppDataPath,
-                                        CacheUpdateDelayInSeconds = 60*10,
                                         ExcludeFolderTemplates = new List<string> {"obj", "bin", ".svn"},
                                         FoldersToParse = null,
                                         PrimaryNavigator = Navigators.WindowsExplorer,
