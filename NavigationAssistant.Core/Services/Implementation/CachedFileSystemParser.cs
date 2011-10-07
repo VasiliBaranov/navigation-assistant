@@ -19,6 +19,8 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private readonly IFileSystemListener _fileSystemListener;
 
+        private readonly IRegistryService _registryService;
+
         #endregion
 
         #region Supplementary Fields
@@ -104,10 +106,12 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public CachedFileSystemParser(IFileSystemParser fileSystemParser,
             ICacheSerializer cacheSerializer,
-            IFileSystemListener fileSystemListener)
+            IFileSystemListener fileSystemListener,
+            IRegistryService registryService)
         {
             _cacheSerializer = cacheSerializer;
             _fileSystemListener = fileSystemListener;
+            _registryService = registryService;
 
             //It's possible to share one file system parser in this class and in AsyncFileSystemParser
             //(though AsyncFileSystemParser will run on a different thread)
@@ -173,7 +177,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                 {
                     if (_fullCacheUpToDate)
                     {
-                        _fullCache.LastFullScanTime = DateTime.UtcNow;
+                        _fullCache.LastFullScanTime = DateTime.Now;
                     }
                     _cacheSerializer.SerializeCache(_fullCache);
                 }
@@ -203,7 +207,7 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             lock (_cacheSync)
             {
-                _fullCache = new FileSystemCache(_fileSystemParser.GetSubFolders(), DateTime.UtcNow);
+                _fullCache = new FileSystemCache(_fileSystemParser.GetSubFolders(), DateTime.Now);
                 _cacheSerializer.SerializeCache(_fullCache);
                 _fullCacheUpToDate = true;
 
@@ -213,25 +217,14 @@ namespace NavigationAssistant.Core.Services.Implementation
             }
         }
 
-        private static bool CacheUpToDate(FileSystemCache cache)
+        private bool CacheUpToDate(FileSystemCache cache)
         {
-            DateTime lastShutDownTime = GetLastSystemShutDownTime();
+            DateTime lastShutDownTime = _registryService.GetLastSystemShutDownTime();
             DateTime lastCacheWriteTime = cache.LastFullScanTime;
 
             TimeSpan timeDifference = lastShutDownTime - lastCacheWriteTime;
             bool cacheValid = timeDifference.TotalSeconds < CacheValidityPeriodInSeconds;
             return cacheValid;
-        }
-
-        private static DateTime GetLastSystemShutDownTime()
-        {
-            const string keyPath = @"System\CurrentControlSet\Control\Windows";
-            RegistryKey key = Registry.LocalMachine.OpenSubKey(keyPath);
-
-            const string valueName = "ShutdownTime";
-            byte[] val = (byte[]) key.GetValue(valueName);
-            long valueAsLong = BitConverter.ToInt64(val, 0);
-            return DateTime.FromFileTime(valueAsLong);
         }
 
         private bool ReadFullCache()
@@ -253,7 +246,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
                 //Run this method in the main thread, thus freezing it.
                 //Don't set any restrictions on this parsing, as want to grab the entire system.
-                _fullCache = new FileSystemCache(_fileSystemParser.GetSubFolders(), DateTime.UtcNow);
+                _fullCache = new FileSystemCache(_fileSystemParser.GetSubFolders(), DateTime.Now);
                 _cacheSerializer.SerializeCache(_fullCache);
                 fullCacheUpToDate = true;
             }

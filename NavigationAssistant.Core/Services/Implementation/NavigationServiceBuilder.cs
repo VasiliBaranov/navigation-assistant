@@ -70,7 +70,8 @@ namespace NavigationAssistant.Core.Services.Implementation
             ICacheSerializer cacheSerializer = new CacheSerializer();
             IFileSystemParser cachedParser = new CachedFileSystemParser(basicParser,
                                                                         cacheSerializer,
-                                                                        new FileSystemListener());
+                                                                        new FileSystemListener(),
+                                                                        new RegistryService());
 
             cachedParser.ExcludeFolderTemplates = settings.ExcludeFolderTemplates;
             cachedParser.FoldersToParse = settings.FoldersToParse;

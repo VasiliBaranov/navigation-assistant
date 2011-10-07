@@ -69,7 +69,7 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             //Don't set any restrictions on this parsing, as want to grab the entire system.
             List<FileSystemItem> fileSystemItems = _fileSystemParser.GetSubFolders();
-            _fileSystem = new FileSystemCache(fileSystemItems, DateTime.UtcNow);
+            _fileSystem = new FileSystemCache(fileSystemItems, DateTime.Now);
         }
 
         private void HandleSystemParsed(IAsyncResult asyncResult)

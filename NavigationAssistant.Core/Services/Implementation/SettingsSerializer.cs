@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using NavigationAssistant.Core.Model;
 using NavigationAssistant.Core.Utilities;
-using Microsoft.Win32;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
@@ -19,6 +16,13 @@ namespace NavigationAssistant.Core.Services.Implementation
         private const string SettingsFileName = "UserSettings.config";
 
         private static readonly object SettingsSync = new object();
+
+        private readonly IRegistryService _registryService;
+
+        public SettingsSerializer(IRegistryService registryService)
+        {
+            _registryService = registryService;
+        }
 
         #region Public Methods
 
@@ -78,30 +82,12 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public bool GetRunOnStartup()
         {
-            RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run");
-            string navigationAssistantPath = startupKey.GetValue("NavigationAssistant") as string;
-
-            bool runOnStartup = navigationAssistantPath != null;
-            return runOnStartup;
+            return _registryService.GetRunOnStartup();
         }
 
         public void SetRunOnStartup(bool value)
         {
-            RegistryKey startupKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-
-            if (value)
-            {
-                string path = string.Format(CultureInfo.InvariantCulture, "\"{0}\"", Assembly.GetEntryAssembly().Location);
-                startupKey.SetValue("NavigationAssistant", path, RegistryValueKind.String);
-            }
-            else
-            {
-                bool valueExists = GetRunOnStartup();
-                if (valueExists)
-                {
-                    startupKey.DeleteValue("NavigationAssistant");
-                }
-            }
+            _registryService.SetRunOnStartup(value);
         }
 
         #endregion
@@ -168,7 +154,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private string GetTotalCommanderPath()
         {
-            string folder = GetTotalCommanderFolder();
+            string folder = _registryService.GetTotalCommanderFolder();
             if (string.IsNullOrEmpty(folder))
             {
                 return null;
@@ -181,34 +167,6 @@ namespace NavigationAssistant.Core.Services.Implementation
             }
 
             return path;
-        }
-
-        private string GetTotalCommanderFolder()
-        {
-            List<RegistryKey> registryKeys = new List<RegistryKey> {Registry.LocalMachine, Registry.CurrentUser};
-
-            foreach (RegistryKey registryKey in registryKeys)
-            {
-                try
-                {
-                    RegistryKey installDirValue = registryKey.OpenSubKey(@"Software\Ghisler\Total Commander");
-
-                    if (installDirValue != null)
-                    {
-                        string installDir = installDirValue.GetValue("InstallDir") as string;
-                        if (!string.IsNullOrEmpty(installDir) && Directory.Exists(installDir))
-                        {
-                            return installDir;
-                        }
-                    }
-                }
-                catch
-                {
-                    continue;
-                }
-            }
-
-            return null;
         }
 
         #endregion
