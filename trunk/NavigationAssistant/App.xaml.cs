@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
+using NavigationAssistant.Core.Services;
 using NavigationAssistant.Core.Services.Implementation;
 using NavigationAssistant.PresentationServices;
 using NavigationAssistant.PresentationServices.Implementations;
@@ -19,6 +20,7 @@ namespace NavigationAssistant
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             PreventDuplicates();
+            InitializePresenters();
         }
 
         private void PreventDuplicates()
@@ -31,23 +33,28 @@ namespace NavigationAssistant
                 MessageBox.Show("Navigation Assistant is already running");
                 Shutdown();
             }
+        }
 
+        private void InitializePresenters()
+        {
             NavigationWindow navigationWindow = new NavigationWindow();
             MainWindow = navigationWindow;
 
+            ISettingsSerializer settingsSerializer = new SettingsSerializer(new RegistryService());
+
             IPresenter navigationPresenter = new NavigationPresenter(navigationWindow,
-                                     new SettingsSerializer(),
+                                     settingsSerializer,
                                      new KeyboardListener(),
                                      new MatchModelMapper(),
                                      new NavigationServiceBuilder());
 
             TrayView trayView = new TrayView();
-            IPresenter trayPresenter = new TrayIconPresenter(trayView, new SettingsSerializer());
+            IPresenter trayPresenter = new TrayIconPresenter(trayView, settingsSerializer);
 
             SettingsWindow settingsWindow = new SettingsWindow();
-            IPresenter settingsPresenter = new SettingsPresenter(settingsWindow, new SettingsSerializer());
+            IPresenter settingsPresenter = new SettingsPresenter(settingsWindow, settingsSerializer);
 
-            List<IPresenter> presenters = new List<IPresenter> {navigationPresenter, trayPresenter, settingsPresenter};
+            List<IPresenter> presenters = new List<IPresenter> { navigationPresenter, trayPresenter, settingsPresenter };
 
             _presenterManager = new PresenterManager(presenters);
             _presenterManager.Exited += HandleExited;
