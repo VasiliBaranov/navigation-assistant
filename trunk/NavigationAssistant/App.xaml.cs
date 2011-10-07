@@ -5,6 +5,7 @@ using NavigationAssistant.PresentationServices;
 using NavigationAssistant.PresentationServices.Implementations;
 using NavigationAssistant.Presenters;
 using NavigationAssistant.Views;
+using NavigationAssistant.Views.Implementation;
 
 namespace NavigationAssistant
 {

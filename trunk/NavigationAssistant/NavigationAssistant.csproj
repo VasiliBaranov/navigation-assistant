@@ -65,10 +65,10 @@
     <Compile Include="Presenters\TrayIconPresenter.cs" />
     <Compile Include="Utilities\ItemEventArgs.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
-    <Compile Include="Views\AdvancedSettingsControl.xaml.cs">
+    <Compile Include="Views\Implementation\AdvancedSettingsControl.xaml.cs">
       <DependentUpon>AdvancedSettingsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\BasicSettingsControl.xaml.cs">
+    <Compile Include="Views\Implementation\BasicSettingsControl.xaml.cs">
       <DependentUpon>BasicSettingsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Constants.cs" />
@@ -76,7 +76,7 @@
     <Compile Include="Views\ISettingsView.cs" />
     <Compile Include="Views\ITrayView.cs" />
     <Compile Include="Views\IView.cs" />
-    <Compile Include="Views\SettingsWindow.xaml.cs">
+    <Compile Include="Views\Implementation\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="PresentationServices\IMatchModelMapper.cs" />
@@ -105,16 +105,16 @@
     <Compile Include="ViewModel\NavigationModel.cs" />
     <Compile Include="ViewModel\NavigatorModel.cs" />
     <Compile Include="ViewModel\SettingsModel.cs" />
-    <Compile Include="Views\TrayView.cs" />
-    <Page Include="Views\AdvancedSettingsControl.xaml">
+    <Compile Include="Views\Implementation\TrayView.cs" />
+    <Page Include="Views\Implementation\AdvancedSettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\BasicSettingsControl.xaml">
+    <Page Include="Views\Implementation\BasicSettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\NavigationWindow.xaml">
+    <Page Include="Views\Implementation\NavigationWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -122,11 +122,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Views\NavigationWindow.xaml.cs">
+    <Compile Include="Views\Implementation\NavigationWindow.xaml.cs">
       <DependentUpon>NavigationWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\SettingsWindow.xaml">
+    <Page Include="Views\Implementation\SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
