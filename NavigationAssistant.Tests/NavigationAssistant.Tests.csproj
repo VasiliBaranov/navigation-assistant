@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CacheSerializerTests.cs" />
     <Compile Include="FileSystemParserTests.cs" />
     <Compile Include="MatchSearcherTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

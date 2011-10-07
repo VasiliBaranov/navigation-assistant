@@ -33,6 +33,11 @@ namespace NavigationAssistant.Core.Services.Implementation
             _cacheFilePath = Path.Combine(Application.CommonAppDataPath, "Cache.txt");
         }
 
+        public CacheSerializer(string cacheFilePath)
+        {
+            _cacheFilePath = cacheFilePath;
+        }
+
         #endregion
 
         #region Public Methods
