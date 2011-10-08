@@ -10,6 +10,8 @@ namespace NavigationAssistant.Core.Services
 
         void SetRunOnStartup(bool value);
 
+        void DeleteRunOnStartup();
+
         string GetTotalCommanderFolder();
     }
 }
