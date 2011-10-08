@@ -9,6 +9,19 @@ namespace NavigationAssistant.Core.Services.Implementation
 {
     public class RegistryService : IRegistryService
     {
+        private readonly string _assemblyPath;
+
+        public RegistryService()
+        {
+            _assemblyPath = Assembly.GetEntryAssembly().Location;
+        }
+
+        //This constructor is needed just for unit tests (where Assembly.GetEntryAssembly() is null).
+        public RegistryService(string assemblyPath)
+        {
+            _assemblyPath = assemblyPath;
+        }
+
         public DateTime GetLastSystemShutDownTime()
         {
             const string keyPath = @"System\CurrentControlSet\Control\Windows";
@@ -35,7 +48,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
             if (value)
             {
-                string path = string.Format(CultureInfo.InvariantCulture, "\"{0}\"", Assembly.GetEntryAssembly().Location);
+                string path = string.Format(CultureInfo.InvariantCulture, "\"{0}\"", _assemblyPath);
                 startupKey.SetValue("NavigationAssistant", path, RegistryValueKind.String);
             }
             else
@@ -46,6 +59,11 @@ namespace NavigationAssistant.Core.Services.Implementation
                     startupKey.DeleteValue("NavigationAssistant");
                 }
             }
+        }
+
+        public void DeleteRunOnStartup()
+        {
+            SetRunOnStartup(false);
         }
 
         public string GetTotalCommanderFolder()

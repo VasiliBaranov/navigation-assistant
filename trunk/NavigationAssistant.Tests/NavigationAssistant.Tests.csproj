@@ -53,6 +53,7 @@
     <Compile Include="FileSystemParserTests.cs" />
     <Compile Include="MatchSearcherTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegistryServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NavigationAssistant.Core\NavigationAssistant.Core.csproj">
