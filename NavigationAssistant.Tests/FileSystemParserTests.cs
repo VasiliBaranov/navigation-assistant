@@ -162,14 +162,12 @@ namespace NavigationAssistant.Tests
 
         private static void MakeSubFolderHidden()
         {
-            DirectoryInfo folder = new DirectoryInfo(SubFolder);
-            folder.Attributes = folder.Attributes | FileAttributes.Hidden;
+            Utility.MakeFolderHidden(SubFolder);
         }
 
         private static void MakeSubFolderVisible()
         {
-            DirectoryInfo folder = new DirectoryInfo(SubFolder);
-            folder.Attributes = folder.Attributes & ~FileAttributes.Hidden;
+            Utility.MakeFolderVisible(SubFolder);
         }
 
         protected class FileSystemParserWithAction : FileSystemParser
