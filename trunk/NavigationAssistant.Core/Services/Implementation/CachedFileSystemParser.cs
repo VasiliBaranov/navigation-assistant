@@ -294,7 +294,9 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private static List<string> NormalizeFolders(IEnumerable<string> folders)
         {
-            return folders.Select(StringUtility.MakeFirstLetterUppercase).ToList();
+            return folders
+                .Select(StringUtility.MakeFirstLetterUppercase)
+                .Select(s=>s.TrimEnd('\\')).ToList();
         }
 
         #endregion

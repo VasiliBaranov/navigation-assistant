@@ -28,6 +28,11 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public static List<Regex> GetExcludeRegexes(List<string> excludeFolderTemplates)
         {
+            if (excludeFolderTemplates== null)
+            {
+                return new List<Regex>();
+            }
+
             List<Regex> excludeRegexes = excludeFolderTemplates.Select(t => new Regex(t, RegexOptions.IgnoreCase)).ToList();
             return excludeRegexes;
         }
