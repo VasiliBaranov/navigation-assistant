@@ -223,6 +223,16 @@ namespace NavigationAssistant.Tests
             Assert.That(actualSettings.RunOnStartup, Is.False);
         }
 
+        [Test]
+        public void Deserialize_InvalidFile_ReturnDefaultSettings()
+        {
+            DirectoryUtility.EnsureClearFolder(Path.GetDirectoryName(SettingsFilePath));
+            File.WriteAllText(SettingsFilePath, "asdasdasd");
+            Settings actualSettings = _settingsSerializer.Deserialize();
+
+            Assert.That(actualSettings.GlobalKeyCombination, Is.EqualTo(Keys.Control | Keys.Shift | Keys.M));
+        }
+
         private class FakeRegistryService : IRegistryService
         {
             #region Properties
