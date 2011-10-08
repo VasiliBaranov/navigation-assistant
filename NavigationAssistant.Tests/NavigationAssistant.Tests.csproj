@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CacheSerializerTests.cs" />
+    <Compile Include="FileSystemFilterUtilityTests.cs" />
     <Compile Include="FileSystemListenerTests.cs" />
     <Compile Include="FileSystemParserTests.cs" />
     <Compile Include="KeyboardListenerTests.cs" />

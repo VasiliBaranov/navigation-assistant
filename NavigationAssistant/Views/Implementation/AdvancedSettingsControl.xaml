@@ -50,7 +50,7 @@
         <TextBox Name="FoldersToParseTextBox" Style="{StaticResource Field}" Text="{Binding Path=FoldersToParse}"/>
 
         <TextBlock Grid.Row="1" Name="ExcludeFolderTemplatesLabel" Text="Exclude Folder Templates" 
-                   ToolTip="Directories to be ignored while displaying matches, e.g. &quot;temp&quot;, &quot;Recycle Bin&quot;. Each entry is a regular expression."/>
+                   ToolTip="Directories to be ignored while displaying matches, e.g. &quot;temp&quot;, &quot;Recycle Bin&quot;. Each entry is a case-insensitive regular expression."/>
         <TextBox Grid.Row="1" Name="ExcludeFolderTemplatesTextBox" Style="{StaticResource Field}" Text="{Binding Path=ExcludeFolderTemplates}"/>
 
         <TextBlock Grid.Row="4" Name="RunOnStartupLabel" Text="Run On Startup"
