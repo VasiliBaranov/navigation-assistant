@@ -19,7 +19,8 @@
     <StackPanel>
         <GroupBox Name="PrimaryNavigatorsGroupBox" 
                   Header="Primary Navigator"
-                  Style="{StaticResource SettingBase}">
+                  Style="{StaticResource SettingBase}"
+                  ToolTip="Program to start when Navigation Assistant search window has not been opened in any of the supported navigators.">
             <ItemsControl x:Name="PrimaryNavigators" 
                  ItemsSource="{Binding Path=PrimaryNavigatorModels}" 
                  Style="{StaticResource GroupBoxList}">
@@ -36,7 +37,8 @@
 
         <GroupBox Name="SupportedNavigatorsGroupBox" 
                   Header="Supported Navigators"
-                  Style="{StaticResource SettingBase}">
+                  Style="{StaticResource SettingBase}"
+                  ToolTip="Programs you would like to be assisted in.">
             <ItemsControl x:Name="SupportedNavigators" 
                  ItemsSource="{Binding Path=SupportedNavigatorModels}" 
                  Style="{StaticResource GroupBoxList}">
@@ -53,6 +55,7 @@
 
         <TextBlock Name="TotalCommanderPathLabel" 
                    Text="Total Commander Path" 
+                   ToolTip="Path to the Total Commander executable."
                    Style="{StaticResource SettingBase}" />
         <TextBox Name="TotalCommanderPathBox" 
                  Text="{Binding Path=TotalCommanderPath}" 

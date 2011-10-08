@@ -45,16 +45,20 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Name="FoldersToParseLabel" Text="Folders To Parse" />
+        <TextBlock Name="FoldersToParseLabel" Text="Folders To Parse" 
+                   ToolTip="Folders to parse (i.e. root folders) when searching for folder matches. If a folder path contains spaces, enclose it in double quotes, e.g. &quot;C:\Documents and Settings&quot;."/>
         <TextBox Name="FoldersToParseTextBox" Style="{StaticResource Field}" Text="{Binding Path=FoldersToParse}"/>
 
-        <TextBlock Grid.Row="1" Name="ExcludeFolderTemplatesLabel" Text="Exclude Folder Templates" />
+        <TextBlock Grid.Row="1" Name="ExcludeFolderTemplatesLabel" Text="Exclude Folder Templates" 
+                   ToolTip="Directories to be ignored while displaying matches, e.g. &quot;temp&quot;, &quot;Recycle Bin&quot;. Each entry is a regular expression."/>
         <TextBox Grid.Row="1" Name="ExcludeFolderTemplatesTextBox" Style="{StaticResource Field}" Text="{Binding Path=ExcludeFolderTemplates}"/>
 
-        <TextBlock Grid.Row="4" Name="RunOnStartupLabel" Text="Run On Startup"/>
+        <TextBlock Grid.Row="4" Name="RunOnStartupLabel" Text="Run On Startup"
+                   ToolTip="Determines whether you would like Navigation Assistant be run on Windows startup. Warning: if this option is off, the program will try to parse computer folders each time you start the Navigation Assistant."/>
         <CheckBox Grid.Row="4" Name="RunOnStartupCheckBox" Style="{StaticResource Field}" IsChecked="{Binding Path=RunOnStartup}"/>
 
-        <TextBlock Grid.Row="5" Name="KeyCombinationLabel" Text="Key Combination"/>
+        <TextBlock Grid.Row="5" Name="KeyCombinationLabel" Text="Key Combination"
+                   ToolTip="Key combination that brings the search window to the foreground."/>
         <StackPanel Grid.Row="5" Style="{StaticResource KeysField}">
             <TextBlock Name="RequireControlLabel" Text="Ctrl"/>
             <CheckBox Name="RequireControlBox" IsChecked="{Binding Path=RequireControl}" Style="{StaticResource KeyModifier}" />
