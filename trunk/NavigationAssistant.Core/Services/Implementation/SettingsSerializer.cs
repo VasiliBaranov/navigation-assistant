@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -13,44 +14,44 @@ namespace NavigationAssistant.Core.Services.Implementation
     //with custom xml serialization of settings to user folders.
     public class SettingsSerializer : ISettingsSerializer
     {
+        #region Fields
+
         private const string SettingsFileName = "UserSettings.config";
 
         private static readonly object SettingsSync = new object();
 
         private readonly IRegistryService _registryService;
 
+        private readonly string _settingsFilePath;
+
+        #endregion
+
+        #region Constructors
+
         public SettingsSerializer(IRegistryService registryService)
         {
             _registryService = registryService;
+            _settingsFilePath = Path.Combine(Application.LocalUserAppDataPath, SettingsFileName);
         }
+
+        public SettingsSerializer(IRegistryService registryService, string settingsFilePath)
+        {
+            _registryService = registryService;
+            _settingsFilePath = settingsFilePath;
+        }
+
+        #endregion
 
         #region Public Methods
 
         public Settings Deserialize()
         {
-            string settingsFileName = GetSettingsFileName(false);
-
-            Settings settings;
-            bool settingsAreDefault = !File.Exists(settingsFileName);
-            if (settingsAreDefault)
-            {
-                settings = GetDefaultSettings();
-            }
-            else
-            {
-                lock (SettingsSync)
-                {
-                    XmlSerializer serializer = new XmlSerializer(typeof(Settings));
-                    using (StreamReader reader = new StreamReader(settingsFileName))
-                    {
-                        settings = serializer.Deserialize(reader) as Settings;
-                    }
-                }
-            }
+            bool settingsAreDefault = !File.Exists(_settingsFilePath);
+            Settings settings = settingsAreDefault ? GetDefaultSettings() : DeserializeXml();
 
             settings.RunOnStartup = GetRunOnStartup();
 
-            ValidateTotalCommanderPath(settings, settingsAreDefault);
+            ValidateTotalCommanderPath(settings);
 
             return settings;
         }
@@ -63,13 +64,13 @@ namespace NavigationAssistant.Core.Services.Implementation
                 return validationResult;
             }
 
-            string settingsFileName = GetSettingsFileName(true);
+            DirectoryUtility.EnsureFolder(Path.GetDirectoryName(_settingsFilePath));
 
             XmlSerializer serializer = new XmlSerializer(typeof (Settings));
 
             lock (SettingsSync)
             {
-                using (StreamWriter writer = new StreamWriter(settingsFileName, false))
+                using (StreamWriter writer = new StreamWriter(_settingsFilePath, false))
                 {
                     serializer.Serialize(writer, settings);
                 }
@@ -94,11 +95,34 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         #region Non Public Methods
 
+        private Settings DeserializeXml()
+        {
+            Settings settings;
+            lock (SettingsSync)
+            {
+                try
+                {
+                    XmlSerializer serializer = new XmlSerializer(typeof(Settings));
+                    using (StreamReader reader = new StreamReader(_settingsFilePath))
+                    {
+                        settings = serializer.Deserialize(reader) as Settings;
+                    }
+                }
+                catch (Exception)
+                {
+                    settings = GetDefaultSettings();
+                }
+            }
+            return settings;
+        }
+
         private static ValidationResult ValidateSettings(Settings settings)
         {
             List<string> errorKeys = new List<string>();
 
-            bool totalCommanderSupported = settings.SupportedNavigators.Contains(Navigators.TotalCommander);
+            bool totalCommanderSupported = settings.SupportedNavigators != null &&
+                                           settings.SupportedNavigators.Contains(Navigators.TotalCommander);
+
             bool totalCommanderPathValid = !string.IsNullOrEmpty(settings.TotalCommanderPath) &&
                                            File.Exists(settings.TotalCommanderPath);
 
@@ -110,30 +134,13 @@ namespace NavigationAssistant.Core.Services.Implementation
             return new ValidationResult(errorKeys);
         }
 
-        private static string GetSettingsFileName(bool ensureFolder)
-        {
-            string settingsFolder = Application.LocalUserAppDataPath;
-            if (ensureFolder)
-            {
-                DirectoryUtility.EnsureFolder(settingsFolder);
-            }
-
-            return Path.Combine(settingsFolder, SettingsFileName);
-        }
-
         //This check is needed, as Total Commander may be deleted or moved since the last settings save.
         //Also, registry may contain an outdated value.
-        private void ValidateTotalCommanderPath(Settings settings, bool settingsAreDefault)
+        private void ValidateTotalCommanderPath(Settings settings)
         {
-            if (string.IsNullOrEmpty(settings.TotalCommanderPath))
+            if (string.IsNullOrEmpty(settings.TotalCommanderPath) || !File.Exists(settings.TotalCommanderPath))
             {
-                return;
-            }
-
-            if (!File.Exists(settings.TotalCommanderPath))
-            {
-                string fallbackValue = settingsAreDefault ? null : GetTotalCommanderPath();
-                settings.TotalCommanderPath = fallbackValue;
+                settings.TotalCommanderPath = GetTotalCommanderPath();
             }
         }
 
