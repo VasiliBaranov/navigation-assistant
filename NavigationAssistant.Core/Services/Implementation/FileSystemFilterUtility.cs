@@ -12,6 +12,11 @@ namespace NavigationAssistant.Core.Services.Implementation
         public static List<FileSystemItem> FilterCache(List<FileSystemItem> items,
                                                         List<string> rootFolders, List<string> excludeFolderTemplates)
         {
+            if (ListUtility.IsNullOrEmpty(items))
+            {
+                return new List<FileSystemItem>();
+            }
+
             List<Regex> excludeRegexes = GetExcludeRegexes(excludeFolderTemplates);
 
             List<FileSystemItem> filteredItems = items
@@ -28,7 +33,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public static List<Regex> GetExcludeRegexes(List<string> excludeFolderTemplates)
         {
-            if (excludeFolderTemplates== null)
+            if (ListUtility.IsNullOrEmpty(excludeFolderTemplates))
             {
                 return new List<Regex>();
             }
@@ -49,6 +54,11 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private static bool ShouldBeExcluded(FileSystemItem item, List<Regex> excludeRegexes)
         {
+            if (ListUtility.IsNullOrEmpty(excludeRegexes))
+            {
+                return false;
+            }
+
             List<string> foldersInPath = DirectoryUtility.SplitPath(item.FullPath);
 
             foreach (string folder in foldersInPath)

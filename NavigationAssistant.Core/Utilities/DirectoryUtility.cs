@@ -45,6 +45,11 @@ namespace NavigationAssistant.Core.Utilities
 
         public static List<string> SplitPath(string path)
         {
+            if (string.IsNullOrEmpty(path))
+            {
+                return new List<string>();
+            }
+
             path = Path.GetFullPath(path);
 
             List<string> folders = path

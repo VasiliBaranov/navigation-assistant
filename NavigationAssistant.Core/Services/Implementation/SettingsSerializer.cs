@@ -58,6 +58,11 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public ValidationResult Serialize(Settings settings)
         {
+            if (settings == null)
+            {
+                throw new ArgumentNullException("settings");
+            }
+
             ValidationResult validationResult = ValidateSettings(settings);
             if (validationResult.ErrorKeys.Count > 0)
             {
