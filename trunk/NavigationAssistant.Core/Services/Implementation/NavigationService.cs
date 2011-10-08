@@ -74,6 +74,11 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public void NavigateTo(string path, ApplicationWindow hostWindow)
         {
+            if (_supportedExplorerManagers == null || _primaryExplorerManager == null)
+            {
+                throw new InvalidOperationException("Please specify supported explorer managers and primary explorer manager.");
+            }
+
             IExplorer explorer = null;
             foreach (IExplorerManager explorerManager in _supportedExplorerManagers)
             {

@@ -65,6 +65,11 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public static void UpdateFolders(List<FileSystemItem> folders, FileSystemChangeEventArgs e, Predicate<FileSystemItem> isCorrectPredicate)
         {
+            if (folders == null || e == null)
+            {
+                return;
+            }
+
             bool changed = false;
 
             if (!String.IsNullOrEmpty(e.OldFullPath))
@@ -132,6 +137,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             _fileSystemListener.StartListening(FoldersToParse);
         }
 
+        //Introduced for testing purposes only.
         protected virtual List<FileSystemItem> ProcessSubFolders(List<FileSystemItem> subfolders)
         {
             return subfolders;

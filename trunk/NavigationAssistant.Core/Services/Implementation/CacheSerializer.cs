@@ -33,6 +33,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             _cacheFilePath = Path.Combine(Application.CommonAppDataPath, "Cache.txt");
         }
 
+        //For tests only
         public CacheSerializer(string cacheFilePath)
         {
             _cacheFilePath = cacheFilePath;
@@ -44,6 +45,11 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public void SerializeCache(FileSystemCache cache)
         {
+            if (cache == null || cache.Items == null)
+            {
+                throw new ArgumentNullException("cache");
+            }
+
             //File system path can not contain ?, so this format is not ambiguous
             List<string> lines = cache.Items.Select(GetLine).ToList();
             lines.Insert(0, cache.LastFullScanTime.ToString(CultureInfo.InvariantCulture));

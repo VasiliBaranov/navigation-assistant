@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NavigationAssistant.Core.Model;
 
@@ -10,6 +11,11 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public INavigationService BuildNavigationService(Settings settings)
         {
+            if (settings == null)
+            {
+                throw new ArgumentNullException("settings");
+            }
+
             IFileSystemParser parser = CreateParser(settings);
 
             IExplorerManager primaryExplorerManager = CreateExplorerManager(settings.PrimaryNavigator, settings);
@@ -28,6 +34,16 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public void UpdateNavigationSettings(INavigationService navigationService, Settings settings)
         {
+            if (navigationService == null)
+            {
+                throw new ArgumentNullException("navigationService");
+            }
+
+            if (settings == null)
+            {
+                throw new ArgumentNullException("settings");
+            }
+
             IExplorerManager primaryExplorerManager = CreateExplorerManager(settings.PrimaryNavigator, settings);
             List<IExplorerManager> supportedExplorerManagers = CreateSupportedExplorerManagers(settings, primaryExplorerManager);
 
