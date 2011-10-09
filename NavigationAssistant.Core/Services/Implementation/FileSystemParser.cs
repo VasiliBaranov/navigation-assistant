@@ -25,11 +25,17 @@ namespace NavigationAssistant.Core.Services.Implementation
             _fileSystemListener = fileSystemListener;
         }
 
+        public FileSystemParser(IFileSystemListener fileSystemListener, List<string> foldersToParse)
+        {
+            _fileSystemListener = fileSystemListener;
+            FoldersToParse = foldersToParse;
+        }
+
         #endregion
 
         #region Properties
 
-        //Note: currently these proeprties are not used in this class, as it is always called with nulls.
+        //Note: currently this proeprty is not used in this class
         public List<string> ExcludeFolderTemplates { get; set; }
 
         public List<string> FoldersToParse { get; set; }
@@ -40,6 +46,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public List<FileSystemItem> GetSubFolders()
         {
+            _fileSystemChangeEvents = new List<FileSystemChangeEventArgs>();
             Thread fileSystemListenerThread = new Thread(RunListener);
             fileSystemListenerThread.Start();
 
@@ -131,9 +138,6 @@ namespace NavigationAssistant.Core.Services.Implementation
         private void RunListener()
         {
             _fileSystemListener.FolderSystemChanged += HandleFolderSystemChanged;
-
-            _fileSystemChangeEvents = new List<FileSystemChangeEventArgs>();
-
             _fileSystemListener.StartListening(FoldersToParse);
         }
 

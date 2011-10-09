@@ -16,7 +16,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private delegate void ParseFileSystemDelegate();
 
-        private const int DelayIntervalInSeconds = 60 * 5;
+        private readonly int _delayIntervalInSeconds = 60 * 5;
 
         private FileSystemCache _fileSystem;
 
@@ -32,13 +32,20 @@ namespace NavigationAssistant.Core.Services.Implementation
             _delayTimer = new Timer();
         }
 
+        public AsyncFileSystemParser(IFileSystemParser fileSystemParser, int delayIntervalInSeconds)
+        {
+            _fileSystemParser = fileSystemParser;
+            _delayTimer = new Timer();
+            _delayIntervalInSeconds = delayIntervalInSeconds;
+        }
+
         #endregion
 
         #region Public Methods
 
         public void BeginParsing()
         {
-            RegisterCacheUpdate(DelayIntervalInSeconds);
+            RegisterCacheUpdate(_delayIntervalInSeconds);
         }
 
         #endregion
@@ -47,7 +54,15 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private void RegisterCacheUpdate(int delayIntervalInSeconds)
         {
-            _delayTimer.Interval = delayIntervalInSeconds * 1000;
+            if (delayIntervalInSeconds == 0)
+            {
+                ParseFileSystemAsynchronously();
+                return;
+            }
+
+            int delayIntervalInMilliseconds = delayIntervalInSeconds * 1000;
+
+            _delayTimer.Interval = delayIntervalInMilliseconds;
             _delayTimer.Elapsed += HandleDelayFinished;
 
             //should raise the System.Timers.Timer.Elapsed event only once

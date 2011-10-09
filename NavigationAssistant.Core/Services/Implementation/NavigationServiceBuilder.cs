@@ -82,12 +82,15 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private static IFileSystemParser CreateParser(Settings settings)
         {
+            //Don't use the same file system parser for cachedParser and AsyncFileSystemParser,
+            //as AsyncFileSystemParser will operate on a different thread.
             IFileSystemParser basicParser = new FileSystemParser(new FileSystemListener());
             ICacheSerializer cacheSerializer = new CacheSerializer();
             IFileSystemParser cachedParser = new CachedFileSystemParser(basicParser,
                                                                         cacheSerializer,
                                                                         new FileSystemListener(),
-                                                                        new RegistryService());
+                                                                        new RegistryService(),
+                                                                        new AsyncFileSystemParser(new FileSystemParser(new FileSystemListener())));
 
             cachedParser.ExcludeFolderTemplates = settings.ExcludeFolderTemplates;
             cachedParser.FoldersToParse = settings.FoldersToParse;

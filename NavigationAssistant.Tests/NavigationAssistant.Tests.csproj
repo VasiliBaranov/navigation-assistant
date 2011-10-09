@@ -53,10 +53,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CachedFileSystemParserTests.cs" />
     <Compile Include="CacheSerializerTests.cs" />
+    <Compile Include="FakeRegistryService.cs" />
     <Compile Include="FileSystemFilterUtilityTests.cs" />
     <Compile Include="FileSystemListenerTests.cs" />
     <Compile Include="FileSystemParserTests.cs" />
+    <Compile Include="FileSystemParserWithAction.cs" />
     <Compile Include="KeyboardListenerTests.cs" />
     <Compile Include="MatchSearcherTests.cs" />
     <Compile Include="NavigationServiceTests.cs" />

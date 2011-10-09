@@ -33,7 +33,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             foreach (string path in foldersToListen)
             {
                 FileSystemWatcher fileSystemWatcher = new FileSystemWatcher();
-                fileSystemWatcher.Path = path;
+                fileSystemWatcher.Path = Path.GetFullPath(path);
 
                 NotifyFilters filters = NotifyFilters.DirectoryName;
 

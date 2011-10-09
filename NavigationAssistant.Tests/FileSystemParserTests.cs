@@ -169,23 +169,5 @@ namespace NavigationAssistant.Tests
         {
             Utility.MakeFolderVisible(SubFolder);
         }
-
-        protected class FileSystemParserWithAction : FileSystemParser
-        {
-            private readonly Action _action;
-
-            public FileSystemParserWithAction(IFileSystemListener fileSystemListener, Action action) : base(fileSystemListener)
-            {
-                _action = action;
-            }
-
-            protected override List<FileSystemItem> ProcessSubFolders(List<FileSystemItem> subfolders)
-            {
-                _action();
-                Thread.Sleep(200); //To let file system handlers handle the action.
-
-                return subfolders;
-            }
-        }
     }
 }
