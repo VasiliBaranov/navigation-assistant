@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.Win32;
 using NavigationAssistant.Core.Model;
 using NavigationAssistant.Core.Utilities;
 
@@ -100,6 +99,11 @@ namespace NavigationAssistant.Core.Services.Implementation
             get { return _fileSystemListener; }
         }
 
+        public AsyncFileSystemParser AsyncFileSystemParser
+        {
+            get { return _asyncFileSystemParser; }
+        }
+
         #endregion
 
         #region Constructors
@@ -107,25 +111,23 @@ namespace NavigationAssistant.Core.Services.Implementation
         public CachedFileSystemParser(IFileSystemParser fileSystemParser,
             ICacheSerializer cacheSerializer,
             IFileSystemListener fileSystemListener,
-            IRegistryService registryService)
+            IRegistryService registryService,
+            AsyncFileSystemParser asyncFileSystemParser)
         {
             _cacheSerializer = cacheSerializer;
             _fileSystemListener = fileSystemListener;
             _registryService = registryService;
-
-            //It's possible to share one file system parser in this class and in AsyncFileSystemParser
-            //(though AsyncFileSystemParser will run on a different thread)
-            //as we will use either _fileSystemParser or _asyncFileSystemParser.
             _fileSystemParser = fileSystemParser;
-            _asyncFileSystemParser = new AsyncFileSystemParser(_fileSystemParser);
+            _asyncFileSystemParser = asyncFileSystemParser;
 
             _fullCacheUpToDate = ReadFullCache();
+            //_fullCache = new FileSystemCache(new List<FileSystemItem>(), DateTime.Now);
 
-            // Listen to the changes in the whole system to update the fullCache.
+            //Listen to the changes in the whole system to update the fullCache.
             _fileSystemListener.FolderSystemChanged += HandleFolderSystemChanged;
             _fileSystemListener.StartListening(null);
 
-            //Set up a timer for initial cache update
+            //Parse file system fully (asynchronously).
             if (!_fullCacheUpToDate)
             {
                 StartFileSystemParsing();
@@ -207,7 +209,7 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             lock (_cacheSync)
             {
-                _fullCache = new FileSystemCache(_fileSystemParser.GetSubFolders(), DateTime.Now);
+                _fullCache = e.Item;
                 _cacheSerializer.SerializeCache(_fullCache);
                 _fullCacheUpToDate = true;
 

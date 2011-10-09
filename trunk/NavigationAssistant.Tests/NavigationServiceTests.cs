@@ -10,10 +10,10 @@ namespace NavigationAssistant.Tests
     [TestFixture]
     public class NavigationServiceTests
     {
-        private readonly Mock<IFileSystemParser> _fileSystemParserMock = new Mock<IFileSystemParser>();
-        private readonly Mock<IMatchSearcher> _matchSearcherMock = new Mock<IMatchSearcher>();
-        private readonly Mock<IExplorerManager> _primaryManagerMock = new Mock<IExplorerManager>();
-        private readonly Mock<IExplorerManager> _secondaryManagerMock = new Mock<IExplorerManager>();
+        private Mock<IFileSystemParser> _fileSystemParserMock = new Mock<IFileSystemParser>();
+        private Mock<IMatchSearcher> _matchSearcherMock = new Mock<IMatchSearcher>();
+        private Mock<IExplorerManager> _primaryManagerMock = new Mock<IExplorerManager>();
+        private Mock<IExplorerManager> _secondaryManagerMock = new Mock<IExplorerManager>();
 
         private IExplorerManager _primaryManager;
         private IExplorerManager _secondaryManager;
@@ -24,9 +24,14 @@ namespace NavigationAssistant.Tests
         [SetUp]
         public void SetUp()
         {
+            _fileSystemParserMock = new Mock<IFileSystemParser>();
+            _matchSearcherMock = new Mock<IMatchSearcher>();
+            _primaryManagerMock = new Mock<IExplorerManager>();
+            _secondaryManagerMock = new Mock<IExplorerManager>();
+
             _primaryManager = _primaryManagerMock.Object;
             _secondaryManager = _secondaryManagerMock.Object;
-            _supportedManagers = new List<IExplorerManager> { _primaryManager, _secondaryManager };
+            _supportedManagers = new List<IExplorerManager> {_primaryManager, _secondaryManager};
 
             _navigationService = new NavigationService(_fileSystemParserMock.Object,
                                                        _matchSearcherMock.Object,

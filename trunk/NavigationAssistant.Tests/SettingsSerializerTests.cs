@@ -232,47 +232,5 @@ namespace NavigationAssistant.Tests
 
             Assert.That(actualSettings.GlobalKeyCombination, Is.EqualTo(Keys.Control | Keys.Shift | Keys.M));
         }
-
-        private class FakeRegistryService : IRegistryService
-        {
-            #region Properties
-
-            public DateTime LastSystemShutDownTime { get; set; }
-
-            public bool RunOnStartUp { get; set; }
-
-            public string TotalCommanderFolder { get; set; }
-
-            #endregion
-
-            #region Public Methods
-
-            public DateTime GetLastSystemShutDownTime()
-            {
-                return LastSystemShutDownTime;
-            }
-
-            public bool GetRunOnStartup()
-            {
-                return RunOnStartUp;
-            }
-
-            public void SetRunOnStartup(bool value)
-            {
-                RunOnStartUp = value;
-            }
-
-            public void DeleteRunOnStartup()
-            {
-                RunOnStartUp = false;
-            }
-
-            public string GetTotalCommanderFolder()
-            {
-                return TotalCommanderFolder;
-            }
-
-            #endregion
-        }
     }
 }
