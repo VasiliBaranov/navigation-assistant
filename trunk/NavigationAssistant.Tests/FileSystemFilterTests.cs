@@ -1,21 +1,30 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
 using NavigationAssistant.Core.Model;
+using NavigationAssistant.Core.Services;
 using NavigationAssistant.Core.Services.Implementation;
 
 namespace NavigationAssistant.Tests
 {
     [TestFixture]
-    public class FileSystemFilterUtilityTests
+    public class FileSystemFilterTests
     {
+        private IFileSystemFilter _fileSystemFilter;
+
+        [SetUp]
+        private void SetUp()
+        {
+            _fileSystemFilter = new FileSystemFilter();
+        }
+
         [Test]
         [TestCaseSource("GetTestCases")]
-        public void TestCorrectness(FileSystemItem item, List<string> rootFolders, List<string> excludeFolderTemplates,
-            bool isCorrect)
+        public void TestCorrectness(FileSystemItem item, List<string> rootFolders, List<string> excludeFolderTemplates, bool isCorrect)
         {
-            List<FileSystemItem> filteredItems = FileSystemFilterUtility.FilterCache(new List<FileSystemItem> {item},
-                                                                                     rootFolders,
-                                                                                     excludeFolderTemplates);
+            _fileSystemFilter.FoldersToParse = rootFolders;
+            _fileSystemFilter.ExcludeFolderTemplates = excludeFolderTemplates;
+
+            List<FileSystemItem> filteredItems = _fileSystemFilter.FilterItems(new List<FileSystemItem> { item });
 
             int expectedFilteredItemsCount = isCorrect ? 1 : 0;
             Assert.That(filteredItems.Count, Is.EqualTo(expectedFilteredItemsCount));
@@ -46,10 +55,40 @@ namespace NavigationAssistant.Tests
             testCaseData = new TestCaseData(item, rootFolders, excludeFolderTemplates, false).SetName("Item with incorrect root not returned.");
             yield return testCaseData;
 
+            item = new FileSystemItem(@"C:\my doc");
+            rootFolders = new List<string> { "C:\\my" };
+            excludeFolderTemplates = null;
+            testCaseData = new TestCaseData(item, rootFolders, excludeFolderTemplates, false).SetName("Item with root, correct incompletely, not returned.");
+            yield return testCaseData;
+
+            item = new FileSystemItem(@"C:\my doc\\");
+            rootFolders = new List<string> { "C:\\my doc" };
+            excludeFolderTemplates = null;
+            testCaseData = new TestCaseData(item, rootFolders, excludeFolderTemplates, true).SetName("Item with correct root, but with slashes, returned.");
+            yield return testCaseData;
+
+            item = new FileSystemItem(@"C:\my doc");
+            rootFolders = new List<string> { "C:\\my doc\\" };
+            excludeFolderTemplates = null;
+            testCaseData = new TestCaseData(item, rootFolders, excludeFolderTemplates, true).SetName("Item with correct root, but without slashes, returned.");
+            yield return testCaseData;
+
+            item = new FileSystemItem(@"C:\my doc\\");
+            rootFolders = new List<string> { "C:\\my doc\\" };
+            excludeFolderTemplates = null;
+            testCaseData = new TestCaseData(item, rootFolders, excludeFolderTemplates, true).SetName("Item with correct root (when root and item have slashes) returned.");
+            yield return testCaseData;
+
             item = new FileSystemItem(@"C:\my documents\temp");
             rootFolders = null;
             excludeFolderTemplates = new List<string>{"my doc.*"};
             testCaseData = new TestCaseData(item, rootFolders, excludeFolderTemplates, false).SetName("Item with excluded folder not returned.");
+            yield return testCaseData;
+
+            item = new FileSystemItem(@"C:\my documents\temp");
+            rootFolders = null;
+            excludeFolderTemplates = new List<string> { "my doc" };
+            testCaseData = new TestCaseData(item, rootFolders, excludeFolderTemplates, true).SetName("Item with excluded folder not matched completely is returned.");
             yield return testCaseData;
 
             item = new FileSystemItem(@"C:\MY documents\temp");

@@ -62,6 +62,8 @@ namespace NavigationAssistant.Core.Services.Implementation
                 fileSystemWatcher.Created -= HandleFolderCreated;
                 fileSystemWatcher.Deleted -= HandleFolderDeleted;
                 fileSystemWatcher.Renamed -= HandleFolderRenamed;
+
+                fileSystemWatcher.Dispose();
             }
 
             _fileSystemWatchers.Clear();
