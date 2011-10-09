@@ -47,6 +47,10 @@ namespace NavigationAssistant.Core.Services.Implementation
         public List<FileSystemItem> GetSubFolders()
         {
             _fileSystemChangeEvents = new List<FileSystemChangeEventArgs>();
+
+            //Here we register a handler to file system events on a new thread to ensure that they are handled on this new thread,
+            //which will not be occupied with GetSubfolderDirectly method.
+            //Can not use BeginInvoke/EndInvoke model, as then events sometimes may be put into the main thread queue.
             Thread fileSystemListenerThread = new Thread(RunListener);
             fileSystemListenerThread.Start();
 

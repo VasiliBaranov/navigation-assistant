@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
+using System.IO;
 using NavigationAssistant.Core.Model;
 using NavigationAssistant.Core.Utilities;
 
@@ -20,27 +19,23 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private readonly IRegistryService _registryService;
 
+        private readonly IFileSystemFilter _fileSystemFilter;
+
+        private readonly IAsyncFileSystemParser _asyncFileSystemParser;
+
         #endregion
 
         #region Supplementary Fields
 
         private readonly object _cacheSync = new object();
 
-        private List<string> _foldersToParseInitial;
-
-        private const int UpdatesCountToWrite = 500;
+        private readonly int _updatesCountToWrite = 500;
 
         private const int CacheValidityPeriodInSeconds = 60*2;
-
-        private readonly AsyncFileSystemParser _asyncFileSystemParser;
 
         #endregion
 
         #region Data Fields
-
-        private List<string> _excludeFolderTemplates;
-
-        private List<string> _foldersToParse;
 
         private int _updatesCount;
 
@@ -61,11 +56,11 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             get
             {
-                return _excludeFolderTemplates;
+                return _fileSystemFilter.ExcludeFolderTemplates;
             }
             set
             {
-                _excludeFolderTemplates = value;
+                _fileSystemFilter.ExcludeFolderTemplates = value;
                 ResetFilteredCacheItems();
             }
         }
@@ -74,12 +69,11 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             get
             {
-                return _foldersToParseInitial;
+                return _fileSystemFilter.FoldersToParse;
             }
             set
             {
-                _foldersToParse = NormalizeFolders(value);
-                _foldersToParseInitial = value;
+                _fileSystemFilter.FoldersToParse = value;
                 ResetFilteredCacheItems();
             }
         }
@@ -99,7 +93,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             get { return _fileSystemListener; }
         }
 
-        public AsyncFileSystemParser AsyncFileSystemParser
+        public IAsyncFileSystemParser AsyncFileSystemParser
         {
             get { return _asyncFileSystemParser; }
         }
@@ -108,22 +102,36 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         #region Constructors
 
+        //For test purposes
         public CachedFileSystemParser(IFileSystemParser fileSystemParser,
             ICacheSerializer cacheSerializer,
             IFileSystemListener fileSystemListener,
             IRegistryService registryService,
-            AsyncFileSystemParser asyncFileSystemParser)
+            IAsyncFileSystemParser asyncFileSystemParser,
+            int updatesCountToWrite)
+            : this(fileSystemParser, cacheSerializer, fileSystemListener, registryService, asyncFileSystemParser)
+        {
+            _updatesCountToWrite = updatesCountToWrite;
+        }
+
+        public CachedFileSystemParser(IFileSystemParser fileSystemParser,
+            ICacheSerializer cacheSerializer,
+            IFileSystemListener fileSystemListener,
+            IRegistryService registryService,
+            IAsyncFileSystemParser asyncFileSystemParser)
         {
             _cacheSerializer = cacheSerializer;
             _fileSystemListener = fileSystemListener;
             _registryService = registryService;
             _fileSystemParser = fileSystemParser;
             _asyncFileSystemParser = asyncFileSystemParser;
+            _fileSystemFilter = new FileSystemFilter();
 
             _fullCacheUpToDate = ReadFullCache();
             //_fullCache = new FileSystemCache(new List<FileSystemItem>(), DateTime.Now);
 
             //Listen to the changes in the whole system to update the fullCache.
+            //This handler should be bound just after reading the full cache to ensure that _fullCache is initialized.
             _fileSystemListener.FolderSystemChanged += HandleFolderSystemChanged;
             _fileSystemListener.StartListening(null);
 
@@ -147,9 +155,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                 {
                     if (_fullCache != null && _fullCache.Items != null)
                     {
-                        _filteredCacheItems = FileSystemFilterUtility.FilterCache(_fullCache.Items,
-                                                                                  _foldersToParse,
-                                                                                  _excludeFolderTemplates);
+                        _filteredCacheItems = _fileSystemFilter.FilterItems(_fullCache.Items);
                     }
                 }
 
@@ -170,6 +176,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                 // get rid of managed resources
                 _fileSystemParser.Dispose();
                 _fileSystemListener.Dispose();
+                _asyncFileSystemParser.Dispose();
             }
 
             // get rid of unmanaged resources
@@ -246,10 +253,23 @@ namespace NavigationAssistant.Core.Services.Implementation
             {
                 //The application is loaded for the first time (no cache stored on disk).
 
+                string cacheFolder = Path.GetDirectoryName(_cacheSerializer.CacheFilePath);
+                bool cacheFolderExisted = Directory.Exists(cacheFolder);
+
                 //Run this method in the main thread, thus freezing it.
                 //Don't set any restrictions on this parsing, as want to grab the entire system.
                 _fullCache = new FileSystemCache(_fileSystemParser.GetSubFolders(), DateTime.Now);
                 _cacheSerializer.SerializeCache(_fullCache);
+
+                //Updating the cache if cache folder has been created
+                bool cacheFolderExists = Directory.Exists(cacheFolder);
+                bool cacheFolderCreated = !cacheFolderExisted && cacheFolderExists;
+                if (cacheFolderCreated)
+                {
+                    FileSystemChangeEventArgs e = new FileSystemChangeEventArgs(null, cacheFolder);
+                    HandleFolderSystemChanged(this, e);
+                }
+
                 fullCacheUpToDate = true;
             }
 
@@ -266,7 +286,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                 //we try to write it periodically also (to minimize the effect of finalization errors,
                 //e.g. when the computer is shut down unexpectedly).
                 _updatesCount++;
-                if (_updatesCount > UpdatesCountToWrite)
+                if (_updatesCount > _updatesCountToWrite)
                 {
                     _cacheSerializer.SerializeCache(_fullCache);
                     _updatesCount = 0;
@@ -275,7 +295,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                 //Cache may be null if settings (FoldersToParse, etc. have been changed before this update).
                 if (_filteredCacheItems != null)
                 {
-                    Implementation.FileSystemParser.UpdateFolders(_filteredCacheItems, e, IsCorrect);
+                    Implementation.FileSystemParser.UpdateFolders(_filteredCacheItems, e, _fileSystemFilter.IsCorrect);
                 }
             }
         }
@@ -286,19 +306,6 @@ namespace NavigationAssistant.Core.Services.Implementation
             {
                 _filteredCacheItems = null;
             }
-        }
-
-        private bool IsCorrect(FileSystemItem item)
-        {
-            List<Regex> excludeRegexes = FileSystemFilterUtility.GetExcludeRegexes(_excludeFolderTemplates);
-            return FileSystemFilterUtility.IsCorrect(item, _foldersToParse, excludeRegexes);
-        }
-
-        private static List<string> NormalizeFolders(IEnumerable<string> folders)
-        {
-            return folders
-                .Select(StringUtility.MakeFirstLetterUppercase)
-                .Select(s=>s.TrimEnd('\\')).ToList();
         }
 
         #endregion

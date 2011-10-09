@@ -6,7 +6,7 @@ using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
-    public class AsyncFileSystemParser
+    public class AsyncFileSystemParser : IAsyncFileSystemParser
     {
         #region Fields
 
@@ -46,6 +46,11 @@ namespace NavigationAssistant.Core.Services.Implementation
         public void BeginParsing()
         {
             RegisterCacheUpdate(_delayIntervalInSeconds);
+        }
+
+        public void Dispose()
+        {
+            _fileSystemParser.Dispose();
         }
 
         #endregion

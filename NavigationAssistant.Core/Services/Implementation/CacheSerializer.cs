@@ -41,6 +41,15 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         #endregion
 
+        #region Properties
+
+        public string CacheFilePath
+        {
+            get { return _cacheFilePath; }
+        }
+
+        #endregion
+
         #region Public Methods
 
         public void SerializeCache(FileSystemCache cache)
