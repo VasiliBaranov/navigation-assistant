@@ -29,9 +29,33 @@ namespace NavigationAssistant.Tests
         }
 
         [Test]
-        public void MakeFirstLetterUppercase_IsCorrect()
+        [TestCaseSource("GetMakeFirstLetterUppercaseData")]
+        public void MakeFirstLetterUppercase_IsCorrect(string input, string expectedOutput)
         {
-            
+            string actualOutput = StringUtility.MakeFirstLetterUppercase(input);
+
+            Assert.That(actualOutput, Is.EqualTo(expectedOutput));
+        }
+
+        public IEnumerable<TestCaseData> GetMakeFirstLetterUppercaseData()
+        {
+            TestCaseData testCaseData;
+
+            //Null input
+            testCaseData = new TestCaseData(null, null).SetName("Uppercase: Null input");
+            yield return testCaseData;
+
+            //Empty input
+            testCaseData = new TestCaseData(string.Empty, string.Empty).SetName("Uppercase: Empty input");
+            yield return testCaseData;
+
+            //First letter lowercase
+            testCaseData = new TestCaseData("aSd", "ASd").SetName("Uppercase: First letter lowercase");
+            yield return testCaseData;
+
+            //First letter uppercase
+            testCaseData = new TestCaseData("ASd", "ASd").SetName("Uppercase: First letter uppercase");
+            yield return testCaseData;
         }
 
         public IEnumerable<TestCaseData> GetParseQuotedStringData()
@@ -43,49 +67,49 @@ namespace NavigationAssistant.Tests
             //Empty input
             input = string.Empty;
             expectedSubstrings = new List<string>();
-            testCaseData = new TestCaseData(input, expectedSubstrings).SetName("Empty input");
+            testCaseData = new TestCaseData(input, expectedSubstrings).SetName("Parse: Empty input");
             yield return testCaseData;
 
             //Null input
             input = null;
             expectedSubstrings = new List<string>();
-            testCaseData = new TestCaseData(input, expectedSubstrings).SetName("Null input");
+            testCaseData = new TestCaseData(input, expectedSubstrings).SetName("Parse: Null input");
             yield return testCaseData;
 
             //Single string without quotes
             input = "asdasd";
             expectedSubstrings = new List<string> { "asdasd" };
-            testCaseData = new TestCaseData(input, expectedSubstrings).SetName("Single string without quotes");
+            testCaseData = new TestCaseData(input, expectedSubstrings).SetName("Parse: Single string without quotes");
             yield return testCaseData;
 
             //Several strings without quotes
             input = "C:\\asd D:\\sdf";
             expectedSubstrings = new List<string> { "C:\\asd", "D:\\sdf" };
-            testCaseData = new TestCaseData(input, expectedSubstrings).SetName("Several strings without quotes");
+            testCaseData = new TestCaseData(input, expectedSubstrings).SetName("Parse: Several strings without quotes");
             yield return testCaseData;
 
             //Single quoted string
             input = "\"C:\\asd asd\"";
             expectedSubstrings = new List<string> { "C:\\asd asd" };
-            testCaseData = new TestCaseData(input, expectedSubstrings).SetName("Single quoted string");
+            testCaseData = new TestCaseData(input, expectedSubstrings).SetName("Parse: Single quoted string");
             yield return testCaseData;
 
             //Multiple quoted strings
             input = "\"C:\\asd asd\" \"D:\\sdf sdf\"";
             expectedSubstrings = new List<string> { "C:\\asd asd", "D:\\sdf sdf" };
-            testCaseData = new TestCaseData(input, expectedSubstrings).SetName("Multiple quoted strings");
+            testCaseData = new TestCaseData(input, expectedSubstrings).SetName("Parse: Multiple quoted strings");
             yield return testCaseData;
 
             //Mixed quoting (first string quoted)
             input = "\"C:\\asd asd\"D:\\sdf \t \"   D:\\sdf sdf\"    \"D:\\sdf sdf   \"";
             expectedSubstrings = new List<string> { "C:\\asd asd", "D:\\sdf", "   D:\\sdf sdf", "D:\\sdf sdf   " };
-            testCaseData = new TestCaseData(input, expectedSubstrings).SetName("Mixed quoting (first string quoted)");
+            testCaseData = new TestCaseData(input, expectedSubstrings).SetName("Parse: Mixed quoting (first string quoted)");
             yield return testCaseData;
 
             //Mixed quoting (second string quoted)
             input = "  D:\\sdf\"C:\\asd asd\" \t  \" \t D:\\sdf sdf\"    D:\\sdf \t ";
             expectedSubstrings = new List<string> { "D:\\sdf", "C:\\asd asd", " \t D:\\sdf sdf", "D:\\sdf" };
-            testCaseData = new TestCaseData(input, expectedSubstrings).SetName("Mixed quoting (second string quoted)");
+            testCaseData = new TestCaseData(input, expectedSubstrings).SetName("Parse: Mixed quoting (second string quoted)");
             yield return testCaseData;
         }
 
