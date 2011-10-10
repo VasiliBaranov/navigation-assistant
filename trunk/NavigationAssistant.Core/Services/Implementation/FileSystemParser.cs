@@ -16,6 +16,10 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private List<FileSystemChangeEventArgs> _fileSystemChangeEvents;
 
+        private bool _listenerLaunched;
+
+        private readonly object _listenerLaunchSync = new object();
+
         #endregion
 
         #region Constructors
@@ -62,8 +66,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             }
             finally
             {
-                fileSystemListenerThread.Abort();
-                _fileSystemListener.StopListening();
+                AbortListenerThread(fileSystemListenerThread);
             }
 
             foreach (FileSystemChangeEventArgs fileSystemChangeArg in _fileSystemChangeEvents)
@@ -129,6 +132,32 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         #region Non Public Methods
 
+        private void AbortListenerThread(Thread thread)
+        {
+            while (true)
+            {
+                bool listenerLaunched;
+                lock (_listenerLaunchSync)
+                {
+                    listenerLaunched = _listenerLaunched;
+                }
+
+                //Should ALWAYS check whether the code has executed, because (if parsing is very fast)
+                //we may try to abort the thread in the middle of FileSystemWatcher execution,
+                //and it may lead to inconsistent folder permissions/state/writes (especially in unit tests).
+                if (listenerLaunched)
+                {
+                    _fileSystemListener.StopListening();
+                    thread.Abort();
+                    return;
+                }
+                else
+                {
+                    Thread.Sleep(50);
+                }
+            }
+        }
+
         private static int CompareFileSystemItems(FileSystemItem x, FileSystemItem y)
         {
             if (x == null || y == null)
@@ -143,6 +172,11 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             _fileSystemListener.FolderSystemChanged += HandleFolderSystemChanged;
             _fileSystemListener.StartListening(FoldersToParse);
+
+            lock (_listenerLaunchSync)
+            {
+                _listenerLaunched = true;
+            }
         }
 
         //Introduced for testing purposes only.
