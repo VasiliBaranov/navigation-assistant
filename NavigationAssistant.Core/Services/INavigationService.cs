@@ -16,8 +16,8 @@ namespace NavigationAssistant.Core.Services
 
         IMatchSearcher MatchSearcher { get; }
 
-        IExplorerManager PrimaryExplorerManager { get; set; }
+        INavigatorManager PrimaryNavigatorManager { get; set; }
 
-        List<IExplorerManager> SupportedExplorerManagers { get; set; }
+        List<INavigatorManager> SupportedNavigatorManagers { get; set; }
     }
 }

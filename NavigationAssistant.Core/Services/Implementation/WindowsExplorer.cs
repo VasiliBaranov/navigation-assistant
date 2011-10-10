@@ -3,7 +3,7 @@ using SHDocVw;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
-    public class WindowsExplorer : IExplorer
+    public class WindowsExplorer : INavigator
     {
         private readonly InternetExplorer _windowsExplorer;
 

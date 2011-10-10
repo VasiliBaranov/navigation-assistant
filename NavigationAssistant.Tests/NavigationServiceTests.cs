@@ -12,12 +12,12 @@ namespace NavigationAssistant.Tests
     {
         private Mock<IFileSystemParser> _fileSystemParserMock = new Mock<IFileSystemParser>();
         private Mock<IMatchSearcher> _matchSearcherMock = new Mock<IMatchSearcher>();
-        private Mock<IExplorerManager> _primaryManagerMock = new Mock<IExplorerManager>();
-        private Mock<IExplorerManager> _secondaryManagerMock = new Mock<IExplorerManager>();
+        private Mock<INavigatorManager> _primaryManagerMock = new Mock<INavigatorManager>();
+        private Mock<INavigatorManager> _secondaryManagerMock = new Mock<INavigatorManager>();
 
-        private IExplorerManager _primaryManager;
-        private IExplorerManager _secondaryManager;
-        private List<IExplorerManager> _supportedManagers;
+        private INavigatorManager _primaryManager;
+        private INavigatorManager _secondaryManager;
+        private List<INavigatorManager> _supportedManagers;
 
         private INavigationService _navigationService;
 
@@ -26,12 +26,12 @@ namespace NavigationAssistant.Tests
         {
             _fileSystemParserMock = new Mock<IFileSystemParser>();
             _matchSearcherMock = new Mock<IMatchSearcher>();
-            _primaryManagerMock = new Mock<IExplorerManager>();
-            _secondaryManagerMock = new Mock<IExplorerManager>();
+            _primaryManagerMock = new Mock<INavigatorManager>();
+            _secondaryManagerMock = new Mock<INavigatorManager>();
 
             _primaryManager = _primaryManagerMock.Object;
             _secondaryManager = _secondaryManagerMock.Object;
-            _supportedManagers = new List<IExplorerManager> {_primaryManager, _secondaryManager};
+            _supportedManagers = new List<INavigatorManager> {_primaryManager, _secondaryManager};
 
             _navigationService = new NavigationService(_fileSystemParserMock.Object,
                                                        _matchSearcherMock.Object,
@@ -66,10 +66,10 @@ namespace NavigationAssistant.Tests
         {
             ApplicationWindow window = new ApplicationWindow();
 
-            Mock<IExplorer> primaryNavigatorMock = new Mock<IExplorer>();
-            _secondaryManagerMock.Setup(manager => manager.IsExplorer(window)).Returns(false);
-            _primaryManagerMock.Setup(manager => manager.IsExplorer(window)).Returns(false);
-            _primaryManagerMock.Setup(manager => manager.CreateExplorer()).Returns(primaryNavigatorMock.Object);
+            Mock<INavigator> primaryNavigatorMock = new Mock<INavigator>();
+            _secondaryManagerMock.Setup(manager => manager.IsNavigator(window)).Returns(false);
+            _primaryManagerMock.Setup(manager => manager.IsNavigator(window)).Returns(false);
+            _primaryManagerMock.Setup(manager => manager.CreateNavigator()).Returns(primaryNavigatorMock.Object);
 
             _navigationService.NavigateTo("asdasd", window);
             primaryNavigatorMock.Verify(navigator => navigator.NavigateTo("asdasd"));
@@ -80,10 +80,10 @@ namespace NavigationAssistant.Tests
         {
             ApplicationWindow window = new ApplicationWindow();
 
-            Mock<IExplorer> secondaryNavigatorMock = new Mock<IExplorer>();
-            _primaryManagerMock.Setup(manager => manager.IsExplorer(window)).Returns(false);
-            _secondaryManagerMock.Setup(manager => manager.IsExplorer(window)).Returns(true);
-            _secondaryManagerMock.Setup(manager => manager.GetExplorer(window)).Returns(secondaryNavigatorMock.Object);
+            Mock<INavigator> secondaryNavigatorMock = new Mock<INavigator>();
+            _primaryManagerMock.Setup(manager => manager.IsNavigator(window)).Returns(false);
+            _secondaryManagerMock.Setup(manager => manager.IsNavigator(window)).Returns(true);
+            _secondaryManagerMock.Setup(manager => manager.GetNavigator(window)).Returns(secondaryNavigatorMock.Object);
 
             _navigationService.NavigateTo("asdasd", window);
             secondaryNavigatorMock.Verify(navigator => navigator.NavigateTo("asdasd"));

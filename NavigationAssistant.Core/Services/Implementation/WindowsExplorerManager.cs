@@ -8,24 +8,24 @@ using SHDocVw;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
-    public class WindowsExplorerManager : IExplorerManager
+    public class WindowsExplorerManager : INavigatorManager
     {
         private const int MaxWaitSeconds = 10;
 
-        public bool IsExplorer(ApplicationWindow hostWindow)
+        public bool IsNavigator(ApplicationWindow hostWindow)
         {
             InternetExplorer windowsExplorer = GetWindowsExplorer(hostWindow);
             return windowsExplorer != null;
         }
 
-        public IExplorer GetExplorer(ApplicationWindow hostWindow)
+        public INavigator GetNavigator(ApplicationWindow hostWindow)
         {
             InternetExplorer windowsExplorer = GetWindowsExplorer(hostWindow);
 
             return new WindowsExplorer(windowsExplorer);
         }
 
-        public IExplorer CreateExplorer()
+        public INavigator CreateNavigator()
         {
             InternetExplorer windowsExplorer = CreateNewExplorer();
 

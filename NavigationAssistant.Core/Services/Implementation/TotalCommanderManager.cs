@@ -6,7 +6,7 @@ using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
-    public class TotalCommanderManager : IExplorerManager
+    public class TotalCommanderManager : INavigatorManager
     {
         private readonly string _totalCommanderPath;
 
@@ -15,7 +15,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             _totalCommanderPath = Path.GetFullPath(totalCommanderPath);
         }
 
-        public bool IsExplorer(ApplicationWindow hostWindow)
+        public bool IsNavigator(ApplicationWindow hostWindow)
         {
             uint hostProcessId;
             WinApi.GetWindowThreadProcessId(hostWindow.Handle, out hostProcessId);
@@ -27,12 +27,12 @@ namespace NavigationAssistant.Core.Services.Implementation
             return string.Equals(executablePath, _totalCommanderPath, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public IExplorer GetExplorer(ApplicationWindow hostWindow)
+        public INavigator GetNavigator(ApplicationWindow hostWindow)
         {
             return new TotalCommander(hostWindow, _totalCommanderPath, false);
         }
 
-        public IExplorer CreateExplorer()
+        public INavigator CreateNavigator()
         {
             return new TotalCommander(null, _totalCommanderPath, true);
         }

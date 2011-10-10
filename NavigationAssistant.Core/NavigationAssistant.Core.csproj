@@ -65,8 +65,8 @@
     <Compile Include="Model\ValidationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ICacheSerializer.cs" />
-    <Compile Include="Services\IExplorer.cs" />
-    <Compile Include="Services\IExplorerManager.cs" />
+    <Compile Include="Services\INavigator.cs" />
+    <Compile Include="Services\INavigatorManager.cs" />
     <Compile Include="Services\IFileSystemListener.cs" />
     <Compile Include="Services\IFileSystemParser.cs" />
     <Compile Include="Services\IKeyboardListener.cs" />

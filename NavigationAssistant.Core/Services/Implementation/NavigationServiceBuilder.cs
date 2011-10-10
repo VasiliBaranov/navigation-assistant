@@ -18,13 +18,13 @@ namespace NavigationAssistant.Core.Services.Implementation
 
             IFileSystemParser parser = CreateParser(settings);
 
-            IExplorerManager primaryExplorerManager = CreateExplorerManager(settings.PrimaryNavigator, settings);
-            List<IExplorerManager> supportedExplorerManagers = CreateSupportedExplorerManagers(settings, primaryExplorerManager);
+            INavigatorManager primaryNavigatorManager = CreateNavigatorManager(settings.PrimaryNavigator, settings);
+            List<INavigatorManager> supportedNavigatorManagers = CreateSupportedNavigatorManagers(settings, primaryNavigatorManager);
 
             INavigationService navigationAssistant = new NavigationService(parser,
                                                                            new MatchSearcher(),
-                                                                           primaryExplorerManager,
-                                                                           supportedExplorerManagers);
+                                                                           primaryNavigatorManager,
+                                                                           supportedNavigatorManagers);
 
             //Warming up (to fill caches, etc)
             navigationAssistant.GetFolderMatches("temp");
@@ -44,11 +44,11 @@ namespace NavigationAssistant.Core.Services.Implementation
                 throw new ArgumentNullException("settings");
             }
 
-            IExplorerManager primaryExplorerManager = CreateExplorerManager(settings.PrimaryNavigator, settings);
-            List<IExplorerManager> supportedExplorerManagers = CreateSupportedExplorerManagers(settings, primaryExplorerManager);
+            INavigatorManager primaryNavigatorManager = CreateNavigatorManager(settings.PrimaryNavigator, settings);
+            List<INavigatorManager> supportedNavigatorManagers = CreateSupportedNavigatorManagers(settings, primaryNavigatorManager);
 
-            navigationService.PrimaryExplorerManager = primaryExplorerManager;
-            navigationService.SupportedExplorerManagers = supportedExplorerManagers;
+            navigationService.PrimaryNavigatorManager = primaryNavigatorManager;
+            navigationService.SupportedNavigatorManagers = supportedNavigatorManagers;
 
             CachedFileSystemParser parser = navigationService.FileSystemParser as CachedFileSystemParser;
             if (parser != null)
@@ -65,19 +65,19 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         #region Non Public Methods
 
-        private static List<IExplorerManager> CreateSupportedExplorerManagers(Settings settings, IExplorerManager primaryExplorerManager)
+        private static List<INavigatorManager> CreateSupportedNavigatorManagers(Settings settings, INavigatorManager primaryNavigatorManager)
         {
             List<Navigators> additionalNavigators = new List<Navigators>(settings.SupportedNavigators);
             additionalNavigators.Remove(settings.PrimaryNavigator);
 
-            List<IExplorerManager> supportedExplorerManagers =
+            List<INavigatorManager> supportedNavigatorManagers =
                 additionalNavigators
-                    .Select(navigator => CreateExplorerManager(navigator, settings))
+                    .Select(navigator => CreateNavigatorManager(navigator, settings))
                     .ToList();
 
-            supportedExplorerManagers.Add(primaryExplorerManager);
+            supportedNavigatorManagers.Add(primaryNavigatorManager);
 
-            return supportedExplorerManagers;
+            return supportedNavigatorManagers;
         }
 
         private static IFileSystemParser CreateParser(Settings settings)
@@ -98,7 +98,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             return cachedParser;
         }
 
-        private static IExplorerManager CreateExplorerManager(Navigators navigator, Settings settings)
+        private static INavigatorManager CreateNavigatorManager(Navigators navigator, Settings settings)
         {
             if (navigator == Navigators.TotalCommander)
             {
