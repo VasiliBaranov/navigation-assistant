@@ -11,8 +11,8 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private readonly IFileSystemParser _fileSystemParser;
         private readonly IMatchSearcher _matchSearcher;
-        private IExplorerManager _primaryExplorerManager;
-        private List<IExplorerManager> _supportedExplorerManagers;
+        private INavigatorManager _primaryNavigatorManager;
+        private List<INavigatorManager> _supportedNavigatorManagers;
 
         #endregion
 
@@ -20,13 +20,13 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public NavigationService(IFileSystemParser fileSystemParser,
                                  IMatchSearcher matchSearcher,
-                                 IExplorerManager primaryExplorerManager,
-                                 List<IExplorerManager> supportedExplorerManagers)
+                                 INavigatorManager primaryNavigatorManager,
+                                 List<INavigatorManager> supportedNavigatorManagers)
         {
             _fileSystemParser = fileSystemParser;
             _matchSearcher = matchSearcher;
-            _primaryExplorerManager = primaryExplorerManager;
-            _supportedExplorerManagers = supportedExplorerManagers;
+            _primaryNavigatorManager = primaryNavigatorManager;
+            _supportedNavigatorManagers = supportedNavigatorManagers;
         }
 
         #endregion
@@ -43,16 +43,16 @@ namespace NavigationAssistant.Core.Services.Implementation
             get { return _matchSearcher; }
         }
 
-        public IExplorerManager PrimaryExplorerManager
+        public INavigatorManager PrimaryNavigatorManager
         {
-            get { return _primaryExplorerManager; }
-            set { _primaryExplorerManager = value; }
+            get { return _primaryNavigatorManager; }
+            set { _primaryNavigatorManager = value; }
         }
 
-        public List<IExplorerManager> SupportedExplorerManagers
+        public List<INavigatorManager> SupportedNavigatorManagers
         {
-            get { return _supportedExplorerManagers; }
-            set { _supportedExplorerManagers = value; }
+            get { return _supportedNavigatorManagers; }
+            set { _supportedNavigatorManagers = value; }
         }
 
         #endregion
@@ -74,27 +74,27 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public void NavigateTo(string path, ApplicationWindow hostWindow)
         {
-            if (_supportedExplorerManagers == null || _primaryExplorerManager == null)
+            if (_supportedNavigatorManagers == null || _primaryNavigatorManager == null)
             {
-                throw new InvalidOperationException("Please specify supported explorer managers and primary explorer manager.");
+                throw new InvalidOperationException("Please specify supported navigator managers and primary navigator manager.");
             }
 
-            IExplorer explorer = null;
-            foreach (IExplorerManager explorerManager in _supportedExplorerManagers)
+            INavigator navigator = null;
+            foreach (INavigatorManager navigatorManager in _supportedNavigatorManagers)
             {
-                if (explorerManager.IsExplorer(hostWindow))
+                if (navigatorManager.IsNavigator(hostWindow))
                 {
-                    explorer = explorerManager.GetExplorer(hostWindow);
+                    navigator = navigatorManager.GetNavigator(hostWindow);
                     break;
                 }
             }
 
-            if (explorer == null)
+            if (navigator == null)
             {
-                explorer = _primaryExplorerManager.CreateExplorer();
+                navigator = _primaryNavigatorManager.CreateNavigator();
             }
 
-            explorer.NavigateTo(path);
+            navigator.NavigateTo(path);
         }
 
         public ApplicationWindow GetActiveWindow()

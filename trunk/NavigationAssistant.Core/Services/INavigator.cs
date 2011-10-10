@@ -1,6 +1,6 @@
 ﻿namespace NavigationAssistant.Core.Services
 {
-    public interface IExplorer
+    public interface INavigator
     {
         void NavigateTo(string path);
     }

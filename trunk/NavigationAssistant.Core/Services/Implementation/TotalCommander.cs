@@ -7,7 +7,7 @@ namespace NavigationAssistant.Core.Services.Implementation
     //Command line arguments can be found here: http://www.ghisler.ch/wiki/index.php/Command_line_parameters
     //If eventually you need a more sophisticated interaction, 
     //please see http://www.purebasic.fr/english/viewtopic.php?f=13&t=47321 (total commander send commands via SendMessage)
-    public class TotalCommander : IExplorer
+    public class TotalCommander : INavigator
     {
         private readonly string _totalCommanderFolder;
         private readonly string _totalCommanderFileName;
