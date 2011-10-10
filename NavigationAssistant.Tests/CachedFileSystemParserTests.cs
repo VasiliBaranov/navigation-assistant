@@ -22,7 +22,6 @@ namespace NavigationAssistant.Tests
         private AsyncFileSystemParser _asyncParser;
 
         private const string FolderName = "Folder";
-        private const string TempFolderName = "Folder\\Temp";
         private const string TempFileName = "Folder\\Temp\\File.txt";
 
         [SetUp]
@@ -53,7 +52,7 @@ namespace NavigationAssistant.Tests
             DeleteFolder();
         }
 
-        private void DeleteFolder()
+        private static void DeleteFolder()
         {
             bool success = false;
 
@@ -102,7 +101,7 @@ namespace NavigationAssistant.Tests
 
             List<FileSystemItem> subfolders = _cachedFileSystemParser.GetSubFolders();
 
-            Assert.That(subfolders.Select(s => s.Name).ToList(), Is.EquivalentTo(new List<string> { FolderName, "Temp" }));
+            Assert.That(GetFileSystemItemNames(subfolders), Is.EquivalentTo(new List<string> { FolderName, "Temp" }));
         }
 
         [Test]
@@ -129,9 +128,7 @@ namespace NavigationAssistant.Tests
 
             List<FileSystemItem> subfolders = _cachedFileSystemParser.GetSubFolders();
 
-            Assert.That(subfolders.Count, Is.EqualTo(2));
-            Assert.That(subfolders[0].Name, Is.EqualTo("Cache1"));
-            Assert.That(subfolders[1].Name, Is.EqualTo("Cache2"));
+            Assert.That(GetFileSystemItemNames(subfolders), Is.EquivalentTo(new List<string> { "Cache1", "Cache2" }));
         }
 
         [Test]
@@ -140,24 +137,13 @@ namespace NavigationAssistant.Tests
             //Set up parsing delay at 1 minute, so it asynchronous parsing will not have been finished when calling GetSubFolders
             _asyncParser = new AsyncFileSystemParser(new FileSystemParser(new FileSystemListener(), new List<string>{FolderName}), 60);
 
-            List<FileSystemItem> items = new List<FileSystemItem>
-                                             {
-                                                 new FileSystemItem(FolderName + "\\Cache1"),
-                                                 new FileSystemItem(FolderName + "\\Cache2"),
-                                             };
-            //Cache is one day older than the last shutdown
-            FileSystemCache cache = new FileSystemCache(items, DateTime.Now.AddDays(-1));
-            _serializer.SerializeCache(cache);
-
-            _registryService.LastSystemShutDownTime = DateTime.Now;
+            SetUpInactiveCache();
 
             CreateCachedParser();
 
             List<FileSystemItem> subfolders = _cachedFileSystemParser.GetSubFolders();
 
-            Assert.That(subfolders.Count, Is.EqualTo(2));
-            Assert.That(subfolders[0].Name, Is.EqualTo("Cache1"));
-            Assert.That(subfolders[1].Name, Is.EqualTo("Cache2"));
+            Assert.That(GetFileSystemItemNames(subfolders), Is.EquivalentTo(new List<string> { "Cache1", "Cache2" }));
         }
 
         [Test]
@@ -166,17 +152,7 @@ namespace NavigationAssistant.Tests
             //Start asynchronous parsing at once
             _asyncParser = new AsyncFileSystemParser(new FileSystemParser(new FileSystemListener(), new List<string> { FolderName }), 0);
 
-            List<FileSystemItem> items = new List<FileSystemItem>
-                                             {
-                                                 new FileSystemItem(FolderName + "\\Cache1"),
-                                                 new FileSystemItem(FolderName + "\\Cache2"),
-                                             };
-
-            //Cache is one day older than the last shutdown
-            FileSystemCache cache = new FileSystemCache(items, DateTime.Now.AddDays(-1));
-            _serializer.SerializeCache(cache);
-
-            _registryService.LastSystemShutDownTime = DateTime.Now;
+            SetUpInactiveCache();
 
             CreateCachedParser();
 
@@ -186,9 +162,8 @@ namespace NavigationAssistant.Tests
 
             Assert.That(subfolders.Count, Is.EqualTo(2));
 
-            List<string> subfolderNames = subfolders.Select(sf => sf.Name).ToList();
             List<string> expectedSubfolderNames = new List<string> {"Folder", "Temp"};
-            Assert.That(subfolderNames, Is.EquivalentTo(expectedSubfolderNames));
+            Assert.That(GetFileSystemItemNames(subfolders), Is.EquivalentTo(expectedSubfolderNames));
         }
 
         [Test]
@@ -197,17 +172,7 @@ namespace NavigationAssistant.Tests
             //Start asynchronous parsing at once
             _asyncParser = new AsyncFileSystemParser(new FileSystemParser(new FileSystemListener(), new List<string> { FolderName }), 0);
 
-            List<FileSystemItem> items = new List<FileSystemItem>
-                                             {
-                                                 new FileSystemItem(FolderName + "\\Cache1"),
-                                                 new FileSystemItem(FolderName + "\\Cache2"),
-                                             };
-
-            //Cache is one day older than the last shutdown
-            FileSystemCache cache = new FileSystemCache(items, DateTime.Now.AddDays(-1));
-            _serializer.SerializeCache(cache);
-
-            _registryService.LastSystemShutDownTime = DateTime.Now;
+            SetUpInactiveCache();
 
             CreateCachedParser();
 
@@ -218,9 +183,8 @@ namespace NavigationAssistant.Tests
             //Updated cache is not older than 2 seconds
             Assert.That(DateTime.Now - updatedCache.LastFullScanTime, Is.LessThan(new TimeSpan(0, 0, 2)));
 
-            List<string> updatedCacheFolderNames = updatedCache.Items.Select(sf => sf.Name).ToList();
             List<string> expectedSubfolderNames = new List<string> { "Folder", "Temp" };
-            Assert.That(updatedCacheFolderNames, Is.EquivalentTo(expectedSubfolderNames));
+            Assert.That(GetFileSystemItemNames(updatedCache), Is.EquivalentTo(expectedSubfolderNames));
         }
 
         [Test]
@@ -231,17 +195,7 @@ namespace NavigationAssistant.Tests
             parser.DelayInMilliseconds = 30*1000;
             _asyncParser = new AsyncFileSystemParser(parser, 0);
 
-            List<FileSystemItem> items = new List<FileSystemItem>
-                                             {
-                                                 new FileSystemItem(FolderName + "\\Cache1"),
-                                                 new FileSystemItem(FolderName + "\\Cache2"),
-                                             };
-
-            //Cache is one day older than the last shutdown
-            FileSystemCache cache = new FileSystemCache(items, DateTime.Now.AddDays(-1));
-            _serializer.SerializeCache(cache);
-
-            _registryService.LastSystemShutDownTime = DateTime.Now;
+            SetUpInactiveCache();
 
             CreateCachedParser();
 
@@ -249,9 +203,8 @@ namespace NavigationAssistant.Tests
             Thread.Sleep(200);
             List<FileSystemItem> subfolders = _cachedFileSystemParser.GetSubFolders();
 
-            List<string> updatedCacheFolderNames = subfolders.Select(sf => sf.Name).ToList();
             List<string> expectedSubfolderNames = new List<string> { "Cache1", "Cache2", "Temp2" };
-            Assert.That(updatedCacheFolderNames, Is.EquivalentTo(expectedSubfolderNames));
+            Assert.That(GetFileSystemItemNames(subfolders), Is.EquivalentTo(expectedSubfolderNames));
         }
 
         [Test]
@@ -260,20 +213,10 @@ namespace NavigationAssistant.Tests
             FileSystemParserWithAction parser = new FileSystemParserWithAction(new FileSystemListener(), new List<string> { FolderName });
             parser.Action = (() => Directory.CreateDirectory(FolderName + "\\Temp2"));
             parser.DelayInMilliseconds = 200;
-
             _asyncParser = new AsyncFileSystemParser(parser, 0);
 
-            List<FileSystemItem> items = new List<FileSystemItem>
-                                             {
-                                                 new FileSystemItem(FolderName + "\\Cache1"),
-                                                 new FileSystemItem(FolderName + "\\Cache2"),
-                                             };
+            SetUpInactiveCache();
 
-            //Cache is one day older than the last shutdown
-            FileSystemCache cache = new FileSystemCache(items, DateTime.Now.AddDays(-1));
-            _serializer.SerializeCache(cache);
-
-            _registryService.LastSystemShutDownTime = DateTime.Now;
             _fileSystemParser.Action = (() => Directory.CreateDirectory(FolderName + "\\Temp2"));
             CreateCachedParser();
 
@@ -282,7 +225,7 @@ namespace NavigationAssistant.Tests
             List<FileSystemItem> subfolders = _cachedFileSystemParser.GetSubFolders();
 
             List<string> expectedSubfolderNames = new List<string> { "Folder", "Temp", "Temp2" };
-            Assert.That(subfolders.Select(sf => sf.Name).ToList(), Is.EquivalentTo(expectedSubfolderNames));
+            Assert.That(GetFileSystemItemNames(subfolders), Is.EquivalentTo(expectedSubfolderNames));
         }
 
         [Test]
@@ -291,16 +234,7 @@ namespace NavigationAssistant.Tests
             //Set up parsing delay at 1 minute, so it asynchronous parsing will not have been finished when calling GetSubFolders
             _asyncParser = new AsyncFileSystemParser(new FileSystemParser(new FileSystemListener(), new List<string> { FolderName }), 60);
 
-            List<FileSystemItem> items = new List<FileSystemItem>
-                                             {
-                                                 new FileSystemItem(FolderName + "\\Cache1"),
-                                                 new FileSystemItem(FolderName + "\\Cache2"),
-                                             };
-            //Cache is one day older than the last shutdown
-            FileSystemCache cache = new FileSystemCache(items, DateTime.Now.AddDays(-1));
-            _serializer.SerializeCache(cache);
-
-            _registryService.LastSystemShutDownTime = DateTime.Now;
+            SetUpInactiveCache();
 
             CreateCachedParser();
 
@@ -321,16 +255,7 @@ namespace NavigationAssistant.Tests
             //Set up parsing delay at 1 minute, so it asynchronous parsing will not have been finished when calling GetSubFolders
             _asyncParser = new AsyncFileSystemParser(new FileSystemParser(new FileSystemListener(), new List<string> { FolderName }), 0);
 
-            List<FileSystemItem> items = new List<FileSystemItem>
-                                             {
-                                                 new FileSystemItem(FolderName + "\\Cache1"),
-                                                 new FileSystemItem(FolderName + "\\Cache2"),
-                                             };
-            //Cache is one day older than the last shutdown
-            FileSystemCache cache = new FileSystemCache(items, DateTime.Now.AddDays(-1));
-            _serializer.SerializeCache(cache);
-
-            _registryService.LastSystemShutDownTime = DateTime.Now;
+            SetUpInactiveCache();
 
             CreateCachedParser();
 
@@ -355,7 +280,7 @@ namespace NavigationAssistant.Tests
             CreateCachedParser();
 
             List<FileSystemItem> subfolders = _cachedFileSystemParser.GetSubFolders();
-            Assert.That(subfolders.Select(sf => sf.Name).ToList(), Is.EquivalentTo(new List<string> { "Folder", "Temp", "Temp2" }));
+            Assert.That(GetFileSystemItemNames(subfolders), Is.EquivalentTo(new List<string> { "Folder", "Temp", "Temp2" }));
         }
 
         [Test]
@@ -384,7 +309,7 @@ namespace NavigationAssistant.Tests
             _cachedFileSystemParser.ExcludeFolderTemplates = new List<string> { "Temp" };
 
             List<FileSystemItem> subfolders = _cachedFileSystemParser.GetSubFolders();
-            Assert.That(subfolders.Select(sf => sf.Name).ToList(), Is.EquivalentTo(new List<string> { "Folder", "Temp2" }));
+            Assert.That(GetFileSystemItemNames(subfolders), Is.EquivalentTo(new List<string> { "Folder", "Temp2" }));
 
             _cachedFileSystemParser.FoldersToParse = new List<string> { "Folder\\Temp\\" };
             subfolders = _cachedFileSystemParser.GetSubFolders();
@@ -406,11 +331,11 @@ namespace NavigationAssistant.Tests
             _cachedFileSystemParser.FoldersToParse = new List<string> {"Folder\\Temp\\"};
 
             List<FileSystemItem> subfolders = _cachedFileSystemParser.GetSubFolders();
-            Assert.That(subfolders.Select(sf => sf.Name).ToList(), Is.EquivalentTo(new List<string> { "Temp", "asd", "zxc" }));
+            Assert.That(GetFileSystemItemNames(subfolders), Is.EquivalentTo(new List<string> { "Temp", "asd", "zxc" }));
 
             _cachedFileSystemParser.ExcludeFolderTemplates = new List<string> {"asd"};
             subfolders = _cachedFileSystemParser.GetSubFolders();
-            Assert.That(subfolders.Select(sf => sf.Name).ToList(), Is.EquivalentTo(new List<string> { "Temp", "zxc" }));
+            Assert.That(GetFileSystemItemNames(subfolders), Is.EquivalentTo(new List<string> { "Temp", "zxc" }));
         }
 
         [Test]
@@ -422,13 +347,13 @@ namespace NavigationAssistant.Tests
             _cachedFileSystemParser.ExcludeFolderTemplates = new List<string> { "Temp" };
 
             List<FileSystemItem> subfolders = _cachedFileSystemParser.GetSubFolders();
-            Assert.That(subfolders.Select(sf => sf.Name), Is.EquivalentTo(new List<string> { "Folder" }));
+            Assert.That(GetFileSystemItemNames(subfolders), Is.EquivalentTo(new List<string> { "Folder" }));
 
             Directory.CreateDirectory("Folder\\Temp2\\asd");
             Thread.Sleep(200);
 
             subfolders = _cachedFileSystemParser.GetSubFolders();
-            Assert.That(subfolders.Select(sf => sf.Name).ToList(), Is.EquivalentTo(new List<string> { "Folder", "Temp2", "asd" }));
+            Assert.That(GetFileSystemItemNames(subfolders), Is.EquivalentTo(new List<string> { "Folder", "Temp2", "asd" }));
         }
 
         [Test]
@@ -445,7 +370,7 @@ namespace NavigationAssistant.Tests
             Thread.Sleep(200);
 
             subfolders = _cachedFileSystemParser.GetSubFolders();
-            Assert.That(subfolders.Select(sf => sf.Name).ToList(), Is.EquivalentTo(new List<string> { "Folder", "Temp2", "asd" }));
+            Assert.That(GetFileSystemItemNames(subfolders), Is.EquivalentTo(new List<string> { "Folder", "Temp2", "asd" }));
         }
 
         [Test]
@@ -462,32 +387,129 @@ namespace NavigationAssistant.Tests
             //Updated cache is not older than 2 seconds
             Assert.That(DateTime.Now - updatedCache.LastFullScanTime, Is.LessThan(new TimeSpan(0, 0, 2)));
 
-            Assert.That(updatedCache.Items.Select(i => i.Name).ToList(),
-                        Is.EquivalentTo(new List<string> {"Folder", "Temp", "Temp2"}));
+            Assert.That(GetFileSystemItemNames(updatedCache), Is.EquivalentTo(new List<string> {"Folder", "Temp", "Temp2"}));
         }
 
         [Test]
-        public void GetSubFolders_NoCacheOnDiskAndCacheIsNotUpToDateAndFileSystemUpdatedEnoughTimesWhileParsing_CacheIsSerializedAsInactive()
+        public void GetSubFolders_CacheOnDiskAndCacheIsNotUpToDateAndFileSystemUpdatedEnoughTimesWhileParsing_CacheIsSerializedAsInactive()
         {
+            //Set up parsing delay at 1 minute, so it asynchronous parsing will not have been finished when creating folders
+            _asyncParser = new AsyncFileSystemParser(new FileSystemParser(new FileSystemListener(), new List<string> { FolderName }), 60);
 
+            DateTime oldDateTime = DateTime.Now.AddDays(-1);
+            SetUpCache(oldDateTime);
+
+            CreateCachedParser(1);
+
+            Directory.CreateDirectory("Folder\\Temp2");
+            Directory.CreateDirectory("Folder\\Temp3");
+            Thread.Sleep(200);
+
+            FileSystemCache updatedCache = _serializer.DeserializeCache();
+
+            //Updated cache is close to oldDateTime
+            Assert.That(oldDateTime - updatedCache.LastFullScanTime, Is.LessThan(new TimeSpan(0, 0, 2)));
+
+            Assert.That(GetFileSystemItemNames(updatedCache), Is.EquivalentTo(new List<string> { "Cache1", "Cache2", "Temp2", "Temp3" }));
         }
 
         [Test]
-        public void GetSubFolders_NoCacheOnDiskAndCacheIsNotUpToDateAndFileSystemUpdatedEnoughTimesAfterParsing_CacheIsSerializedAsActive()
+        public void GetSubFolders_CacheOnDiskAndCacheIsNotUpToDateAndFileSystemUpdatedEnoughTimesAfterParsing_CacheIsSerializedAsActive()
         {
+            _asyncParser = new AsyncFileSystemParser(new FileSystemParser(new FileSystemListener(), new List<string> { FolderName }), 0);
 
+            SetUpInactiveCache();
+
+            CreateCachedParser(1);
+
+            //Wait while async parsing is finished
+            Thread.Sleep(200);
+
+            Directory.CreateDirectory("Folder\\Temp2");
+            Directory.CreateDirectory("Folder\\Temp3");
+
+            //Wait while folder creation is handled
+            Thread.Sleep(200);
+
+            FileSystemCache updatedCache = _serializer.DeserializeCache();
+
+            //Updated cache is close to oldDateTime
+            Assert.That(DateTime.Now - updatedCache.LastFullScanTime, Is.LessThan(new TimeSpan(0, 0, 2)));
+
+            Assert.That(GetFileSystemItemNames(updatedCache), Is.EquivalentTo(new List<string> { "Folder", "Temp", "Temp2", "Temp3" }));
         }
 
         [Test]
-        public void Dispose_NoCacheOnDiskAndCacheIsNotUpToDateAndParsingFinished_CacheIsSerializedAsActive()
+        public void Dispose_CacheOnDiskAndCacheIsNotUpToDateAndParsingFinished_CacheIsSerializedAsActive()
         {
+            _asyncParser = new AsyncFileSystemParser(new FileSystemParser(new FileSystemListener(), new List<string> { FolderName }), 0);
 
+            SetUpInactiveCache();
+
+            CreateCachedParser();
+
+            //Wait while async parsing is finished
+            Thread.Sleep(200);
+
+            _cachedFileSystemParser.Dispose();
+
+            FileSystemCache updatedCache = _serializer.DeserializeCache();
+            Assert.That(DateTime.Now - updatedCache.LastFullScanTime, Is.LessThan(new TimeSpan(0, 0, 2)));
+
+            Assert.That(GetFileSystemItemNames(updatedCache), Is.EquivalentTo(new List<string> { "Folder", "Temp" }));
         }
 
         [Test]
-        public void Dispose_NoCacheOnDiskAndCacheIsNotUpToDateAndParsingNotFinished_CacheIsSerializedAsInactive()
+        public void Dispose_CacheOnDiskAndCacheIsNotUpToDateAndParsingNotFinished_CacheIsSerializedAsInactive()
         {
+            //Set up parsing delay at 1 minute, so it asynchronous parsing will not have been finished when creating folders
+            _asyncParser = new AsyncFileSystemParser(new FileSystemParser(new FileSystemListener(), new List<string> { FolderName }), 60);
 
+            DateTime oldDateTime = DateTime.Now.AddDays(-1);
+            SetUpCache(oldDateTime);
+
+            CreateCachedParser();
+
+            //Wait while async parsing is finished
+            Thread.Sleep(200);
+
+            _cachedFileSystemParser.Dispose();
+
+            FileSystemCache updatedCache = _serializer.DeserializeCache();
+            Assert.That(oldDateTime - updatedCache.LastFullScanTime, Is.LessThan(new TimeSpan(0, 0, 2)));
+
+            Assert.That(GetFileSystemItemNames(updatedCache), Is.EquivalentTo(new List<string> { "Cache1", "Cache2" }));
+        }
+
+        private void SetUpCache(DateTime cacheSaveTime)
+        {
+            List<FileSystemItem> items = new List<FileSystemItem>
+                                             {
+                                                 new FileSystemItem(FolderName + "\\Cache1"),
+                                                 new FileSystemItem(FolderName + "\\Cache2"),
+                                             };
+
+            // Cache is one day older than the last shutdown
+            
+            FileSystemCache cache = new FileSystemCache(items, cacheSaveTime);
+            _serializer.SerializeCache(cache);
+
+            _registryService.LastSystemShutDownTime = DateTime.Now;
+        }
+
+        private void SetUpInactiveCache()
+        {
+            SetUpCache(DateTime.Now.AddDays(-1));
+        }
+
+        private static List<string> GetFileSystemItemNames(FileSystemCache updatedCache)
+        {
+            return GetFileSystemItemNames(updatedCache.Items);
+        }
+
+        private static List<string> GetFileSystemItemNames(List<FileSystemItem> items)
+        {
+            return items.Select(i => i.Name).ToList();
         }
     }
 }
