@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using NUnit.Framework;
 using NavigationAssistant.Core.Model;
@@ -57,6 +54,21 @@ namespace NavigationAssistant.Tests
             ValidationResult result = _settingsSerializer.Serialize(settings);
 
             Assert.That(result.IsValid, Is.False);
+            Assert.That(result.ErrorKeys, Is.EquivalentTo(new List<string> { "TotalCommanderPathInvalidError" }));
+            Assert.That(File.Exists(SettingsFilePath), Is.False);
+        }
+
+        [Test]
+        public void Serialize_ExcludeFolderTemplatesNotValid_ReturnValidationError()
+        {
+            Settings settings = new Settings
+                                    {
+                                        ExcludeFolderTemplates = new List<string> {"svn", "["}
+                                    };
+            ValidationResult result = _settingsSerializer.Serialize(settings);
+
+            Assert.That(result.IsValid, Is.False);
+            Assert.That(result.ErrorKeys, Is.EquivalentTo(new List<string> { "ExcludeFolderTemplatesInvalidError" }));
             Assert.That(File.Exists(SettingsFilePath), Is.False);
         }
 
