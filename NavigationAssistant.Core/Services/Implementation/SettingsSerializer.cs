@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using NavigationAssistant.Core.Model;
@@ -125,6 +126,7 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             List<string> errorKeys = new List<string>();
 
+            //Check total commander
             bool totalCommanderSupported = settings.SupportedNavigators != null &&
                                            settings.SupportedNavigators.Contains(Navigators.TotalCommander);
 
@@ -134,6 +136,28 @@ namespace NavigationAssistant.Core.Services.Implementation
             if (totalCommanderSupported && !totalCommanderPathValid)
             {
                 errorKeys.Add("TotalCommanderPathInvalidError");
+            }
+
+            //Check exclude path regexes
+            bool excludeRegexesValid = true;
+            if (settings.ExcludeFolderTemplates != null)
+            {
+                foreach (string excludeFolderTemplate in settings.ExcludeFolderTemplates)
+                {
+                    try
+                    {
+                        new Regex(excludeFolderTemplate);
+                    }
+                    catch
+                    {
+                        excludeRegexesValid = false;
+                    }
+                }
+            }
+
+            if (!excludeRegexesValid)
+            {
+                errorKeys.Add("ExcludeFolderTemplatesInvalidError");
             }
 
             return new ValidationResult(errorKeys);

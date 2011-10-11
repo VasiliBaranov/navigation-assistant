@@ -61,6 +61,15 @@ namespace NavigationAssistant.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Exclude folder templates do not represent correct regular expressions.
+        /// </summary>
+        internal static string ExcludeFolderTemplatesInvalidError {
+            get {
+                return ResourceManager.GetString("ExcludeFolderTemplatesInvalidError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to E&amp;xit.
         /// </summary>
         internal static string ExitMenuItemText {
