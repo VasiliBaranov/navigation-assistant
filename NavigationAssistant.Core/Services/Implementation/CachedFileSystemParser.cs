@@ -108,8 +108,9 @@ namespace NavigationAssistant.Core.Services.Implementation
             IFileSystemListener fileSystemListener,
             IRegistryService registryService,
             IAsyncFileSystemParser asyncFileSystemParser,
+            bool appWasAutoRun,
             int updatesCountToWrite)
-            : this(fileSystemParser, cacheSerializer, fileSystemListener, registryService, asyncFileSystemParser)
+            : this(fileSystemParser, cacheSerializer, fileSystemListener, registryService, asyncFileSystemParser, appWasAutoRun)
         {
             _updatesCountToWrite = updatesCountToWrite;
         }
@@ -118,7 +119,8 @@ namespace NavigationAssistant.Core.Services.Implementation
             ICacheSerializer cacheSerializer,
             IFileSystemListener fileSystemListener,
             IRegistryService registryService,
-            IAsyncFileSystemParser asyncFileSystemParser)
+            IAsyncFileSystemParser asyncFileSystemParser,
+            bool appWasAutoRun)
         {
             _cacheSerializer = cacheSerializer;
             _fileSystemListener = fileSystemListener;
@@ -127,8 +129,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             _asyncFileSystemParser = asyncFileSystemParser;
             _fileSystemFilter = new FileSystemFilter();
 
-            _fullCacheUpToDate = ReadFullCache();
-            //_fullCache = new FileSystemCache(new List<FileSystemItem>(), DateTime.Now);
+            _fullCacheUpToDate = ReadFullCache(appWasAutoRun);
 
             //Listen to the changes in the whole system to update the fullCache.
             //This handler should be bound just after reading the full cache to ensure that _fullCache is initialized.
@@ -184,11 +185,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             {
                 lock (_cacheSync)
                 {
-                    if (_fullCacheUpToDate)
-                    {
-                        _fullCache.LastFullScanTime = DateTime.Now;
-                    }
-                    _cacheSerializer.SerializeCache(_fullCache);
+                    SerializeFullCache();
                 }
             }
             catch
@@ -206,6 +203,15 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         #region Non Public Methods
 
+        private void SerializeFullCache()
+        {
+            if (_fullCacheUpToDate)
+            {
+                _fullCache.LastFullScanTime = DateTime.Now;
+            }
+            _cacheSerializer.SerializeCache(_fullCache);
+        }
+
         private void StartFileSystemParsing()
         {
             _asyncFileSystemParser.ParsingFinished += HandleParsingFinished;
@@ -217,8 +223,8 @@ namespace NavigationAssistant.Core.Services.Implementation
             lock (_cacheSync)
             {
                 _fullCache = e.Item;
-                _cacheSerializer.SerializeCache(_fullCache);
                 _fullCacheUpToDate = true;
+                SerializeFullCache();
 
                 ResetFilteredCacheItems();
 
@@ -236,7 +242,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             return cacheValid;
         }
 
-        private bool ReadFullCache()
+        private bool ReadFullCache(bool appWasAutoRun)
         {
             bool fullCacheUpToDate;
 
@@ -247,7 +253,10 @@ namespace NavigationAssistant.Core.Services.Implementation
             _fullCache = _cacheSerializer.DeserializeCache();
             if (_fullCache != null)
             {
-                fullCacheUpToDate = CacheUpToDate(_fullCache);
+                //The cache file can be up to date only if the current Navigation Assistant has been run on startup
+                //and if it had been closed just on system shutdown and the current parser is created at application start.
+                //In this case no additional folders can be created during NavAssistant being inactive.
+                fullCacheUpToDate = CacheUpToDate(_fullCache) && appWasAutoRun;
             }
             else
             {
@@ -288,7 +297,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                 _updatesCount++;
                 if (_updatesCount > _updatesCountToWrite)
                 {
-                    _cacheSerializer.SerializeCache(_fullCache);
+                    SerializeFullCache();
                     _updatesCount = 0;
                 }
 

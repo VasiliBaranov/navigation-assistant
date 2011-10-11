@@ -5,8 +5,16 @@ using NavigationAssistant.Core.Model;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
+    //TODO: Use IoC
     public class NavigationServiceBuilder : INavigationServiceBuilder
     {
+        private readonly bool _appWasAutoRun;
+
+        public NavigationServiceBuilder(bool appWasAutoRun)
+        {
+            _appWasAutoRun = appWasAutoRun;
+        }
+
         #region Public Methods
 
         public INavigationService BuildNavigationService(Settings settings)
@@ -80,7 +88,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             return supportedNavigatorManagers;
         }
 
-        private static IFileSystemParser CreateParser(Settings settings)
+        private IFileSystemParser CreateParser(Settings settings)
         {
             //Don't use the same file system parser for cachedParser and AsyncFileSystemParser,
             //as AsyncFileSystemParser will operate on a different thread.
@@ -90,7 +98,8 @@ namespace NavigationAssistant.Core.Services.Implementation
                                                                         cacheSerializer,
                                                                         new FileSystemListener(),
                                                                         new RegistryService(),
-                                                                        new AsyncFileSystemParser(new FileSystemParser(new FileSystemListener())));
+                                                                        new AsyncFileSystemParser(new FileSystemParser(new FileSystemListener())),
+                                                                        _appWasAutoRun);
 
             cachedParser.ExcludeFolderTemplates = settings.ExcludeFolderTemplates;
             cachedParser.FoldersToParse = settings.FoldersToParse;

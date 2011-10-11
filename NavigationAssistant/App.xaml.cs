@@ -5,7 +5,6 @@ using NavigationAssistant.Core.Services.Implementation;
 using NavigationAssistant.PresentationServices;
 using NavigationAssistant.PresentationServices.Implementations;
 using NavigationAssistant.Presenters;
-using NavigationAssistant.Views;
 using NavigationAssistant.Views.Implementation;
 
 namespace NavigationAssistant
@@ -40,13 +39,14 @@ namespace NavigationAssistant
             NavigationWindow navigationWindow = new NavigationWindow();
             MainWindow = navigationWindow;
 
-            ISettingsSerializer settingsSerializer = new SettingsSerializer(new RegistryService());
+            IRegistryService registryService = new RegistryService();
+            ISettingsSerializer settingsSerializer = new SettingsSerializer(registryService);
 
             IPresenter navigationPresenter = new NavigationPresenter(navigationWindow,
                                      settingsSerializer,
                                      new KeyboardListener(),
                                      new MatchModelMapper(),
-                                     new NavigationServiceBuilder());
+                                     new NavigationServiceBuilder(registryService.GetRunOnStartup()));
 
             TrayView trayView = new TrayView();
             IPresenter trayPresenter = new TrayIconPresenter(trayView, settingsSerializer);
