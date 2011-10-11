@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="CachedFileSystemParserTests.cs" />
     <Compile Include="CacheSerializerTests.cs" />
+    <Compile Include="EnumUtilityTests.cs" />
     <Compile Include="FakeRegistryService.cs" />
     <Compile Include="FileSystemFilterTests.cs" />
     <Compile Include="FileSystemListenerTests.cs" />
