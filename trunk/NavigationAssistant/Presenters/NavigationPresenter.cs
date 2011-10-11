@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows;
 using NavigationAssistant.Core.Model;
 using NavigationAssistant.Core.Services;
 using NavigationAssistant.Core.Utilities;
 using NavigationAssistant.PresentationServices;
 using NavigationAssistant.Properties;
-using NavigationAssistant.Utilities;
 using NavigationAssistant.ViewModel;
 using NavigationAssistant.Views;
 

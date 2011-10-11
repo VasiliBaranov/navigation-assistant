@@ -20,6 +20,8 @@ namespace NavigationAssistant.Tests
         private FileSystemParserWithAction _fileSystemParser;
         private FakeRegistryService _registryService;
         private AsyncFileSystemParser _asyncParser;
+        private bool _appWasAutoRun;
+        private int _updatesCountToWrite;
 
         private const string FolderName = "Folder";
         private const string TempFileName = "Folder\\Temp\\File.txt";
@@ -33,6 +35,8 @@ namespace NavigationAssistant.Tests
             _fileSystemParser = new FileSystemParserWithAction(new FileSystemListener(), new List<string> { FolderName });
             _registryService = new FakeRegistryService();
             _asyncParser = new AsyncFileSystemParser(new FileSystemParser(new FileSystemListener(), new List<string> { FolderName }));
+            _appWasAutoRun = true;
+            _updatesCountToWrite = -1;
 
             DirectoryUtility.EnsureClearFolder(FolderName);
 
@@ -77,21 +81,25 @@ namespace NavigationAssistant.Tests
 
         private void CreateCachedParser()
         {
-            _cachedFileSystemParser = new CachedFileSystemParser(_fileSystemParser,
-                                                     _serializer,
-                                                     _listener,
-                                                     _registryService,
-                                                     _asyncParser);
-        }
-
-        private void CreateCachedParser(int updatesCountToWrite)
-        {
-            _cachedFileSystemParser = new CachedFileSystemParser(_fileSystemParser,
-                                                     _serializer,
-                                                     _listener,
-                                                     _registryService,
-                                                     _asyncParser,
-                                                     updatesCountToWrite);
+            if (_updatesCountToWrite == -1)
+            {
+                _cachedFileSystemParser = new CachedFileSystemParser(_fileSystemParser,
+                                                                     _serializer,
+                                                                     _listener,
+                                                                     _registryService,
+                                                                     _asyncParser,
+                                                                     _appWasAutoRun);
+            }
+            else
+            {
+                _cachedFileSystemParser = new CachedFileSystemParser(_fileSystemParser,
+                                                                     _serializer,
+                                                                     _listener,
+                                                                     _registryService,
+                                                                     _asyncParser,
+                                                                     _appWasAutoRun,
+                                                                     _updatesCountToWrite);
+            }
         }
 
         [Test]
@@ -115,14 +123,7 @@ namespace NavigationAssistant.Tests
         [Test]
         public void GetSubFolders_CacheOnDiskExistsAndIsUpToDate_CachedItemsReturned()
         {
-            List<FileSystemItem> items = new List<FileSystemItem>
-                                             {
-                                                 new FileSystemItem(FolderName + "\\Cache1"),
-                                                 new FileSystemItem(FolderName + "\\Cache2"),
-                                             };
-            FileSystemCache cache = new FileSystemCache(items, DateTime.Now);
-            _serializer.SerializeCache(cache);
-            _registryService.LastSystemShutDownTime = DateTime.Now;
+            SetUpCache(DateTime.Now);
 
             CreateCachedParser();
 
@@ -144,6 +145,27 @@ namespace NavigationAssistant.Tests
             List<FileSystemItem> subfolders = _cachedFileSystemParser.GetSubFolders();
 
             Assert.That(GetFileSystemItemNames(subfolders), Is.EquivalentTo(new List<string> { "Cache1", "Cache2" }));
+        }
+
+        [Test]
+        public void GetSubFolders_CacheOnDiskExistsAndIsUpToDateAndAppIsNotAutoRun_ParsedItemsReturnedAfterParsing()
+        {
+            //Start asynchronous parsing at once
+            _asyncParser = new AsyncFileSystemParser(new FileSystemParser(new FileSystemListener(), new List<string> { FolderName }), 0);
+            _appWasAutoRun = false;
+
+            SetUpCache(DateTime.Now);
+
+            CreateCachedParser();
+
+            //To wait for asynchronous parsing
+            Thread.Sleep(200);
+            List<FileSystemItem> subfolders = _cachedFileSystemParser.GetSubFolders();
+
+            Assert.That(subfolders.Count, Is.EqualTo(2));
+
+            List<string> expectedSubfolderNames = new List<string> { "Folder", "Temp" };
+            Assert.That(GetFileSystemItemNames(subfolders), Is.EquivalentTo(expectedSubfolderNames));
         }
 
         [Test]
@@ -376,18 +398,28 @@ namespace NavigationAssistant.Tests
         [Test]
         public void GetSubFolders_CacheOnDiskAndActiveAndFileSystemUpdatedEnoughTimes_CacheIsSerializedAsActive()
         {
-            CreateCachedParser(1);
+            DateTime initialCacheDateTime = DateTime.Now;
+            SetUpCache(initialCacheDateTime);
+
+            _updatesCountToWrite = 1;
+            CreateCachedParser();
+
+            //To maintain significant time difference for timestamp
+            Thread.Sleep(1000);
 
             //Temp folder will be created while initial cache serialization.
             Directory.CreateDirectory("Folder\\Temp2");
+            Directory.CreateDirectory("Folder\\Temp3");
+
+            //To let events be handled
             Thread.Sleep(200);
 
             FileSystemCache updatedCache = _serializer.DeserializeCache();
 
             //Updated cache is not older than 2 seconds
-            Assert.That(DateTime.Now - updatedCache.LastFullScanTime, Is.LessThan(new TimeSpan(0, 0, 2)));
+            Assert.That(updatedCache.LastFullScanTime > initialCacheDateTime, Is.True);
 
-            Assert.That(GetFileSystemItemNames(updatedCache), Is.EquivalentTo(new List<string> {"Folder", "Temp", "Temp2"}));
+            Assert.That(GetFileSystemItemNames(updatedCache), Is.EquivalentTo(new List<string> { "Cache1", "Cache2", "Temp2", "Temp3" }));
         }
 
         [Test]
@@ -399,7 +431,8 @@ namespace NavigationAssistant.Tests
             DateTime oldDateTime = DateTime.Now.AddDays(-1);
             SetUpCache(oldDateTime);
 
-            CreateCachedParser(1);
+            _updatesCountToWrite = 1;
+            CreateCachedParser();
 
             Directory.CreateDirectory("Folder\\Temp2");
             Directory.CreateDirectory("Folder\\Temp3");
@@ -420,7 +453,8 @@ namespace NavigationAssistant.Tests
 
             SetUpInactiveCache();
 
-            CreateCachedParser(1);
+            _updatesCountToWrite = 1;
+            CreateCachedParser();
 
             //Wait while async parsing is finished
             Thread.Sleep(200);
