@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsyncFileSystemParserTests.cs" />
     <Compile Include="CachedFileSystemParserTests.cs" />
     <Compile Include="CacheSerializerTests.cs" />
     <Compile Include="EnumUtilityTests.cs" />
