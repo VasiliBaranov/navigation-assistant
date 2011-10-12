@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Timers;
+using System.Threading;
 using NavigationAssistant.Core.Model;
 using NavigationAssistant.Core.Utilities;
 
@@ -12,7 +12,13 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private readonly IFileSystemParser _fileSystemParser;
 
-        private readonly Timer _delayTimer;
+        //The object is used by simply handling a reference to it.
+        //Better to use Threading.Timer than Timers.Timer, as Timers.Timer callbacks
+        //may be executed on the same thread (even if SynchronizationObject is null)-i don't know why).
+        //Threading.Timer callbacks are always executed on a different thread
+        //(see http://stackoverflow.com/questions/1435876/do-c-timers-elapse-on-a-separate-thread).
+        //This is very crucial for unit tests, where the calling thread is always busy with a unit test.
+        private Timer _threadingTimer;
 
         private delegate void ParseFileSystemDelegate();
 
@@ -29,13 +35,11 @@ namespace NavigationAssistant.Core.Services.Implementation
         public AsyncFileSystemParser(IFileSystemParser fileSystemParser)
         {
             _fileSystemParser = fileSystemParser;
-            _delayTimer = new Timer();
         }
 
         public AsyncFileSystemParser(IFileSystemParser fileSystemParser, int delayIntervalInSeconds)
         {
             _fileSystemParser = fileSystemParser;
-            _delayTimer = new Timer();
             _delayIntervalInSeconds = delayIntervalInSeconds;
         }
 
@@ -66,15 +70,10 @@ namespace NavigationAssistant.Core.Services.Implementation
             }
 
             int delayIntervalInMilliseconds = delayIntervalInSeconds * 1000;
-
-            _delayTimer.Interval = delayIntervalInMilliseconds;
-            _delayTimer.Elapsed += HandleDelayFinished;
-
-            //should raise the System.Timers.Timer.Elapsed event only once
-            _delayTimer.AutoReset = false;
+            _threadingTimer = new Timer(HandleDelayFinished, null, delayIntervalInMilliseconds, Timeout.Infinite);
         }
 
-        private void HandleDelayFinished(object sender, ElapsedEventArgs e)
+        private void HandleDelayFinished(object state)
         {
             ParseFileSystemAsynchronously();
         }
