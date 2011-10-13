@@ -9,6 +9,8 @@ namespace NavigationAssistant.Core.Services.Implementation
 {
     public class RegistryService : IRegistryService
     {
+        public const string StartupRunParameter = "/startup";
+
         private readonly string _assemblyPath;
 
         public RegistryService()
@@ -48,7 +50,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
             if (value)
             {
-                string path = string.Format(CultureInfo.InvariantCulture, "\"{0}\"", _assemblyPath);
+                string path = string.Format(CultureInfo.InvariantCulture, "\"{0}\" \"{1}\"", _assemblyPath, StartupRunParameter);
                 startupKey.SetValue("NavigationAssistant", path, RegistryValueKind.String);
             }
             else

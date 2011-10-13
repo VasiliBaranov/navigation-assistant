@@ -124,6 +124,15 @@ namespace NavigationAssistant.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Navigation Assistant is already running.
+        /// </summary>
+        internal static string ProgramIsRunningError {
+            get {
+                return ResourceManager.GetString("ProgramIsRunningError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &amp;Settings.
         /// </summary>
         internal static string SettingsMenuItemText {
