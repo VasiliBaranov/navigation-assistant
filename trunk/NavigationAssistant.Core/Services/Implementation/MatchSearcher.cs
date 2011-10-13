@@ -85,18 +85,20 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private static Regex GetSearchRegex(string searchText)
         {
-            string[] substrings = searchText.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+            //List<string> substrings = StringUtility.SplitStringByNonLetters(searchText)
+            //    .Select(s=>s.Trim())
+            //    .Where(substring => !string.IsNullOrEmpty(substring))
+            //    .ToList();
+            IList<string> substrings = searchText.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 
             if (ListUtility.IsNullOrEmpty(substrings))
             {
                 return null;
             }
 
-            substrings = substrings.Select(Regex.Escape).ToArray();
-
             string[] substringTemplates = substrings.Select(GetWordStartTemplate).ToArray();
 
-            string template = string.Join(@"[^\s]*", substringTemplates);
+            string template = string.Join(@"\S*", substringTemplates);
             Regex searchRegex = new Regex(template);
 
             return searchRegex;
@@ -107,7 +109,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             string firstLetterTemplate = GetFirstLetterTemplate(wordStart[0], wordIndex);
 
             string otherLettersTemplate = wordStart.Length > 1
-                                              ? string.Format("(?i:{0})", wordStart.Substring(1))
+                                              ? string.Format("(?i:{0})", Regex.Escape(wordStart.Substring(1)))
                                               : string.Empty;
 
             return firstLetterTemplate + otherLettersTemplate;
@@ -115,9 +117,14 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private static string GetFirstLetterTemplate(char firstLetter, int wordIndex)
         {
+            if (!char.IsLetter(firstLetter))
+            {
+                return @"(?:\b|\W+)" + Regex.Escape(firstLetter.ToString());
+            }
+
             string template = wordIndex == 0 
-                ? @"(?:\b[{0}{1}]|{1})" 
-                : @"(?:\s+[{0}{1}]|{1})";
+                ? @"(?:\b[{0}{1}]|{1})"
+                : @"(?:\W+[{0}{1}]|{1})";
 
             return string.Format(template, char.ToLower(firstLetter), char.ToUpper(firstLetter));
         }
