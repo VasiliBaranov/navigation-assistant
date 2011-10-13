@@ -333,31 +333,7 @@ namespace NavigationAssistant.Tests
             MatchedFileSystemItem expectedMatch;
             TestCaseData testCaseData;
 
-            //18
-            item = new FileSystemItem(rootPath + "my. doc");
-            searchText = "m.d";
-            //matchString = new MatchString
-            //                  {
-            //                      new MatchSubstring("my. d", true),
-            //                      new MatchSubstring("oc", false),
-            //                  };
-            matchString = null;
-            expectedMatch = new MatchedFileSystemItem(item, matchString);
-            testCaseData = new TestCaseData(item, searchText, expectedMatch).SetName("Special symbol does not act as a word break after itself in a search text");
-            yield return testCaseData;
-
-            //19
-            item = new FileSystemItem(rootPath + "my.doc");
-            searchText = "m d";
-            //matchString = new MatchString
-            //                  {
-            //                      new MatchSubstring("my.d", true),
-            //                      new MatchSubstring("oc", false),
-            //                  };
-            matchString = null;
-            expectedMatch = new MatchedFileSystemItem(item, matchString);
-            testCaseData = new TestCaseData(item, searchText, expectedMatch).SetName("Special symbol does not act as a word break after itself in a path");
-            yield return testCaseData;
+            yield return CreateTestCaseData("my.doc", "m .d", null, "00_10");
         }
     }
 }

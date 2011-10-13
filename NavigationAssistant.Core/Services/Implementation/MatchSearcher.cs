@@ -119,7 +119,10 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             if (!char.IsLetter(firstLetter))
             {
-                return @"(?:\b|\W+)" + Regex.Escape(firstLetter.ToString());
+                //Can not use \b
+                //return @"(?:\b|\W+)" + Regex.Escape(firstLetter.ToString());
+                //return Regex.Escape(firstLetter.ToString());
+                return ".*" + Regex.Escape(firstLetter.ToString());
             }
 
             string template = wordIndex == 0 
