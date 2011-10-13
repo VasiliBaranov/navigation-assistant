@@ -21,7 +21,20 @@ namespace NavigationAssistant.Tests
 
         [Test]
         [TestCaseSource("GetMatchCases")]
-        public void GetMatches_MatchesCorrect(FileSystemItem item, string searchText, MatchedFileSystemItem expectedMatch)
+        public void GetMatches_WithoutSpecialSymbols_MatchesCorrect(FileSystemItem item, string searchText, MatchedFileSystemItem expectedMatch)
+        {
+            MatchesCorrect(item, searchText, expectedMatch);
+        }
+
+        [Test]
+        [TestCaseSource("GetMatchCasesWithSpecialSymbols")]
+        //[TestCaseSource("GetTempMatchCases")]
+        public void GetMatches_WithSpecialSymbols_MatchesCorrect(FileSystemItem item, string searchText, MatchedFileSystemItem expectedMatch)
+        {
+            MatchesCorrect(item, searchText, expectedMatch);
+        }
+
+        private void MatchesCorrect(FileSystemItem item, string searchText, MatchedFileSystemItem expectedMatch)
         {
             List<FileSystemItem> items = new List<FileSystemItem> {item};
 
@@ -220,27 +233,131 @@ namespace NavigationAssistant.Tests
             yield return testCaseData;
         }
 
-        //public IEnumerable<TestCaseData> GetTempMatchCases()
-        //{
-        //    const string rootPath = @"C:\";
+        public IEnumerable<TestCaseData> GetMatchCasesWithSpecialSymbols()
+        {
+            const string rootPath = @"C:\";
 
-        //    FileSystemItem item;
-        //    string searchText;
-        //    MatchString matchString;
-        //    MatchedFileSystemItem expectedMatch;
-        //    TestCaseData testCaseData;
+            FileSystemItem item;
+            string searchText;
+            MatchString matchString;
+            MatchedFileSystemItem expectedMatch;
+            TestCaseData testCaseData;
 
-        //    item = new FileSystemItem(rootPath + "myOwnDoc");
-        //    searchText = "o do";
-        //    matchString = new MatchString
-        //                      {
-        //                          new MatchSubstring("my", false),
-        //                          new MatchSubstring("ownDo", true),
-        //                          new MatchSubstring("c", false)
-        //                      };
-        //    expectedMatch = new MatchedFileSystemItem(item, matchString);
-        //    testCaseData = new TestCaseData(item, searchText, expectedMatch).SetName("Match camel/pascal casing in the middle");
-        //    yield return testCaseData;
-        //}
+            item = new FileSystemItem(rootPath + "mydoc");
+            searchText = "[ ";
+            expectedMatch = null;
+            testCaseData = new TestCaseData(item, searchText, expectedMatch).SetName("Correctly handle special symbol");
+            yield return testCaseData;
+
+            item = new FileSystemItem(rootPath + "mydoc");
+            searchText = "] [ ^ $ # @ ! ~ ' \" > < . , ? / \\ = - + _ ` ";
+            expectedMatch = null;
+            testCaseData = new TestCaseData(item, searchText, expectedMatch).SetName("Correctly handle several special symbols");
+            yield return testCaseData;
+
+            item = new FileSystemItem(rootPath + "mydoc");
+            searchText = "] [^$# @ ~[' \"><. ,?/\\ =-+_]`";
+            expectedMatch = null;
+            testCaseData = new TestCaseData(item, searchText, expectedMatch).SetName("Correctly handle invalid regex with grouped symbols");
+            yield return testCaseData;
+
+            item = new FileSystemItem(rootPath + ".my doc");
+            searchText = ".m d";
+            matchString = new MatchString
+                              {
+                                  new MatchSubstring(".my d", true),
+                                  new MatchSubstring("oc", false),
+                              };
+            expectedMatch = new MatchedFileSystemItem(item, matchString);
+            testCaseData = new TestCaseData(item, searchText, expectedMatch).SetName("Match word with special symbol at string start");
+            yield return testCaseData;
+
+            //Naming convention: "10_01" means that there is a space before the dot in the folder name
+            //and a space after the dot in the search text.
+            yield return CreateTestCaseData("my.doc", "m.d", null, "00_00");
+            yield return CreateTestCaseData("my.doc", "m. d", null, "00_01");
+            yield return CreateTestCaseData("my.doc", "m .d", null, "00_10");
+            yield return CreateTestCaseData("my.doc", "m . d", null, "00_11");
+            yield return CreateTestCaseData("my.doc", "m d", "my.d", "00_noDot");
+            yield return CreateTestCaseData("my.doc", "my.d", "my.d", "00_full");
+            yield return CreateTestCaseData("my.doc", "my. d", "my.d", "00_full 1");
+
+            yield return CreateTestCaseData("my .doc", "m.d", null, "10_00");
+            yield return CreateTestCaseData("my .doc", "m. d", null, "10_01");
+            yield return CreateTestCaseData("my .doc", "m .d", "my .d", "10_10");
+            yield return CreateTestCaseData("my .doc", "m . d", null, "10_11");
+            yield return CreateTestCaseData("my .doc", "m d", "my .d", "10_noDot");
+
+            yield return CreateTestCaseData("my. doc", "m.d", null, "01_00");
+            yield return CreateTestCaseData("my. doc", "m. d", null, "01_01");
+            yield return CreateTestCaseData("my. doc", "m .d", "my. d", "01_10");
+            yield return CreateTestCaseData("my. doc", "m . d", "my. d", "01_11");
+            yield return CreateTestCaseData("my. doc", "m d", "my. d", "01_noDot");
+
+            yield return CreateTestCaseData("my . doc", "m.d", null, "11_00");
+            yield return CreateTestCaseData("my . doc", "m. d", null, "11_01");
+            yield return CreateTestCaseData("my . doc", "m .d", null, "11_10");
+            yield return CreateTestCaseData("my . doc", "m . d", "my . d", "11_11");
+            yield return CreateTestCaseData("my . doc", "m d", "my . d", "11_noDot");
+        }
+
+        private TestCaseData CreateTestCaseData(string folderName, string searchText, string matchedSubstring, string testName)
+        {
+            FileSystemItem item = new FileSystemItem("C:\\" + folderName);
+            MatchedFileSystemItem expectedMatch;
+            if (string.IsNullOrEmpty(matchedSubstring))
+            {
+                expectedMatch = null;
+            }
+            else
+            {
+                MatchString matchString = new MatchString
+                                  {
+                                      new MatchSubstring(matchedSubstring, true),
+                                      new MatchSubstring(folderName.Substring(matchedSubstring.Length), false),
+                                  };
+                expectedMatch = new MatchedFileSystemItem(item, matchString);
+            }
+            
+            TestCaseData testCaseData = new TestCaseData(item, searchText, expectedMatch).SetName(testName);
+            return testCaseData;
+        }
+
+        public IEnumerable<TestCaseData> GetTempMatchCases()
+        {
+            const string rootPath = @"C:\";
+
+            FileSystemItem item;
+            string searchText;
+            MatchString matchString;
+            MatchedFileSystemItem expectedMatch;
+            TestCaseData testCaseData;
+
+            //18
+            item = new FileSystemItem(rootPath + "my. doc");
+            searchText = "m.d";
+            //matchString = new MatchString
+            //                  {
+            //                      new MatchSubstring("my. d", true),
+            //                      new MatchSubstring("oc", false),
+            //                  };
+            matchString = null;
+            expectedMatch = new MatchedFileSystemItem(item, matchString);
+            testCaseData = new TestCaseData(item, searchText, expectedMatch).SetName("Special symbol does not act as a word break after itself in a search text");
+            yield return testCaseData;
+
+            //19
+            item = new FileSystemItem(rootPath + "my.doc");
+            searchText = "m d";
+            //matchString = new MatchString
+            //                  {
+            //                      new MatchSubstring("my.d", true),
+            //                      new MatchSubstring("oc", false),
+            //                  };
+            matchString = null;
+            expectedMatch = new MatchedFileSystemItem(item, matchString);
+            testCaseData = new TestCaseData(item, searchText, expectedMatch).SetName("Special symbol does not act as a word break after itself in a path");
+            yield return testCaseData;
+        }
     }
 }

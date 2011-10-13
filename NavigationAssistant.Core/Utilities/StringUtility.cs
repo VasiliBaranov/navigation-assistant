@@ -10,6 +10,16 @@ namespace NavigationAssistant.Core.Utilities
     {
         public static List<string> SplitStringByUpperChars(string input)
         {
+            return SplitString(input, char.IsUpper);
+        }
+
+        public static List<string> SplitStringByNonLetters(string input)
+        {
+            return SplitString(input, c => !char.IsLetter(c));
+        }
+
+        private static List<string> SplitString(string input, Predicate<char> isSubstringStart)
+        {
             List<string> result = new List<string>();
 
             if (String.IsNullOrEmpty(input))
@@ -24,7 +34,7 @@ namespace NavigationAssistant.Core.Utilities
             {
                 char currentChar = input[i];
 
-                bool shouldAddSubstring = Char.IsUpper(currentChar) && (i != 0);
+                bool shouldAddSubstring = isSubstringStart(currentChar) && (i != 0);
 
                 if (!shouldAddSubstring)
                 {
