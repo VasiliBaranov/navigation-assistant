@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using NavigationAssistant.Core.Services;
 using NavigationAssistant.Core.Services.Implementation;
+using NavigationAssistant.Core.Utilities;
 using NavigationAssistant.PresentationServices;
 using NavigationAssistant.PresentationServices.Implementations;
 using NavigationAssistant.Presenters;
@@ -18,8 +20,10 @@ namespace NavigationAssistant
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            bool isRunOnStartup = IsRunOnStartup(e.Args);
+
             PreventDuplicates();
-            InitializePresenters();
+            InitializePresenters(isRunOnStartup);
         }
 
         private void PreventDuplicates()
@@ -29,12 +33,12 @@ namespace NavigationAssistant
 
             if (appIsRunning)
             {
-                MessageBox.Show("Navigation Assistant is already running");
+                MessageBox.Show(NavigationAssistant.Properties.Resources.ProgramIsRunningError);
                 Shutdown();
             }
         }
 
-        private void InitializePresenters()
+        private void InitializePresenters(bool isRunOnStartup)
         {
             NavigationWindow navigationWindow = new NavigationWindow();
             MainWindow = navigationWindow;
@@ -46,7 +50,7 @@ namespace NavigationAssistant
                                      settingsSerializer,
                                      new KeyboardListener(),
                                      new MatchModelMapper(),
-                                     new NavigationServiceBuilder(registryService.GetRunOnStartup()));
+                                     new NavigationServiceBuilder(isRunOnStartup));
 
             TrayView trayView = new TrayView();
             IPresenter trayPresenter = new TrayIconPresenter(trayView, settingsSerializer);
@@ -58,6 +62,12 @@ namespace NavigationAssistant
 
             _presenterManager = new PresenterManager(presenters);
             _presenterManager.Exited += HandleExited;
+        }
+
+        private static bool IsRunOnStartup(IEnumerable<string> parameters)
+        {
+            List<string> list = parameters.ToList();
+            return !ListUtility.IsNullOrEmpty(list) && list.Contains(RegistryService.StartupRunParameter);
         }
 
         private void HandleExited(object sender, System.EventArgs e)

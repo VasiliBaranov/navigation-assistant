@@ -138,6 +138,9 @@
   <data name="NotifyIconText" xml:space="preserve">
     <value>Navigation Assistant</value>
   </data>
+  <data name="ProgramIsRunningError" xml:space="preserve">
+    <value>Navigation Assistant is already running</value>
+  </data>
   <data name="SettingsMenuItemText" xml:space="preserve">
     <value>&amp;Settings</value>
   </data>
