@@ -28,7 +28,6 @@ namespace NavigationAssistant.Tests
 
         [Test]
         [TestCaseSource("GetMatchCasesWithSpecialSymbols")]
-        //[TestCaseSource("GetTempMatchCases")]
         public void GetMatches_WithSpecialSymbols_MatchesCorrect(FileSystemItem item, string searchText, MatchedFileSystemItem expectedMatch)
         {
             MatchesCorrect(item, searchText, expectedMatch);
@@ -276,11 +275,11 @@ namespace NavigationAssistant.Tests
             //and a space after the dot in the search text.
             yield return CreateTestCaseData("my.doc", "m.d", null, "00_00");
             yield return CreateTestCaseData("my.doc", "m. d", null, "00_01");
-            yield return CreateTestCaseData("my.doc", "m .d", null, "00_10");
+            yield return CreateTestCaseData("my.doc", "m .d", "my.d", "00_10"); //Dots match any symbols before themselves, even space. Not sure if it's user-friendly
             yield return CreateTestCaseData("my.doc", "m . d", null, "00_11");
             yield return CreateTestCaseData("my.doc", "m d", "my.d", "00_noDot");
             yield return CreateTestCaseData("my.doc", "my.d", "my.d", "00_full");
-            yield return CreateTestCaseData("my.doc", "my. d", "my.d", "00_full 1");
+            yield return CreateTestCaseData("my.doc", "my. d", null, "00_full 1"); //No space after dot in the search text-no match. Not sure if it's perfect
 
             yield return CreateTestCaseData("my .doc", "m.d", null, "10_00");
             yield return CreateTestCaseData("my .doc", "m. d", null, "10_01");
@@ -290,7 +289,7 @@ namespace NavigationAssistant.Tests
 
             yield return CreateTestCaseData("my. doc", "m.d", null, "01_00");
             yield return CreateTestCaseData("my. doc", "m. d", null, "01_01");
-            yield return CreateTestCaseData("my. doc", "m .d", "my. d", "01_10");
+            yield return CreateTestCaseData("my. doc", "m .d", null, "01_10"); //No space after dot in the search text-no match. Not sure if it's perfect
             yield return CreateTestCaseData("my. doc", "m . d", "my. d", "01_11");
             yield return CreateTestCaseData("my. doc", "m d", "my. d", "01_noDot");
 
@@ -321,19 +320,6 @@ namespace NavigationAssistant.Tests
             
             TestCaseData testCaseData = new TestCaseData(item, searchText, expectedMatch).SetName(testName);
             return testCaseData;
-        }
-
-        public IEnumerable<TestCaseData> GetTempMatchCases()
-        {
-            const string rootPath = @"C:\";
-
-            FileSystemItem item;
-            string searchText;
-            MatchString matchString;
-            MatchedFileSystemItem expectedMatch;
-            TestCaseData testCaseData;
-
-            yield return CreateTestCaseData("my.doc", "m .d", null, "00_10");
         }
     }
 }
