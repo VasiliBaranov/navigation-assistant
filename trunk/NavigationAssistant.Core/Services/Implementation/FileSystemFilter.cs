@@ -115,7 +115,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private static bool IsInRootFolder(string fullPath, string rootFolderPath)
         {
-            //root folder has no trailing slashes
+            //root folder has no trailing slashes after NormalizeFolders
             return fullPath.StartsWith(rootFolderPath + "\\", StringComparison.CurrentCulture) ||
                 string.Equals(rootFolderPath, fullPath, StringComparison.CurrentCulture);
         }
@@ -151,9 +151,10 @@ namespace NavigationAssistant.Core.Services.Implementation
             }
 
             return folders
+                .Select(s => s.TrimEnd('\\') + "\\") //GetFullPath will return current path for the folder "C:", so we add a backslash manually
                 .Select(Path.GetFullPath)
                 .Select(StringUtility.MakeFirstLetterUppercase)
-                .Select(s => s.TrimEnd('\\'))
+                .Select(s => s.TrimEnd('\\')) //assume in other methods of this class
                 .ToList();
         }
 
