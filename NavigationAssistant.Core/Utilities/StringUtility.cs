@@ -137,6 +137,16 @@ namespace NavigationAssistant.Core.Utilities
 
         public static string MakeFirstLetterUppercase(string input)
         {
+            return UpdateFirstLetter(input, char.ToUpper);
+        }
+
+        public static string MakeFirstLetterLowercase(string input)
+        {
+            return UpdateFirstLetter(input, char.ToLower);
+        }
+
+        private static string UpdateFirstLetter(string input, Func<char, char> update )
+        {
             if (string.IsNullOrEmpty(input))
             {
                 return input;
@@ -145,7 +155,7 @@ namespace NavigationAssistant.Core.Utilities
             char firstLetter = input[0];
             string otherLetters = input.Length > 1 ? input.Substring(1) : string.Empty;
 
-            return char.ToUpper(firstLetter) + otherLetters;
+            return update(firstLetter) + otherLetters;
         }
     }
 }

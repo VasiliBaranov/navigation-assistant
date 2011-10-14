@@ -150,12 +150,19 @@ namespace NavigationAssistant.Core.Services.Implementation
                 return new List<string>();
             }
 
-            return folders
+            List<string> fullPathFolders = folders
                 .Select(s => s.TrimEnd('\\') + "\\") //GetFullPath will return current path for the folder "C:", so we add a backslash manually
                 .Select(Path.GetFullPath)
-                .Select(StringUtility.MakeFirstLetterUppercase)
                 .Select(s => s.TrimEnd('\\')) //assume in other methods of this class
                 .ToList();
+
+            IEnumerable<string> upperCaseFolders = fullPathFolders.Select(StringUtility.MakeFirstLetterUppercase);
+            IEnumerable<string> lowerCaseFolders = fullPathFolders.Select(StringUtility.MakeFirstLetterLowercase);
+
+            List<string> normalizedFolders = new List<string>(upperCaseFolders);
+            normalizedFolders.AddRange(lowerCaseFolders);
+
+            return normalizedFolders;
         }
 
         #endregion
