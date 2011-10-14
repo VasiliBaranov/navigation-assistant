@@ -64,6 +64,7 @@
     <Compile Include="FileSystemParserWithAction.cs" />
     <Compile Include="KeyboardListenerTests.cs" />
     <Compile Include="MatchSearcherTests.cs" />
+    <Compile Include="NavigationServiceBuilderTests.cs" />
     <Compile Include="NavigationServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistryServiceTests.cs" />
