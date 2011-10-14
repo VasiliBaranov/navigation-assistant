@@ -32,76 +32,35 @@ namespace NavigationAssistant.Tests
 
         public IEnumerable<TestCaseData> GetTestCases()
         {
-            FileSystemItem item;
-            List<string> rootFolders;
-            List<string> excludeFolderTemplates;
-            TestCaseData testCaseData;
+            yield return CreateExcludeTemplateData(@"C:\my doc", null, true, "Null constraints handled correctly.");
+            yield return CreateExcludeTemplateData(@"C:\my documents\temp", "my doc.*", false, "Item with excluded folder not returned.");
+            yield return CreateExcludeTemplateData(@"C:\my documents\temp", "my doc", true, "Item with excluded folder not matched completely is returned.");
+            yield return CreateExcludeTemplateData(@"C:\MY documents\temp", "my doc.*", false, "Item with excluded folder (with different case) not returned.");
+            yield return CreateExcludeTemplateData(@"C:\documents\temp", "my doc.*", true, "Item no folders excluded is returned.");
 
-            item = new FileSystemItem(@"C:\my doc");
-            rootFolders = null;
-            excludeFolderTemplates = null;
-            testCaseData = new TestCaseData(item, rootFolders, excludeFolderTemplates, true).SetName("Null constraints handled correctly.");
-            yield return testCaseData;
+            yield return CreateRootFolderData(@"C:\my doc", "C:", true, "Item with correct root returned.");
+            yield return CreateRootFolderData(@"C:\my doc", "D:\\", false, "Item with incorrect root not returned.");
+            yield return CreateRootFolderData(@"C:\my doc", "C:\\my", false, "Item with root, correct incompletely, not returned.");
+            yield return CreateRootFolderData(@"C:\my doc\\", "C:\\my doc", true, "Item with correct root, but with slashes, returned.");
+            yield return CreateRootFolderData(@"C:\my doc", "C:\\my doc\\", true, "Item with correct root, but without slashes, returned.");
+            yield return CreateRootFolderData(@"C:\my doc\\", "C:\\my doc\\", true, "Item with correct root (when root and item have slashes) returned.");
 
-            item = new FileSystemItem(@"C:\my doc");
-            rootFolders = new List<string> {"C:"};
-            excludeFolderTemplates = null;
-            testCaseData = new TestCaseData(item, rootFolders, excludeFolderTemplates, true).SetName("Item with correct root returned.");
-            yield return testCaseData;
+        }
 
-            item = new FileSystemItem(@"C:\my doc");
-            rootFolders = new List<string> { "D:\\" };
-            excludeFolderTemplates = null;
-            testCaseData = new TestCaseData(item, rootFolders, excludeFolderTemplates, false).SetName("Item with incorrect root not returned.");
-            yield return testCaseData;
+        private TestCaseData CreateExcludeTemplateData(string path, string excludeFolderTemplate, bool isMatched, string name)
+        {
+            FileSystemItem item = new FileSystemItem(path);
+            List<string> excludeFolderTemplates = excludeFolderTemplate == null ? null : new List<string> { excludeFolderTemplate };
+            TestCaseData testCaseData = new TestCaseData(item, null, excludeFolderTemplates, isMatched).SetName(name);
+            return testCaseData;
+        }
 
-            item = new FileSystemItem(@"C:\my doc");
-            rootFolders = new List<string> { "C:\\my" };
-            excludeFolderTemplates = null;
-            testCaseData = new TestCaseData(item, rootFolders, excludeFolderTemplates, false).SetName("Item with root, correct incompletely, not returned.");
-            yield return testCaseData;
-
-            item = new FileSystemItem(@"C:\my doc\\");
-            rootFolders = new List<string> { "C:\\my doc" };
-            excludeFolderTemplates = null;
-            testCaseData = new TestCaseData(item, rootFolders, excludeFolderTemplates, true).SetName("Item with correct root, but with slashes, returned.");
-            yield return testCaseData;
-
-            item = new FileSystemItem(@"C:\my doc");
-            rootFolders = new List<string> { "C:\\my doc\\" };
-            excludeFolderTemplates = null;
-            testCaseData = new TestCaseData(item, rootFolders, excludeFolderTemplates, true).SetName("Item with correct root, but without slashes, returned.");
-            yield return testCaseData;
-
-            item = new FileSystemItem(@"C:\my doc\\");
-            rootFolders = new List<string> { "C:\\my doc\\" };
-            excludeFolderTemplates = null;
-            testCaseData = new TestCaseData(item, rootFolders, excludeFolderTemplates, true).SetName("Item with correct root (when root and item have slashes) returned.");
-            yield return testCaseData;
-
-            item = new FileSystemItem(@"C:\my documents\temp");
-            rootFolders = null;
-            excludeFolderTemplates = new List<string>{"my doc.*"};
-            testCaseData = new TestCaseData(item, rootFolders, excludeFolderTemplates, false).SetName("Item with excluded folder not returned.");
-            yield return testCaseData;
-
-            item = new FileSystemItem(@"C:\my documents\temp");
-            rootFolders = null;
-            excludeFolderTemplates = new List<string> { "my doc" };
-            testCaseData = new TestCaseData(item, rootFolders, excludeFolderTemplates, true).SetName("Item with excluded folder not matched completely is returned.");
-            yield return testCaseData;
-
-            item = new FileSystemItem(@"C:\MY documents\temp");
-            rootFolders = null;
-            excludeFolderTemplates = new List<string> { "my doc.*" };
-            testCaseData = new TestCaseData(item, rootFolders, excludeFolderTemplates, false).SetName("Item with excluded folder (with different case) not returned.");
-            yield return testCaseData;
-
-            item = new FileSystemItem(@"C:\documents\temp");
-            rootFolders = null;
-            excludeFolderTemplates = new List<string> { "my doc.*" };
-            testCaseData = new TestCaseData(item, rootFolders, excludeFolderTemplates, true).SetName("Item no folders excluded is returned.");
-            yield return testCaseData;
+        private TestCaseData CreateRootFolderData(string path, string rootFolder, bool isMatched, string name)
+        {
+            FileSystemItem item = new FileSystemItem(path);
+            List<string> rootFolders = new List<string> { rootFolder };
+            TestCaseData testCaseData = new TestCaseData(item, rootFolders, null, isMatched).SetName(name);
+            return testCaseData;
         }
     }
 }
