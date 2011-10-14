@@ -10,10 +10,10 @@ namespace NavigationAssistant.Tests
     [TestFixture]
     public class NavigationServiceTests
     {
-        private Mock<IFileSystemParser> _fileSystemParserMock = new Mock<IFileSystemParser>();
-        private Mock<IMatchSearcher> _matchSearcherMock = new Mock<IMatchSearcher>();
-        private Mock<INavigatorManager> _primaryManagerMock = new Mock<INavigatorManager>();
-        private Mock<INavigatorManager> _secondaryManagerMock = new Mock<INavigatorManager>();
+        private Mock<IFileSystemParser> _fileSystemParserMock;
+        private Mock<IMatchSearcher> _matchSearcherMock;
+        private Mock<INavigatorManager> _primaryManagerMock;
+        private Mock<INavigatorManager> _secondaryManagerMock;
 
         private INavigatorManager _primaryManager;
         private INavigatorManager _secondaryManager;
