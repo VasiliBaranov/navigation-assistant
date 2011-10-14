@@ -122,7 +122,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                 //Can not use \b
                 //return @"(?:\b|\W+)" + Regex.Escape(firstLetter.ToString());
                 //return Regex.Escape(firstLetter.ToString());
-                return ".*" + Regex.Escape(firstLetter.ToString());
+                return "\\s*" + Regex.Escape(firstLetter.ToString());
             }
 
             string template = wordIndex == 0 
