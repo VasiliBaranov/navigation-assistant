@@ -36,13 +36,16 @@ namespace NavigationAssistant.Tests
             yield return CreateExcludeTemplateData(@"C:\my documents\temp", "my doc.*", false, "Item with excluded folder not returned.");
             yield return CreateExcludeTemplateData(@"C:\my documents\temp", "my doc", true, "Item with excluded folder not matched completely is returned.");
             yield return CreateExcludeTemplateData(@"C:\MY documents\temp", "my doc.*", false, "Item with excluded folder (with different case) not returned.");
-            yield return CreateExcludeTemplateData(@"C:\documents\temp", "my doc.*", true, "Item no folders excluded is returned.");
+            yield return CreateExcludeTemplateData(@"C:\documents\temp", "my doc.*", true, "Item with no folders excluded is returned.");
 
-            yield return CreateRootFolderData(@"C:\my doc", "C:", true, "Item with correct root returned.");
+            yield return CreateRootFolderData(@"C:\my doc", "C:", true, "Item with correct root (root has no slash) returned.");
+            yield return CreateRootFolderData(@"C:\my doc", "C:\\", true, "Item with correct root (root has a slash) returned.");
             yield return CreateRootFolderData(@"C:\my doc", "D:\\", false, "Item with incorrect root not returned.");
             yield return CreateRootFolderData(@"C:\my doc", "C:\\my", false, "Item with root, correct incompletely, not returned.");
             yield return CreateRootFolderData(@"C:\my doc\\", "C:\\my doc", true, "Item with correct root, but with slashes, returned.");
             yield return CreateRootFolderData(@"C:\my doc", "C:\\my doc\\", true, "Item with correct root, but without slashes, returned.");
+            yield return CreateRootFolderData(@"c:\my doc", "C:\\my doc\\", true, "Item with correct root (but the first letter is lower) returned.");
+            yield return CreateRootFolderData(@"C:\my doc", "c:\\my doc\\", true, "Item with correct root (but the first letter is upper) returned.");
             yield return CreateRootFolderData(@"C:\my doc\\", "C:\\my doc\\", true, "Item with correct root (when root and item have slashes) returned.");
 
         }
