@@ -12,7 +12,7 @@ namespace NavigationAssistant.Tests
         private IFileSystemFilter _fileSystemFilter;
 
         [SetUp]
-        private void SetUp()
+        public void SetUp()
         {
             _fileSystemFilter = new FileSystemFilter();
         }
@@ -44,7 +44,7 @@ namespace NavigationAssistant.Tests
             yield return testCaseData;
 
             item = new FileSystemItem(@"C:\my doc");
-            rootFolders = new List<string>{"C:"};
+            rootFolders = new List<string> {"C:"};
             excludeFolderTemplates = null;
             testCaseData = new TestCaseData(item, rootFolders, excludeFolderTemplates, true).SetName("Item with correct root returned.");
             yield return testCaseData;
