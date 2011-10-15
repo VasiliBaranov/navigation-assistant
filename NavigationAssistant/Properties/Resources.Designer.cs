@@ -133,6 +133,15 @@ namespace NavigationAssistant.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sorry.
+        /// </summary>
+        internal static string ProgramIsRunningErrorCaption {
+            get {
+                return ResourceManager.GetString("ProgramIsRunningErrorCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &amp;Settings.
         /// </summary>
         internal static string SettingsMenuItemText {

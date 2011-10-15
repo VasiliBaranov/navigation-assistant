@@ -8,11 +8,11 @@ namespace NavigationAssistant.Core.Services.Implementation
     //TODO: Use IoC
     public class NavigationServiceBuilder : INavigationServiceBuilder
     {
-        private readonly bool _appWasAutoRun;
+        private readonly bool _appRunOnStartup;
 
-        public NavigationServiceBuilder(bool appWasAutoRun)
+        public NavigationServiceBuilder(bool appRunOnStartup)
         {
-            _appWasAutoRun = appWasAutoRun;
+            _appRunOnStartup = appRunOnStartup;
         }
 
         #region Public Methods
@@ -99,7 +99,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                                                                         new FileSystemListener(),
                                                                         new RegistryService(),
                                                                         new AsyncFileSystemParser(new FileSystemParser(new FileSystemListener())),
-                                                                        _appWasAutoRun);
+                                                                        _appRunOnStartup);
 
             cachedParser.ExcludeFolderTemplates = settings.ExcludeFolderTemplates;
             cachedParser.FoldersToParse = settings.FoldersToParse;

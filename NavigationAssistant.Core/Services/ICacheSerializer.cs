@@ -9,5 +9,7 @@ namespace NavigationAssistant.Core.Services
         void SerializeCache(FileSystemCache cache);
 
         FileSystemCache DeserializeCache();
+
+        void DeleteCache();
     }
 }
