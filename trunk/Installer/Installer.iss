@@ -45,9 +45,15 @@ Source: "{#SourceDir}\NavigationAssistant.exe"; DestDir: "{app}"; Flags: ignorev
 ; Removing product directory if it is empty
 Type: dirifempty; Name: "{app}"
 
-[CustomMessages]
-ExecutableDescription=Run Navigation Assistant
-
 [Icons]
-Name: "{userprograms}\{#ProductName}\{#ProductName}"; Comment: "{cm:ExecutableDescription}"; Filename: "{app}\NavigationAssistant.exe"; IconFileName: {app}\NavigationAssistant.exe;
-; [Code]
+Name: "{userprograms}\{#ProductName}\{#ProductName}"; Comment: "Run Navigation Assistant"; Filename: "{app}\NavigationAssistant.exe"; IconFileName: {app}\NavigationAssistant.exe;
+Name: "{userprograms}\{#ProductName}\Uninstall"; Comment: "Uninstall Navigation Assistant"; Filename: "{app}\unins000.exe"; IconFileName: {app}\unins000.exe;
+
+[Run]
+Filename: "{app}\NavigationAssistant.exe"; Parameters: "/install"; StatusMsg: "Parsing file system (this may take several minutes)..."; Flags: runascurrentuser runhidden;
+
+; We run the application at once (no postinstall flag) to prevent changing filesystem between parsing the file system and running the app manually.
+Filename: "{app}\NavigationAssistant.exe"; Parameters: "/startup"; Flags: nowait;
+
+[UninstallRun]
+Filename: "{app}\NavigationAssistant.exe"; Parameters: "/uninstall"; StatusMsg: "Removing cache and settings..."; Flags: runascurrentuser runhidden;

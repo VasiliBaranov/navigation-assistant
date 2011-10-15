@@ -58,5 +58,24 @@ namespace NavigationAssistant.Core.Utilities
 
             return folders;
         }
+
+        public static bool IsEmpty(string path)
+        {
+            DirectoryInfo folder = new DirectoryInfo(path);
+
+            return ListUtility.IsNullOrEmpty(folder.GetFiles()) && ListUtility.IsNullOrEmpty(folder.GetDirectories());
+        }
+
+        public static void DeleteIfEmpty(string path, int layersCount)
+        {
+            for (int i = 0; i < layersCount; i++)
+            {
+                if (IsEmpty(path))
+                {
+                    Directory.Delete(path, true);
+                }
+                path = Path.GetDirectoryName(path);
+            }
+        }
     }
 }

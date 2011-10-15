@@ -11,5 +11,7 @@ namespace NavigationAssistant.Core.Services
         bool GetRunOnStartup();
 
         void SetRunOnStartup(bool value);
+
+        void DeleteSettings();
     }
 }

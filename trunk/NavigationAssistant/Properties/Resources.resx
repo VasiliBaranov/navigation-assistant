@@ -141,6 +141,9 @@
   <data name="ProgramIsRunningError" xml:space="preserve">
     <value>Navigation Assistant is already running</value>
   </data>
+  <data name="ProgramIsRunningErrorCaption" xml:space="preserve">
+    <value>Sorry</value>
+  </data>
   <data name="SettingsMenuItemText" xml:space="preserve">
     <value>&amp;Settings</value>
   </data>

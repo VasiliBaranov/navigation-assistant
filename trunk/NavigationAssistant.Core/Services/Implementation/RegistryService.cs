@@ -50,7 +50,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
             if (value)
             {
-                string path = string.Format(CultureInfo.InvariantCulture, "\"{0}\" \"{1}\"", _assemblyPath, StartupRunParameter);
+                string path = String.Format(CultureInfo.InvariantCulture, "\"{0}\" \"{1}\"", _assemblyPath, StartupRunParameter);
                 startupKey.SetValue("NavigationAssistant", path, RegistryValueKind.String);
             }
             else
@@ -81,7 +81,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                     if (installDirValue != null)
                     {
                         string installDir = installDirValue.GetValue("InstallDir") as string;
-                        if (!string.IsNullOrEmpty(installDir) && Directory.Exists(installDir))
+                        if (!String.IsNullOrEmpty(installDir) && Directory.Exists(installDir))
                         {
                             return installDir;
                         }

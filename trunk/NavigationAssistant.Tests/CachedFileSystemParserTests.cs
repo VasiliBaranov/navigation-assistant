@@ -20,7 +20,7 @@ namespace NavigationAssistant.Tests
         private FileSystemParserWithAction _fileSystemParser;
         private FakeRegistryService _registryService;
         private AsyncFileSystemParser _asyncParser;
-        private bool _appWasAutoRun;
+        private bool _appRunOnStartup;
         private int _updatesCountToWrite;
 
         private const string FolderName = "Folder";
@@ -35,7 +35,7 @@ namespace NavigationAssistant.Tests
             _fileSystemParser = new FileSystemParserWithAction(new FileSystemListener(), new List<string> { FolderName });
             _registryService = new FakeRegistryService();
             _asyncParser = new AsyncFileSystemParser(new FileSystemParser(new FileSystemListener(), new List<string> { FolderName }));
-            _appWasAutoRun = true;
+            _appRunOnStartup = true;
             _updatesCountToWrite = -1;
 
             DirectoryUtility.EnsureClearFolder(FolderName);
@@ -88,7 +88,7 @@ namespace NavigationAssistant.Tests
                                                                      _listener,
                                                                      _registryService,
                                                                      _asyncParser,
-                                                                     _appWasAutoRun);
+                                                                     _appRunOnStartup);
             }
             else
             {
@@ -97,7 +97,7 @@ namespace NavigationAssistant.Tests
                                                                      _listener,
                                                                      _registryService,
                                                                      _asyncParser,
-                                                                     _appWasAutoRun,
+                                                                     _appRunOnStartup,
                                                                      _updatesCountToWrite);
             }
         }
@@ -152,7 +152,7 @@ namespace NavigationAssistant.Tests
         {
             //Start asynchronous parsing at once
             _asyncParser = new AsyncFileSystemParser(new FileSystemParser(new FileSystemListener(), new List<string> { FolderName }), 0);
-            _appWasAutoRun = false;
+            _appRunOnStartup = false;
 
             SetUpCache(DateTime.Now);
 

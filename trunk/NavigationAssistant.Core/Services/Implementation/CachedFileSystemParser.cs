@@ -108,9 +108,9 @@ namespace NavigationAssistant.Core.Services.Implementation
             IFileSystemListener fileSystemListener,
             IRegistryService registryService,
             IAsyncFileSystemParser asyncFileSystemParser,
-            bool appWasAutoRun,
+            bool appRunOnStartup,
             int updatesCountToWrite)
-            : this(fileSystemParser, cacheSerializer, fileSystemListener, registryService, asyncFileSystemParser, appWasAutoRun)
+            : this(fileSystemParser, cacheSerializer, fileSystemListener, registryService, asyncFileSystemParser, appRunOnStartup)
         {
             _updatesCountToWrite = updatesCountToWrite;
         }
@@ -120,7 +120,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             IFileSystemListener fileSystemListener,
             IRegistryService registryService,
             IAsyncFileSystemParser asyncFileSystemParser,
-            bool appWasAutoRun)
+            bool appRunOnStartup)
         {
             _cacheSerializer = cacheSerializer;
             _fileSystemListener = fileSystemListener;
@@ -129,7 +129,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             _asyncFileSystemParser = asyncFileSystemParser;
             _fileSystemFilter = new FileSystemFilter();
 
-            _fullCacheUpToDate = ReadFullCache(appWasAutoRun);
+            _fullCacheUpToDate = ReadFullCache(appRunOnStartup);
 
             //Listen to the changes in the whole system to update the fullCache.
             //This handler should be bound just after reading the full cache to ensure that _fullCache is initialized.
@@ -242,7 +242,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             return cacheValid;
         }
 
-        private bool ReadFullCache(bool appWasAutoRun)
+        private bool ReadFullCache(bool appRunOnStartup)
         {
             bool fullCacheUpToDate;
 
@@ -256,7 +256,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                 //The cache file can be up to date only if the current Navigation Assistant has been run on startup
                 //and if it had been closed just on system shutdown and the current parser is created at application start.
                 //In this case no additional folders can be created during NavAssistant being inactive.
-                fullCacheUpToDate = CacheUpToDate(_fullCache) && appWasAutoRun;
+                fullCacheUpToDate = CacheUpToDate(_fullCache) && appRunOnStartup;
             }
             else
             {
