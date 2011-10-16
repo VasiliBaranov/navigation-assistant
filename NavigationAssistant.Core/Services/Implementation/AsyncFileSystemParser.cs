@@ -22,7 +22,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private delegate void ParseFileSystemDelegate();
 
-        private readonly int _delayIntervalInSeconds = 60 * 5;
+        private readonly int _delayIntervalInSeconds = 30;
 
         private FileSystemCache _fileSystem;
 
