@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace NavigationAssistant.Utilities
+namespace NavigationAssistant.WpfExtensions
 {
     //Allows restriction of textboxes to numeric input
     //Code taken from http://stackoverflow.com/questions/1346707/validation-in-textbox-in-wpf

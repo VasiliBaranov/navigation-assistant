@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using NavigationAssistant.Core.Utilities;
 
-namespace NavigationAssistant.Presenters
+namespace NavigationAssistant.Presenters.Implementation
 {
     public class PresenterManager : BasePresenter, IPresenterManager
     {

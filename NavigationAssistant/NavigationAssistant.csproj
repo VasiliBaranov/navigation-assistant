@@ -56,13 +56,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Presenters\BasePresenter.cs" />
+    <Compile Include="Presenters\Implementation\BasePresenter.cs" />
     <Compile Include="Presenters\IPresenter.cs" />
     <Compile Include="Presenters\IPresenterManager.cs" />
-    <Compile Include="Presenters\NavigationPresenter.cs" />
-    <Compile Include="Presenters\PresenterManager.cs" />
-    <Compile Include="Presenters\SettingsPresenter.cs" />
-    <Compile Include="Presenters\TrayIconPresenter.cs" />
+    <Compile Include="Presenters\Implementation\NavigationPresenter.cs" />
+    <Compile Include="Presenters\Implementation\PresenterManager.cs" />
+    <Compile Include="Presenters\Implementation\SettingsPresenter.cs" />
+    <Compile Include="Presenters\Implementation\TrayIconPresenter.cs" />
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="Views\Implementation\AdvancedSettingsControl.xaml.cs">
       <DependentUpon>AdvancedSettingsControl.xaml</DependentUpon>
@@ -82,20 +82,17 @@
     <Compile Include="PresentationServices\Implementations\MatchModelMapper.cs" />
     <Compile Include="PresentationServices\Implementations\PresentationService.cs" />
     <Compile Include="PresentationServices\IPresentationService.cs" />
-    <Compile Include="Utilities\FocusExtension.cs">
+    <Compile Include="WpfExtensions\FocusExtension.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Utilities\NumericExtension.cs" />
-    <Compile Include="Utilities\ScrollExtension.cs">
+    <Compile Include="WpfExtensions\NumericExtension.cs" />
+    <Compile Include="WpfExtensions\ScrollExtension.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Utilities\SizeExtension.cs">
+    <Compile Include="WpfExtensions\SizeExtension.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Utilities\Utility.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Utilities\WindowExtension.cs">
+    <Compile Include="WpfExtensions\WindowExtension.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewModel\AdvancedSettingsModel.cs" />
@@ -154,9 +151,7 @@
       <Name>NavigationAssistant.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="PresentationModel\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -165,9 +160,9 @@
   -->
   <Target Name="AfterBuild">
     <PropertyGroup>
-        <AppVersion>1.0.0</AppVersion>
-        <Revision>0</Revision>
+      <AppVersion>1.0.0</AppVersion>
+      <Revision>0</Revision>
     </PropertyGroup>
-    <Exec Command="call &quot;..\Installer\InnoSetup\ISCC.exe&quot; &quot;/dAppVersion=$(AppVersion)&quot; &quot;/dRevision=$(Revision)&quot; &quot;/dSourceDir=..\NavigationAssistant\$(OutputPath)&quot; ..\Installer\Installer.iss"/>
+    <Exec Command="call &quot;..\Installer\InnoSetup\ISCC.exe&quot; &quot;/dAppVersion=$(AppVersion)&quot; &quot;/dRevision=$(Revision)&quot; &quot;/dSourceDir=..\NavigationAssistant\$(OutputPath)&quot; ..\Installer\Installer.iss" />
   </Target>
 </Project>

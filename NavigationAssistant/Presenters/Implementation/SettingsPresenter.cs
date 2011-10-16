@@ -2,10 +2,9 @@
 using NavigationAssistant.Core.Model;
 using NavigationAssistant.Core.Services;
 using NavigationAssistant.Core.Utilities;
-using NavigationAssistant.Utilities;
 using NavigationAssistant.Views;
 
-namespace NavigationAssistant.Presenters
+namespace NavigationAssistant.Presenters.Implementation
 {
     public class SettingsPresenter : BasePresenter, IPresenter
     {

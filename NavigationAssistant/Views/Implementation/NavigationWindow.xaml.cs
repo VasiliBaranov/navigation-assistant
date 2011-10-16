@@ -8,7 +8,6 @@ using NavigationAssistant.Core.Model;
 using NavigationAssistant.Core.Utilities;
 using NavigationAssistant.PresentationServices;
 using NavigationAssistant.PresentationServices.Implementations;
-using NavigationAssistant.Utilities;
 using NavigationAssistant.ViewModel;
 
 namespace NavigationAssistant.Views.Implementation
