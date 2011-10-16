@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using NavigationAssistant.Core.Model;
 using NavigationAssistant.Core.Services;
@@ -19,6 +20,8 @@ namespace NavigationAssistant
     public partial class App : Application
     {
         private IPresenterManager _presenterManager;
+
+        private static readonly Mutex AppMutex = new Mutex(true, "44F16610-EF84-47B6-8536-33C0D754F41E");
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
@@ -76,7 +79,7 @@ namespace NavigationAssistant
         private void PreventDuplicates()
         {
             IPresentationService presentationService = new PresentationService();
-            bool appIsRunning = presentationService.ApplicationIsRunning();
+            bool appIsRunning = presentationService.ApplicationIsRunning(AppMutex);
 
             if (appIsRunning)
             {

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
@@ -71,11 +72,11 @@ namespace NavigationAssistant.PresentationServices.Implementations
             return availableWidth * Constants.MaxScreenFillingRatio;
         }
 
-        public bool ApplicationIsRunning()
+        // See http://sanity-free.org/143/csharp_dotnet_single_instance_application.html
+        public bool ApplicationIsRunning(Mutex mutex)
         {
-            Process[] processes = Process.GetProcessesByName("NavigationAssistant");
-
-            return processes.Length > 1;
+            // So, if our app is running, WaitOne will return false
+            return !mutex.WaitOne(TimeSpan.Zero, true);
         }
 
         //The code is taken from http://stackoverflow.com/questions/46030/c-force-form-focus
