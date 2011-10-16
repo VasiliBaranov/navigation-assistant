@@ -1,8 +1,7 @@
 ﻿using System;
 using NavigationAssistant.Core.Utilities;
-using NavigationAssistant.Utilities;
 
-namespace NavigationAssistant.Presenters
+namespace NavigationAssistant.Presenters.Implementation
 {
     public abstract class BasePresenter
     {

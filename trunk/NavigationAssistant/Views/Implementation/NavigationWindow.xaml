@@ -1,7 +1,7 @@
 ﻿<Window x:Class="NavigationAssistant.Views.Implementation.NavigationWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:Utilities="clr-namespace:NavigationAssistant.Utilities"
+        xmlns:WpfExtensions="clr-namespace:NavigationAssistant.WpfExtensions" 
         Title="Navigation Assistant" 
         SizeToContent="WidthAndHeight"
         Topmost="True"
@@ -63,8 +63,8 @@
                  Style="{StaticResource SearchTextBox}"
                  Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"
                  PreviewKeyDown="HandleSearchTextPreviewKeyDown"
-                 Utilities:SizeExtension.Observe="True"
-                 Utilities:SizeExtension.ObservedHeight="{Binding Path=SearchTextBoxHeight, Mode=OneWayToSource}"
+                 WpfExtensions:SizeExtension.Observe="True"
+                 WpfExtensions:SizeExtension.ObservedHeight="{Binding Path=SearchTextBoxHeight, Mode=OneWayToSource}"
                  Visibility="{Binding Path=MainScreenVisiblity}"/>
         <ListBox x:Name="MatchesListBox"
                  Style="{StaticResource MatchesListBox}"
@@ -75,9 +75,9 @@
                  ItemContainerStyle="{StaticResource ListBoxItemStyle}"
                  MaxHeight="{Binding Path=MaxMatchesListBoxHeight, Mode=OneWay}"
                  Width="{Binding Path=MatchesListBoxWidth}"
-                 Utilities:SizeExtension.Observe="True"
-                 Utilities:SizeExtension.ObservedWidth="{Binding Path=MatchesListBoxActualWidth, Mode=OneWayToSource}"
-                 Utilities:ScrollExtension.AutoScrollToCurrentItem="True"
+                 WpfExtensions:SizeExtension.Observe="True"
+                 WpfExtensions:SizeExtension.ObservedWidth="{Binding Path=MatchesListBoxActualWidth, Mode=OneWayToSource}"
+                 WpfExtensions:ScrollExtension.AutoScrollToCurrentItem="True"
                  Visibility="{Binding Path=MainScreenVisiblity}">
             <!--AutoScrollToCurrentItem is set as far we allow selection change with up/down keys even if the control is not focused.-->
             <ListBox.ItemTemplate>

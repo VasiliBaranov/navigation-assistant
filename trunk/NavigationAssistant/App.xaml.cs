@@ -9,6 +9,7 @@ using NavigationAssistant.Core.Utilities;
 using NavigationAssistant.PresentationServices;
 using NavigationAssistant.PresentationServices.Implementations;
 using NavigationAssistant.Presenters;
+using NavigationAssistant.Presenters.Implementation;
 using NavigationAssistant.Views.Implementation;
 
 namespace NavigationAssistant

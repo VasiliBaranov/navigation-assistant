@@ -8,7 +8,7 @@ using NavigationAssistant.Properties;
 using NavigationAssistant.ViewModel;
 using NavigationAssistant.Views;
 
-namespace NavigationAssistant.Presenters
+namespace NavigationAssistant.Presenters.Implementation
 {
     public class NavigationPresenter : BasePresenter, IPresenter
     {

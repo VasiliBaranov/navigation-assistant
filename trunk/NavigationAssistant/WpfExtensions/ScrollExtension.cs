@@ -2,8 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-
-namespace NavigationAssistant.Utilities
+namespace NavigationAssistant.WpfExtensions
 {
     /// <summary>
     /// This class supports list box automatic scrolling to the selected item.
