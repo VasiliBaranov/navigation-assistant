@@ -31,40 +31,50 @@
                 <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="LightBlue" Opacity=".4"/>
             </Style.Resources>
         </Style>
+        <Style x:Key="InitializingTextBlock" TargetType="TextBlock">
+            <Setter Property="Width" Value="300" />
+            <Setter Property="Height" Value="Auto" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Margin" Value="10" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style x:Key="SearchTextBox" TargetType="TextBox">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="MinWidth" Value="300" />
+        </Style>
+        <Style x:Key="MatchesListBox" TargetType="ListBox">
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="Height" Value="Auto" />
+            <Setter Property="MinWidth" Value="300" />
+        </Style>
     </Window.Resources>
     <StackPanel Width="Auto" 
                 Height="Auto" 
                 VerticalAlignment="Top" 
                 KeyDown="HandlePanelKeyDown">
         <TextBlock x:Name="InitializingTextBlock" 
-                    Width="300"
-                    Height="Auto"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Margin="10"
-                    Text="Please wait while the computer folders are being parsed. This may take several minutes."
-                    TextWrapping="Wrap"
-                    Visibility="{Binding Path=InitializingScreenVisiblity}"/>
+                   Style="{StaticResource InitializingTextBlock}"
+                   Visibility="{Binding Path=InitializingScreenVisiblity}" >
+            Please wait while the computer folders are being parsed. This may take several minutes.
+        </TextBlock>
         <TextBox x:Name="SearchTextBox" 
-                 HorizontalAlignment="Stretch" 
-                 Width="Auto"
-                 MinWidth="300" 
+                 Style="{StaticResource SearchTextBox}"
                  Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"
                  PreviewKeyDown="HandleSearchTextPreviewKeyDown"
                  Utilities:SizeExtension.Observe="True"
                  Utilities:SizeExtension.ObservedHeight="{Binding Path=SearchTextBoxHeight, Mode=OneWayToSource}"
                  Visibility="{Binding Path=MainScreenVisiblity}"/>
-        <ListBox x:Name="MatchesListBox" 
-                 HorizontalAlignment="Left"
-                 ItemsSource="{Binding Path=Matches}" 
+        <ListBox x:Name="MatchesListBox"
+                 Style="{StaticResource MatchesListBox}"
+                 ItemsSource="{Binding Path=Matches}"
                  SelectedItem="{Binding Path=SelectedMatch}"
-                 IsSynchronizedWithCurrentItem="True" 
+                 IsSynchronizedWithCurrentItem="True"
                  MouseUp="HandleMatchesListMouseUp"
                  ItemContainerStyle="{StaticResource ListBoxItemStyle}"
-                 Height="Auto"
                  MaxHeight="{Binding Path=MaxMatchesListBoxHeight, Mode=OneWay}"
                  Width="{Binding Path=MatchesListBoxWidth}"
-                 MinWidth="300"
                  Utilities:SizeExtension.Observe="True"
                  Utilities:SizeExtension.ObservedWidth="{Binding Path=MatchesListBoxActualWidth, Mode=OneWayToSource}"
                  Utilities:ScrollExtension.AutoScrollToCurrentItem="True"

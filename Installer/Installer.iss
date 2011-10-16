@@ -37,11 +37,9 @@ VersionInfoVersion={#AppVersion}.{#Revision}
 ; This will be the {app} variable
 DefaultDirName={pf}\{#ProductName}
 
-[Messages]
-FinishedLabel=Setup has finished installing [name] on your computer. The application will be launched automatically and will be registered for launching on Windows startup.
-
 [CustomMessages]
-ApplicationAlreadyInstalled=Navigation Assistant seems to be already installed on your computer. Would you like to continue?
+ApplicationAlreadyInstalled=Navigation Assistant seems to have already been installed on your computer. Would you like to continue?
+RunExecutableDescription=Run Navigation Assistant
 
 [Registry]
 Root: HKLM; Subkey: "Software\{#ProductName}"; Flags: uninsdeletekey
@@ -60,10 +58,9 @@ Name: "{userprograms}\{#ProductName}\{#ProductName}"; Comment: "Run Navigation A
 Name: "{userprograms}\{#ProductName}\Uninstall"; Comment: "Uninstall Navigation Assistant"; Filename: "{app}\unins000.exe"; IconFileName: {app}\unins000.exe;
 
 [Run]
-Filename: "{app}\NavigationAssistant.exe"; Parameters: "/install"; StatusMsg: "Parsing file system (this may take several minutes)..."; Flags: runascurrentuser runhidden;
-
-; We run the application at once (no postinstall flag) to prevent changing filesystem between parsing the file system and running the app manually.
-Filename: "{app}\NavigationAssistant.exe"; Parameters: "/startup"; Flags: nowait;
+Filename: "{app}\NavigationAssistant.exe"; Parameters: "/install"; StatusMsg: "Performing startup actions"; Flags: runascurrentuser runhidden;
+; Add a checkbox to the success window for running the Navigation Assistant
+Filename: "{app}\NavigationAssistant.exe"; Description: "{cm:RunExecutableDescription}";  Flags: postinstall nowait;
 
 [UninstallRun]
 Filename: "{app}\NavigationAssistant.exe"; Parameters: "/uninstall"; StatusMsg: "Removing cache and settings..."; Flags: runascurrentuser runhidden;
