@@ -2,6 +2,12 @@
 
 namespace NavigationAssistant.Core.Model
 {
+    /// <summary>
+    /// Represents an item of the file system.
+    /// </summary>
+    /// <remarks>
+    /// Currently the application works just with folders.
+    /// </remarks>
     public class FileSystemItem
     {
         public string Name { get; set; }

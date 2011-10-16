@@ -2,6 +2,9 @@
 
 namespace NavigationAssistant.Core.Utilities
 {
+    /// <summary>
+    /// Contains utility methods for dealing with enumerations.
+    /// </summary>
     public static class EnumUtility
     {
         public static bool IsPresent(Keys key, Keys keyToCheck)

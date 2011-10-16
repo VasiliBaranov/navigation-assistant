@@ -5,15 +5,28 @@ using NavigationAssistant.Core.Model;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
-    //TODO: Use IoC
+    /// <summary>
+    /// Implements building and updating navigation service according to settings provided.
+    /// </summary>
+    /// <remarks>
+    /// TODO: Consider IoC
+    /// </remarks>
     public class NavigationServiceBuilder : INavigationServiceBuilder
     {
+        #region Fields
+
         private readonly bool _appRunOnStartup;
+
+        #endregion
+
+        #region Constructors
 
         public NavigationServiceBuilder(bool appRunOnStartup)
         {
             _appRunOnStartup = appRunOnStartup;
         }
+
+        #endregion
 
         #region Public Methods
 

@@ -7,6 +7,9 @@ using Microsoft.Win32;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
+    /// <summary>
+    /// Implements high-level registry manipulations.
+    /// </summary>
     public class RegistryService : IRegistryService
     {
         public const string StartupRunParameter = "/startup";

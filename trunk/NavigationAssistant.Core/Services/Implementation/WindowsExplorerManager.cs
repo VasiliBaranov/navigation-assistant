@@ -8,9 +8,18 @@ using SHDocVw;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
+    /// <summary>
+    /// Implements managing Windows Explorer instances.
+    /// </summary>
     public class WindowsExplorerManager : INavigatorManager
     {
+        #region Fields
+
         private const int MaxWaitSeconds = 10;
+
+        #endregion
+
+        #region Public Methods
 
         public bool IsNavigator(ApplicationWindow hostWindow)
         {
@@ -31,6 +40,10 @@ namespace NavigationAssistant.Core.Services.Implementation
 
             return new WindowsExplorer(windowsExplorer);
         }
+
+        #endregion
+
+        #region Non Public Methods
 
         private InternetExplorer CreateNewExplorer()
         {
@@ -137,5 +150,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
             return filename.Equals("explorer");
         }
+
+        #endregion
     }
 }

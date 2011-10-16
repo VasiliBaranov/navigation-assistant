@@ -2,6 +2,9 @@
 
 namespace NavigationAssistant.Core.Services
 {
+    /// <summary>
+    /// Defines methods for saving and loading user settings.
+    /// </summary>
     public interface ISettingsSerializer
     {
         Settings Deserialize();

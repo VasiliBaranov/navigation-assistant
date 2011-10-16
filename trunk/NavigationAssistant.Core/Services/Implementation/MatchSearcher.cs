@@ -9,6 +9,8 @@ namespace NavigationAssistant.Core.Services.Implementation
 {
     public class MatchSearcher : IMatchSearcher
     {
+        #region Public Methods
+
         public List<MatchedFileSystemItem> GetMatches(List<FileSystemItem> items, string searchText)
         {
             if (ListUtility.IsNullOrEmpty(items) || string.IsNullOrEmpty(searchText))
@@ -26,6 +28,10 @@ namespace NavigationAssistant.Core.Services.Implementation
 
             return matches;
         }
+
+        #endregion
+
+        #region Non Public Methods
 
         private MatchedFileSystemItem GetMatchedItem(FileSystemItem item, Regex searchRegex)
         {
@@ -126,10 +132,12 @@ namespace NavigationAssistant.Core.Services.Implementation
             }
 
             string template = wordIndex == 0 
-                ? @"(?:\b[{0}{1}]|{1})"
-                : @"(?:\W+[{0}{1}]|{1})";
+                                  ? @"(?:\b[{0}{1}]|{1})"
+                                  : @"(?:\W+[{0}{1}]|{1})";
 
             return string.Format(template, char.ToLower(firstLetter), char.ToUpper(firstLetter));
         }
+
+        #endregion
     }
 }

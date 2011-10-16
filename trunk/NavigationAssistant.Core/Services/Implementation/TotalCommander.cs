@@ -4,9 +4,14 @@ using NavigationAssistant.Core.Model;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
-    //Command line arguments can be found here: http://www.ghisler.ch/wiki/index.php/Command_line_parameters
-    //If eventually you need a more sophisticated interaction, 
-    //please see http://www.purebasic.fr/english/viewtopic.php?f=13&t=47321 (total commander send commands via SendMessage)
+    /// <summary>
+    /// Implements a navigation wrapper for Total Commander.
+    /// </summary>
+    /// <remarks>
+    /// Command line arguments can be found here: http://www.ghisler.ch/wiki/index.php/Command_line_parameters.
+    /// If eventually you need a more sophisticated interaction, 
+    /// please see http://www.purebasic.fr/english/viewtopic.php?f=13&t=47321 (total commander send commands via SendMessage).
+    /// </remarks>
     public class TotalCommander : INavigator
     {
         private readonly string _totalCommanderFolder;

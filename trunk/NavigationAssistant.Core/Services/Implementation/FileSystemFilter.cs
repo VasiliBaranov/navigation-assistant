@@ -9,6 +9,9 @@ using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
+    /// <summary>
+    /// Implements filtering file system items according to the settings constraints.
+    /// </summary>
     public class FileSystemFilter : IFileSystemFilter
     {
         #region Fields
@@ -23,6 +26,13 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         #region Properties
 
+        /// <summary>
+        /// Gets or sets the exclude folder templates; i.e. directories to be ignored while displaying matches,
+        /// e.g. "temp","Recycle Bin". Each entry is a case-sensitive regular expression.
+        /// </summary>
+        /// <value>
+        /// The exclude folder templates.
+        /// </value>
         public List<string> ExcludeFolderTemplates
         {
             get
@@ -35,6 +45,13 @@ namespace NavigationAssistant.Core.Services.Implementation
             }
         }
 
+        /// <summary>
+        /// Gets or sets the folders to parse (i.e. root folders) when searching for folder matches;
+        /// e.g. "C:\Documents and Settings".
+        /// </summary>
+        /// <value>
+        /// The folders to parse.
+        /// </value>
         public List<string> FoldersToParse
         {
             get

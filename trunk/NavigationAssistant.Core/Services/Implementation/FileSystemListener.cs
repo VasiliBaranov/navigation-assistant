@@ -6,17 +6,31 @@ using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
+    /// <summary>
+    /// Implements listening for file system changes (currently just for folders).
+    /// </summary>
     public class FileSystemListener : IFileSystemListener
     {
+        #region Fields
+
         private readonly List<FileSystemWatcher> _fileSystemWatchers;
+
         private bool _stopped = true;
+
+        public event EventHandler<FileSystemChangeEventArgs> FolderSystemChanged;
+
+        #endregion
+
+        #region Constructors
 
         public FileSystemListener()
         {
             _fileSystemWatchers = new List<FileSystemWatcher>();
         }
 
-        public event EventHandler<FileSystemChangeEventArgs> FolderSystemChanged;
+        #endregion
+
+        #region Public Methods
 
         public void StartListening(List<string> foldersToListen)
         {
@@ -75,6 +89,10 @@ namespace NavigationAssistant.Core.Services.Implementation
             StopListening();
         }
 
+        #endregion
+
+        #region Non Public Methods
+
         private void HandleFolderRenamed(object sender, RenamedEventArgs e)
         {
             OnFolderSystemChanged(e.OldFullPath, e.FullPath);
@@ -97,5 +115,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                 FolderSystemChanged(this, new FileSystemChangeEventArgs(oldPath, newPath));
             }
         }
+
+        #endregion
     }
 }
