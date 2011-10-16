@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows;
-using NavigationAssistant.Core.Model;
 using NavigationAssistant.Core.Services;
 using NavigationAssistant.Core.Services.Implementation;
 using NavigationAssistant.Core.Utilities;
@@ -50,13 +49,6 @@ namespace NavigationAssistant
         private static void Install()
         {
             IRegistryService registryService = new RegistryService();
-            IFileSystemParser fileSystemParser = new FileSystemParser(new FileSystemListener());
-            ICacheSerializer cacheSerializer = new CacheSerializer();
-
-            //Parse folders and save cache
-            List<FileSystemItem> folders = fileSystemParser.GetSubFolders();
-            FileSystemCache cache = new FileSystemCache(folders, DateTime.Now);
-            cacheSerializer.SerializeCache(cache);
 
             //Set run on startup = true
             registryService.SetRunOnStartup(true);
