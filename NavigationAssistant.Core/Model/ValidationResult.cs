@@ -3,6 +3,9 @@ using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Core.Model
 {
+    /// <summary>
+    /// Represents a result of settings validation before trying to save them.
+    /// </summary>
     public class ValidationResult
     {
         public List<string> ErrorKeys { get; set; }

@@ -2,6 +2,9 @@
 
 namespace NavigationAssistant.Core.Services
 {
+    /// <summary>
+    /// Defines methods modifying registry.
+    /// </summary>
     public interface IRegistryService
     {
         DateTime GetLastSystemShutDownTime();

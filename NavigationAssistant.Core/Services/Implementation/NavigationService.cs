@@ -5,6 +5,9 @@ using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
+    /// <summary>
+    /// Implements a high-level navigation assistance.
+    /// </summary>
     public class NavigationService : INavigationService
     {
         #region Fields

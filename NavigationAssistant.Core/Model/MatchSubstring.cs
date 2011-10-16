@@ -1,5 +1,8 @@
 ﻿namespace NavigationAssistant.Core.Model
 {
+    /// <summary>
+    /// Represents a part of the match string that was either fully matched or not.
+    /// </summary>
     public class MatchSubstring
     {
         public string Value { get; set; }

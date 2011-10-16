@@ -9,7 +9,12 @@ using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
-    //Use this class with Singleton lifetime from IoC
+    /// <summary>
+    /// Implements file system cache serialization/deserialization.
+    /// </summary>
+    /// <remarks>
+    /// Use this class with Singleton lifetime from IoC.
+    /// </remarks>
     public class CacheSerializer : ICacheSerializer
     {
         #region Fields

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace NavigationAssistant.Core.Utilities
 {
+    /// <summary>
+    /// Implements methods for manipulating strings.
+    /// </summary>
     public static class StringUtility
     {
         public static List<string> SplitStringByUpperChars(string input)
@@ -55,6 +57,12 @@ namespace NavigationAssistant.Core.Utilities
             return result;
         }
 
+        /// <summary>
+        /// Splits the string into the list of substrings. Substrings, enclosed in quotes, are treated as a single substring;
+        /// substrings out of quotes are split by spaces.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <returns>List of parsed strings.</returns>
         public static List<string> ParseQuotedString(string input)
         {
             if (string.IsNullOrEmpty(input))
@@ -111,6 +119,11 @@ namespace NavigationAssistant.Core.Utilities
             }
         }
 
+        /// <summary>
+        /// Builds the string merged values. If a value contains spaces, it is inclosed into double quotes.
+        /// </summary>
+        /// <param name="values">The values.</param>
+        /// <returns></returns>
         public static string BuildQuotedString(List<string> values)
         {
             if (ListUtility.IsNullOrEmpty(values))

@@ -4,13 +4,12 @@ using NavigationAssistant.Core.Model;
 
 namespace NavigationAssistant.Core.Services
 {
+    /// <summary>
+    /// Defines high-level methods and properties for assisting navigation.
+    /// </summary>
     public interface INavigationService : IDisposable
     {
-        List<MatchedFileSystemItem> GetFolderMatches(string searchText);
-
-        void NavigateTo(string path, ApplicationWindow hostWindow);
-
-        ApplicationWindow GetActiveWindow();
+        #region Properties
 
         IFileSystemParser FileSystemParser { get; }
 
@@ -19,5 +18,13 @@ namespace NavigationAssistant.Core.Services
         INavigatorManager PrimaryNavigatorManager { get; set; }
 
         List<INavigatorManager> SupportedNavigatorManagers { get; set; }
+
+        #endregion
+
+        ApplicationWindow GetActiveWindow();
+
+        List<MatchedFileSystemItem> GetFolderMatches(string searchText);
+
+        void NavigateTo(string path, ApplicationWindow hostWindow);
     }
 }

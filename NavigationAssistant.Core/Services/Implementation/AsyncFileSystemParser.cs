@@ -6,6 +6,9 @@ using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
+    /// <summary>
+    /// Implements asynchronous file system parsing.
+    /// </summary>
     public class AsyncFileSystemParser : IAsyncFileSystemParser
     {
         #region Fields
@@ -26,9 +29,9 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private FileSystemCache _fileSystem;
 
-        #endregion
-
         public event EventHandler<ItemEventArgs<FileSystemCache>> ParsingFinished;
+
+        #endregion
 
         #region Constructors
 

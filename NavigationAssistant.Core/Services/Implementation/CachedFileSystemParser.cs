@@ -6,7 +6,17 @@ using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
-    //Use this class with Singleton lifetime from IoC
+    /// <summary>
+    /// Implements parsing file system folders with an effective cache.
+    /// If there is no cache on disk, tries to parse it synchronously in the constructor.
+    /// The cache is considered to be outdated if the app was not run on startup or
+    /// if the cache had not been saved immediately before last turning off.
+    /// If there is an outdated cache on disk, class registers file system re-parsing with a slight delay
+    /// (to ease system loading). If the cache is active, doesn't rebuild it.
+    /// </summary>
+    /// <remarks>
+    /// Use this class with Singleton lifetime from IoC
+    /// </remarks>
     public class CachedFileSystemParser : IFileSystemParser
     {
         #region Services
@@ -170,6 +180,15 @@ namespace NavigationAssistant.Core.Services.Implementation
             GC.SuppressFinalize(this);
         }
 
+        ~CachedFileSystemParser()
+        {
+            Dispose(false);
+        }
+
+        #endregion
+
+        #region Non Public Methods
+
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -193,15 +212,6 @@ namespace NavigationAssistant.Core.Services.Implementation
                 // no exceptions in finalizer
             }
         }
-
-        ~CachedFileSystemParser()
-        {
-            Dispose(false);
-        }
-
-        #endregion
-
-        #region Non Public Methods
 
         private void SerializeFullCache()
         {

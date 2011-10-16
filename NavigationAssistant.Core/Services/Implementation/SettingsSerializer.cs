@@ -9,10 +9,15 @@ using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
-    //With *.settings files approach app.config become awful.
-    //Custom Configuration Sections approach is weird and too verbose.
-    //So we use an approach from http://msdn.microsoft.com/en-us/library/ms973902.aspx
-    //with custom xml serialization of settings to user folders.
+    /// <summary>
+    /// Implements saving and loading user settings.
+    /// </summary>
+    /// <remarks>
+    /// With *.settings files approach app.config become awful.
+    /// Custom Configuration Sections approach is weird and too verbose.
+    /// So we use an approach from http://msdn.microsoft.com/en-us/library/ms973902.aspx
+    /// with custom xml serialization of settings to user folders.
+    /// </remarks>
     public class SettingsSerializer : ISettingsSerializer
     {
         #region Fields

@@ -6,6 +6,9 @@ using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
+    /// <summary>
+    /// Implements a manager for total commander windows.
+    /// </summary>
     public class TotalCommanderManager : INavigatorManager
     {
         private readonly string _totalCommanderPath;

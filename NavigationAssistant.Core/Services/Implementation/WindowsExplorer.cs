@@ -3,6 +3,9 @@ using SHDocVw;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
+    /// <summary>
+    /// Implements a wrapper over Windows Explorer.
+    /// </summary>
     public class WindowsExplorer : INavigator
     {
         private readonly InternetExplorer _windowsExplorer;

@@ -6,6 +6,9 @@ using System.Threading;
 
 namespace NavigationAssistant.Core.Utilities
 {
+    /// <summary>
+    /// Implements utility methods for dealing with directories.
+    /// </summary>
     public static class DirectoryUtility
     {
         public static List<string> GetHardDriveRootFolders()

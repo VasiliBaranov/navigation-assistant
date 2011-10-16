@@ -8,6 +8,9 @@ using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
+    /// <summary>
+    /// Implements basic parsing of file system folders.
+    /// </summary>
     public class FileSystemParser : IFileSystemParser
     {
         #region Fields
@@ -39,9 +42,25 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         #region Properties
 
-        //Note: currently this proeprty is not used in this class
+        /// <summary>
+        /// Gets or sets the exclude folder templates; i.e. directories to be ignored while displaying matches,
+        /// e.g. "temp","Recycle Bin". Each entry is a case-sensitive regular expression.
+        /// </summary>
+        /// <value>
+        /// The exclude folder templates.
+        /// </value>
+        /// <remarks>
+        /// Note: currently this proeprty is not used in this class
+        /// </remarks>
         public List<string> ExcludeFolderTemplates { get; set; }
 
+        /// <summary>
+        /// Gets or sets the folders to parse (i.e. root folders) when searching for folder matches;
+        /// e.g. "C:\Documents and Settings".
+        /// </summary>
+        /// <value>
+        /// The folders to parse.
+        /// </value>
         public List<string> FoldersToParse { get; set; }
 
         #endregion

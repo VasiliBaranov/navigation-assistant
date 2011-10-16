@@ -4,6 +4,9 @@ using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
+    /// <summary>
+    /// Implements listening to the pressing of a specified key combination globally (i.e. among all the windows).
+    /// </summary>
     public class KeyboardListener : IKeyboardListener
     {
         #region Fields
