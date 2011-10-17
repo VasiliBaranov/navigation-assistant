@@ -4,6 +4,9 @@ using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Presenters.Implementation
 {
+    /// <summary>
+    /// Implements a presenters manager (see Mediator pattern).
+    /// </summary>
     public class PresenterManager : BasePresenter, IPresenterManager
     {
         private readonly List<IPresenter> _presenters;

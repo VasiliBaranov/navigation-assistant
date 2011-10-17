@@ -5,6 +5,9 @@ using NavigationAssistant.ViewModel;
 
 namespace NavigationAssistant.PresentationServices
 {
+    /// <summary>
+    /// Defines methods for performing supplementary presentation tasks.
+    /// </summary>
     public interface IPresentationService
     {
         MatchModel MoveSelectionUp(ObservableCollection<MatchModel> matches, MatchModel selectedMatch);

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -14,6 +13,9 @@ using Application = System.Windows.Application;
 
 namespace NavigationAssistant.PresentationServices.Implementations
 {
+    /// <summary>
+    /// Implements methods for performing supplementary presentation tasks.
+    /// </summary>
     public class PresentationService : IPresentationService
     {
         #region Public Methods
