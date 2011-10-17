@@ -7,6 +7,9 @@ using NavigationAssistant.ViewModel;
 
 namespace NavigationAssistant.PresentationServices
 {
+    /// <summary>
+    /// Defines methods for mapping matched file system items into match models (view models).
+    /// </summary>
     public interface IMatchModelMapper
     {
         List<MatchModel> GetMatchModels(List<MatchedFileSystemItem> folderMatches);

@@ -6,6 +6,9 @@ using NavigationAssistant.Views;
 
 namespace NavigationAssistant.Presenters.Implementation
 {
+    /// <summary>
+    /// Implements a presenter for the Tray Icon view.
+    /// </summary>
     public class TrayIconPresenter : BasePresenter, IPresenter
     {
         #region Fields

@@ -4,6 +4,9 @@ using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Presenters
 {
+    /// <summary>
+    /// Defines methods and events for a presenter (from Model-View-Presenter pattern).
+    /// </summary>
     public interface IPresenter : IDisposable
     {
         event EventHandler<ItemEventArgs<Settings>> SettingsChanged;

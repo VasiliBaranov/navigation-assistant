@@ -10,6 +10,9 @@ using NavigationAssistant.Views;
 
 namespace NavigationAssistant.Presenters.Implementation
 {
+    /// <summary>
+    /// Implements a presenter for the Navigation View (i.e. the main window of the application).
+    /// </summary>
     public class NavigationPresenter : BasePresenter, IPresenter
     {
         #region Events
@@ -73,13 +76,11 @@ namespace NavigationAssistant.Presenters.Implementation
             _view.ShowMatches(new List<MatchModel> {new MatchModel(_matchModelMapper, Resources.InitialMatchesMessage)});
             _view.ShowInitializingScreen = true;
 
+            //Initialize navigation service asynchronously, as it may require a long operation (file system parsing).
             //Clone settings to avoid any coupling
             Settings settingsCopy = settings.Clone() as Settings;
             InitializeDelegate initialize = Initialize;
             initialize.BeginInvoke(settingsCopy, EndInitialize, initialize);
-
-            //Action asyncMethod = (() => Initialize());
-            //Application.Current.Dispatcher.BeginInvoke(asyncMethod);
         }
 
         #endregion

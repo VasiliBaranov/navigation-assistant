@@ -13,8 +13,13 @@ using NavigationAssistant.ViewModel;
 
 namespace NavigationAssistant.PresentationServices.Implementations
 {
+    /// <summary>
+    /// Implements mapping matched file system items into match models (view models).
+    /// </summary>
     public class MatchModelMapper : IMatchModelMapper
     {
+        #region Public Methods
+
         public List<MatchModel> GetMatchModels(List<MatchedFileSystemItem> folderMatches)
         {
             if (ListUtility.IsNullOrEmpty(folderMatches))
@@ -95,6 +100,10 @@ namespace NavigationAssistant.PresentationServices.Implementations
             return string.Compare(x.FullPath, y.FullPath, StringComparison.CurrentCulture);
         }
 
+        #endregion
+
+        #region Non Public Methods
+
         private static int? CompareValidity(MatchedFileSystemItem x, MatchedFileSystemItem y)
         {
             int? nullComparison = CompareByNull(x, y);
@@ -137,5 +146,7 @@ namespace NavigationAssistant.PresentationServices.Implementations
 
             return null;
         }
+
+        #endregion
     }
 }
