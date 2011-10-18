@@ -23,7 +23,7 @@ namespace NavigationAssistant
 
         private static readonly Mutex AppMutex = new Mutex(true, "44F16610-EF84-47B6-8536-33C0D754F41E");
 
-        private void Application_Startup(object sender, StartupEventArgs e)
+        private void HandleApplicationStartup(object sender, StartupEventArgs e)
         {
             bool isInstalling = IsInstalling(e.Args);
             bool isUninstalling = IsUninstalling(e.Args);
@@ -31,20 +31,44 @@ namespace NavigationAssistant
 
             if (isInstalling)
             {
-                Install();
+                try
+                {
+                    Install();
+                }
+                catch
+                {
+                    //Should not throw errors in InnoSetup.
+                    //TODO: Add logging
+                }
+                
                 Shutdown();
                 return;
             }
 
             if (isUninstalling)
             {
-                Uninstall();
+                try
+                {
+                    Uninstall();
+                }
+                catch
+                {
+                    //Should not throw errors in InnoSetup.
+                    //TODO: Add logging
+                }
+                
                 Shutdown();
                 return;
             }
 
-            PreventDuplicates();
-            InitializePresenters(isRunOnStartup);
+            if (HasDuplicates())
+            {
+                Shutdown();
+            }
+            else
+            {
+                InitializePresenters(isRunOnStartup);
+            }
         }
 
         private static void Install()
@@ -69,17 +93,17 @@ namespace NavigationAssistant
             settingsSerializer.DeleteSettings();
         }
 
-        private void PreventDuplicates()
+        private bool HasDuplicates()
         {
             IPresentationService presentationService = new PresentationService();
-            bool appIsRunning = presentationService.ApplicationIsRunning(AppMutex);
+            bool hasDuplicates = presentationService.ApplicationIsRunning(AppMutex);
 
-            if (appIsRunning)
+            if (hasDuplicates)
             {
                 MessageBox.Show(NavigationAssistant.Properties.Resources.ProgramIsRunningError,
                                 NavigationAssistant.Properties.Resources.ProgramIsRunningErrorCaption);
-                Shutdown();
             }
+            return hasDuplicates;
         }
 
         private void InitializePresenters(bool isRunOnStartup)

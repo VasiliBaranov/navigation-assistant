@@ -1,7 +1,7 @@
 ﻿#ifndef AppVersion
     #define AppVersion "1.0.0"
     #define Revision "0"
-    #define SourceDir "..\NavigationAssistant\bin\Release"
+    #define SourceDir "..\NavigationAssistant\bin\Debug"
 #endif
 
 #define ProductName "Navigation Assistant"
@@ -40,6 +40,7 @@ DefaultDirName={pf}\{#ProductName}
 [CustomMessages]
 ApplicationAlreadyInstalled=Navigation Assistant seems to have already been installed on your computer. Would you like to continue?
 RunExecutableDescription=Run Navigation Assistant
+DotNetMissing=Navigation Assistant requires Microsoft .Net Framework 3.5, which is not yet installed. Would you like to download it now?
 
 [Registry]
 Root: HKLM; Subkey: "Software\{#ProductName}"; Flags: uninsdeletekey
@@ -66,15 +67,44 @@ Filename: "{app}\NavigationAssistant.exe"; Description: "{cm:RunExecutableDescri
 Filename: "{app}\NavigationAssistant.exe"; Parameters: "/uninstall"; StatusMsg: "Removing cache and settings..."; Flags: runascurrentuser runhidden;
 
 [Code]
+const dotNet35Url = 'http://www.microsoft.com/download/en/details.aspx?DisplayLang=en&id=21';
+
+function ProductNotInstalled() : Boolean;
+begin
+    result := (not RegKeyExists(HKLM, 'Software\{#ProductName}'));
+
+    //Show a warning that this app has already been installed.
+    if not result then
+    begin
+        result := (MsgBox(CustomMessage('ApplicationAlreadyInstalled'), mbConfirmation, MB_YESNO) = IDYES);
+    end;
+end;
+
+function DotNetFrameworkInstalled() : Boolean;
+var
+    errorCode: Integer;
+    netFrameWorkInstalled : Boolean;
+    isInstalled: Cardinal;
+begin
+    result := true;
+
+    // Check for the .Net 3.5 framework
+    isInstalled := 0;
+    netFrameworkInstalled := RegQueryDWordValue(HKLM, 'SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5', 'Install', isInstalled);
+    netFrameworkInstalled := (netFrameworkInstalled and (isInstalled = 1));
+
+    if (not netFrameworkInstalled) then
+    begin
+        if (MsgBox(CustomMessage('DotNetMissing'), mbError, MB_YESNO) = idYes) then
+        begin
+            ShellExec('open', dotNet35Url, '', '', SW_SHOWNORMAL, ewNoWait, errorCode);
+        end;
+        result := false;
+    end;
+end;
 
 function InitializeSetup(): Boolean;
 begin
-
-    Result := (not RegKeyExists(HKLM, 'Software\{#ProductName}'));
-
-    //Show a warning that this app has already been installed.
-    if not Result then
-    begin
-        Result := (MsgBox(CustomMessage('ApplicationAlreadyInstalled'), mbError, MB_YESNO) = IDYES);
-    end;
+    // If the first function returns false, doesn't execute a second one
+    result := (DotNetFrameworkInstalled() and ProductNotInstalled());
 end;
