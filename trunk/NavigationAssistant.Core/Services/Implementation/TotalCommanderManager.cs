@@ -24,7 +24,17 @@ namespace NavigationAssistant.Core.Services.Implementation
             WinApi.GetWindowThreadProcessId(hostWindow.Handle, out hostProcessId);
 
             Process hostProcess = Process.GetProcessById((int)hostProcessId);
-            string executablePath = hostProcess.MainModule.FileName;
+
+            string executablePath = null;
+            try
+            {
+                executablePath = hostProcess.MainModule.FileName;
+            }
+            catch (Exception)
+            {
+                //This may happen if hostProcess is not TotalCommander (e.g. Windows Explorer)
+            }
+            
 
             //Ignore case is not very accurate, but should prevent possible case mistakes
             return string.Equals(executablePath, _totalCommanderPath, StringComparison.InvariantCultureIgnoreCase);
