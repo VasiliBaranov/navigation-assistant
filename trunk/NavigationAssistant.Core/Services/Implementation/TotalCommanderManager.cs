@@ -34,7 +34,6 @@ namespace NavigationAssistant.Core.Services.Implementation
             {
                 //This may happen if hostProcess is not TotalCommander (e.g. Windows Explorer)
             }
-            
 
             //Ignore case is not very accurate, but should prevent possible case mistakes
             return string.Equals(executablePath, _totalCommanderPath, StringComparison.InvariantCultureIgnoreCase);
