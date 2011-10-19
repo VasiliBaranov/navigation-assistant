@@ -93,46 +93,46 @@ namespace NavigationAssistant.PresentationServices.Implementations
             window.Show();
             window.Activate();
 
-            //Magic starts here; currently commented, as may lead to window rendering bugs (the window is black sometimes).
-            //IntPtr hWnd = new WindowInteropHelper(window).Handle;
+            //Magic starts here; but it may lead to window rendering bugs (the window is black sometimes).
+            IntPtr hWnd = new WindowInteropHelper(window).Handle;
 
-            //if (IsIconic(hWnd))
-            //{
-            //    ShowWindowAsync(hWnd, SW_RESTORE);
-            //}
+            if (IsIconic(hWnd))
+            {
+                ShowWindowAsync(hWnd, SW_RESTORE);
+            }
 
-            //ShowWindowAsync(hWnd, SW_SHOW);
+            ShowWindowAsync(hWnd, SW_SHOW);
 
-            //SetForegroundWindow(hWnd);
+            SetForegroundWindow(hWnd);
 
-            //// Code from Karl E. Peterson, www.mvps.org/vb/sample.htm
-            //// Converted to Delphi by Ray Lischner
-            //// Published in The Delphi Magazine 55, page 16
-            //// Converted to C# by Kevin Gale
-            //IntPtr foregroundWindow = GetForegroundWindow();
-            //IntPtr zeroPointer = IntPtr.Zero;
+            // Code from Karl E. Peterson, www.mvps.org/vb/sample.htm
+            // Converted to Delphi by Ray Lischner
+            // Published in The Delphi Magazine 55, page 16
+            // Converted to C# by Kevin Gale
+            IntPtr foregroundWindow = GetForegroundWindow();
+            IntPtr zeroPointer = IntPtr.Zero;
 
-            //uint foregroundThreadId = GetWindowThreadProcessId(foregroundWindow, zeroPointer);
-            //uint thisThreadId = GetWindowThreadProcessId(hWnd, zeroPointer);
+            uint foregroundThreadId = GetWindowThreadProcessId(foregroundWindow, zeroPointer);
+            uint thisThreadId = GetWindowThreadProcessId(hWnd, zeroPointer);
 
-            //if (AttachThreadInput(thisThreadId, foregroundThreadId, true))
-            //{
-            //    BringWindowToTop(hWnd); // IE 5.5 related hack
-            //    SetForegroundWindow(hWnd);
-            //    AttachThreadInput(thisThreadId, foregroundThreadId, false);
-            //}
+            if (AttachThreadInput(thisThreadId, foregroundThreadId, true))
+            {
+                BringWindowToTop(hWnd); // IE 5.5 related hack
+                SetForegroundWindow(hWnd);
+                AttachThreadInput(thisThreadId, foregroundThreadId, false);
+            }
 
-            //if (GetForegroundWindow() != hWnd)
-            //{
-            //    // Code by Daniel P. Stasinski
-            //    // Converted to C# by Kevin Gale
-            //    IntPtr timeout = IntPtr.Zero;
-            //    SystemParametersInfo(SPI_GETFOREGROUNDLOCKTIMEOUT, 0, timeout, 0);
-            //    SystemParametersInfo(SPI_SETFOREGROUNDLOCKTIMEOUT, 0, zeroPointer, SPIF_SENDCHANGE);
-            //    BringWindowToTop(hWnd); // IE 5.5 related hack
-            //    SetForegroundWindow(hWnd);
-            //    SystemParametersInfo(SPI_SETFOREGROUNDLOCKTIMEOUT, 0, timeout, SPIF_SENDCHANGE);
-            //}
+            if (GetForegroundWindow() != hWnd)
+            {
+                // Code by Daniel P. Stasinski
+                // Converted to C# by Kevin Gale
+                IntPtr timeout = IntPtr.Zero;
+                SystemParametersInfo(SPI_GETFOREGROUNDLOCKTIMEOUT, 0, timeout, 0);
+                SystemParametersInfo(SPI_SETFOREGROUNDLOCKTIMEOUT, 0, zeroPointer, SPIF_SENDCHANGE);
+                BringWindowToTop(hWnd); // IE 5.5 related hack
+                SetForegroundWindow(hWnd);
+                SystemParametersInfo(SPI_SETFOREGROUNDLOCKTIMEOUT, 0, timeout, SPIF_SENDCHANGE);
+            }
         }
 
         #endregion

@@ -32,11 +32,13 @@ namespace NavigationAssistant.Tests
 
         public IEnumerable<TestCaseData> GetTestCases()
         {
-            yield return CreateExcludeTemplateData(@"C:\my doc", null, true, "Null constraints handled correctly.");
-            yield return CreateExcludeTemplateData(@"C:\my documents\temp", "my doc.*", false, "Item with excluded folder not returned.");
-            yield return CreateExcludeTemplateData(@"C:\my documents\temp", "my doc", true, "Item with excluded folder not matched completely is returned.");
-            yield return CreateExcludeTemplateData(@"C:\MY documents\temp", "my doc.*", false, "Item with excluded folder (with different case) not returned.");
-            yield return CreateExcludeTemplateData(@"C:\documents\temp", "my doc.*", true, "Item with no folders excluded is returned.");
+            //yield return CreateExcludeTemplateData(@"C:\my doc", null, true, "Null constraints handled correctly.");
+            //yield return CreateExcludeTemplateData(@"C:\my documents\temp", "my doc.*", false, "Item with excluded folder not returned.");
+            //yield return CreateExcludeTemplateData(@"C:\my documents\temp", "my doc", true, "Item with excluded folder not matched completely is returned.");
+            //yield return CreateExcludeTemplateData(@"C:\MY documents\temp", "my doc.*", false, "Item with excluded folder (with different case) not returned.");
+            //yield return CreateExcludeTemplateData(@"C:\documents\temp", "my doc.*", true, "Item with no folders excluded is returned.");
+            yield return CreateExcludeTemplateData(@"C:\documents\.svn\temp", ".svn", false, "Svn folder excluded.");
+            yield return CreateExcludeTemplateData(@"C:\documents\.svn\temp", "\\.svn", false, "Svn folder with escaped dot excluded.");
 
             yield return CreateRootFolderData(@"C:\my doc", "C:", true, "Item with correct root (root has no slash) returned.");
             yield return CreateRootFolderData(@"C:\my doc", "C:\\", true, "Item with correct root (root has a slash) returned.");

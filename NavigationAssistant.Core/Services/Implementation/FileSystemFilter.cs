@@ -113,8 +113,12 @@ namespace NavigationAssistant.Core.Services.Implementation
                 return new List<Regex>();
             }
 
+            //Here we enclose each regex into double slashes (to make them escaped in the regex).
+            //It's needed to allow exact matches of folder names.
+            //I tried using \b{0}\b, but it doesn't work for folder names like .svn
+            //(as \b matches at the word boundary if the first and/or last characters in the string are _word characters_).
             List<Regex> excludeRegexes = excludeFolderTemplates
-                .Select(t=>string.Format(CultureInfo.InvariantCulture, "\\b{0}\\b", t))
+                .Select(t=>string.Format(CultureInfo.InvariantCulture, @"\\{0}\\", t))
                 .Select(t => new Regex(t, RegexOptions.IgnoreCase))
                 .ToList();
             return excludeRegexes;
@@ -148,9 +152,11 @@ namespace NavigationAssistant.Core.Services.Implementation
 
             foreach (string folder in foldersInPath)
             {
+                //The regexes assume inclosing slashes.
+                string normalizedFolder = string.Format("\\{0}\\", folder);
                 foreach (Regex excludeRegex in excludeRegexes)
                 {
-                    if (excludeRegex.IsMatch(folder))
+                    if (excludeRegex.IsMatch(normalizedFolder))
                     {
                         return true;
                     }
