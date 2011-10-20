@@ -91,6 +91,9 @@ namespace NavigationAssistant.Views.Implementation
         public void ShowView()
         {
             _presentationService.MakeForeground(this);
+
+            //User could have removed the focus previously by clicking on one of the matches.
+            SearchTextBox.Focus();
         }
 
         public void HideView()
@@ -184,6 +187,10 @@ namespace NavigationAssistant.Views.Implementation
         private void HandleMatchesListMouseUp(object sender, MouseButtonEventArgs e)
         {
             Navigate();
+
+            //In case if navigation is not be performed (e.g. the user clicked "Please type a folder name" item)
+            //we would like to retain focus in the search text box.
+            SearchTextBox.Focus();
         }
 
         //Use PreviewKeyDown, not KeyDown, as TextBox (which is always focused by design) consumes all the arrow keys 
