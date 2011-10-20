@@ -93,6 +93,11 @@ namespace NavigationAssistant.PresentationServices.Implementations
             window.Show();
             window.Activate();
 
+            ReallySetForegroundWindow(window);
+        }
+
+        private void ReallySetForegroundWindowStackOverflow(Window window)
+        {
             //Magic starts here; but it may lead to window rendering bugs (the window is black sometimes).
             IntPtr hWnd = new WindowInteropHelper(window).Handle;
 
@@ -135,6 +140,44 @@ namespace NavigationAssistant.PresentationServices.Implementations
             }
         }
 
+        //The code is taken from http://forums.purebasic.com/english/viewtopic.php?f=12&t=7424&hilit=real+SetForegroundWindow
+        private void ReallySetForegroundWindow(Window window)
+        {
+            IntPtr hWnd = new WindowInteropHelper(window).Handle;
+
+            //If the window is in a minimized state, maximize now
+
+            if ((GetWindowLong(hWnd, GWL_STYLE) & WS_MINIMIZE) != 0)
+            {
+                ShowWindow(hWnd, SW_MAXIMIZE);
+                UpdateWindow(hWnd);
+            }
+
+            //Check To see If we are the foreground thread
+
+            uint foregroundThreadId = GetWindowThreadProcessId(GetForegroundWindow(), IntPtr.Zero);
+            uint ourThreadId = GetCurrentThreadId();
+            //If not, attach our thread's 'input' to the foreground thread's
+
+            if (foregroundThreadId != ourThreadId)
+            {
+                AttachThreadInput(foregroundThreadId, ourThreadId, true);
+            }
+
+
+            //Bring our window To the foreground
+            SetForegroundWindow(hWnd);
+
+            //If we attached our thread, detach it now
+            if (foregroundThreadId != ourThreadId)
+            {
+                AttachThreadInput(foregroundThreadId, ourThreadId, false);
+            }
+
+            //Force our window to redraw
+            InvalidateRect(hWnd, IntPtr.Zero, true);
+        }
+
         #endregion
 
         #region Non Public Methods
@@ -166,6 +209,25 @@ namespace NavigationAssistant.PresentationServices.Implementations
         #endregion
 
         #region Win APi
+
+        private const int GWL_STYLE = (-16);
+
+        const UInt32 WS_MINIMIZE = 0x20000000;
+
+        [DllImport("user32.dll")]
+        static extern bool InvalidateRect(IntPtr hWnd, IntPtr lpRect, bool bErase);
+
+        [DllImport("kernel32.dll")]
+        static extern uint GetCurrentThreadId();
+
+        [DllImport("user32.dll")]
+        static extern bool UpdateWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         [DllImport("user32.dll")]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
