@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;

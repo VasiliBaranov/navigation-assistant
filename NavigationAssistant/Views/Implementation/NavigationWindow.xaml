@@ -10,7 +10,6 @@
         WindowStartupLocation="CenterScreen"
         Closing="HandleClose" 
         Deactivated="HandleDeactivated"
-        FocusManager.FocusedElement="{Binding ElementName=SearchTextBox}"
         KeyDown="HandleWindowKeyDown">
     <!--Don't set the window icon.
     Wpf uses the assembly icon, if specified.
