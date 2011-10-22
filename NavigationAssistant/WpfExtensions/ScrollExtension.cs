@@ -5,7 +5,7 @@ using System.Windows.Controls;
 namespace NavigationAssistant.WpfExtensions
 {
     /// <summary>
-    /// This class supports list box automatic scrolling to the selected item.
+    /// Supports list box automatic scrolling to the selected item.
     /// </summary>
     /// <remarks>
     /// Code taken from http://michlg.wordpress.com/2010/01/16/listbox-automatically-scroll-currentitem-into-view/

@@ -5,6 +5,9 @@ using NavigationAssistant.Core.Model;
 
 namespace NavigationAssistant.ViewModel
 {
+    /// <summary>
+    /// Implements a view model for basic application settings.
+    /// </summary>
     public class BasicSettingsModel : BaseViewModel
     {
         #region Fields

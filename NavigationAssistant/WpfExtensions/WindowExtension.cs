@@ -5,8 +5,12 @@ using System.Windows.Interop;
 
 namespace NavigationAssistant.WpfExtensions
 {
-    //Declares an attached property to enable/disable maximize/minimize window buttons.
-    //Code taken from http://weblogs.asp.net/marianor/archive/2010/03/22/disabling-minimize-and-maximize-buttons-in-a-wpf-window.aspx
+    /// <summary>
+    /// Declares an attached property to enable/disable maximize/minimize window buttons.
+    /// </summary>
+    /// <remarks>
+    /// Code taken from http://weblogs.asp.net/marianor/archive/2010/03/22/disabling-minimize-and-maximize-buttons-in-a-wpf-window.aspx
+    /// </remarks>
     public static class WindowExtension
     {
         public static readonly DependencyProperty HasHelpButtonProperty = DependencyProperty.RegisterAttached(

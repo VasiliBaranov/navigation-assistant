@@ -4,6 +4,9 @@ using NavigationAssistant.Core.Model;
 
 namespace NavigationAssistant.ViewModel
 {
+    /// <summary>
+    /// Implements a view model for manipulating navigators in the settings window.
+    /// </summary>
     public class NavigatorModel : INotifyPropertyChanged
     {
         #region Fields

@@ -2,9 +2,13 @@
 
 namespace NavigationAssistant.WpfExtensions
 {
-    //This attached property allows to set focus on controls from view model,
-    //e.g. <TextBox local:FocusExtension.IsFocused="{Binding IsUserNameFocused}" />
-    //Code is taken from http://stackoverflow.com/questions/1356045/set-focus-on-textbox-in-wpf-from-view-model-c-wpf
+    /// <summary>
+    /// Implements an attached property that allows to set focus on controls from view model,
+    /// e.g. &lt; TextBox local:FocusExtension.IsFocused="{Binding IsUserNameFocused}" / &gt;
+    /// </summary>
+    /// <remarks>
+    /// Code is taken from http://stackoverflow.com/questions/1356045/set-focus-on-textbox-in-wpf-from-view-model-c-wpf
+    /// </remarks>
     public static class FocusExtension
     {
         public static bool GetIsFocused(DependencyObject obj)

@@ -2,6 +2,9 @@
 
 namespace NavigationAssistant.ViewModel
 {
+    /// <summary>
+    /// Implements a settings view model.
+    /// </summary>
     public class SettingsModel : BaseViewModel
     {
         #region Fields
