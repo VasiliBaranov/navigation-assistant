@@ -5,6 +5,9 @@ using NavigationAssistant.PresentationServices;
 
 namespace NavigationAssistant.ViewModel
 {
+    /// <summary>
+    /// Implements a view model for the main navigation window.
+    /// </summary>
     public class NavigationModel : BaseViewModel
     {
         #region Supplemetary Fields

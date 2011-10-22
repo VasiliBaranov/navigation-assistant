@@ -5,8 +5,12 @@ using System.Windows.Input;
 
 namespace NavigationAssistant.WpfExtensions
 {
-    //Allows restriction of textboxes to numeric input
-    //Code taken from http://stackoverflow.com/questions/1346707/validation-in-textbox-in-wpf
+    /// <summary>
+    /// Implements an extension that allows restriction of textboxes to numeric input.
+    /// </summary>
+    /// <remarks>
+    /// Code taken from http://stackoverflow.com/questions/1346707/validation-in-textbox-in-wpf
+    /// </remarks>
     public class NumericExtension
     {
         /// <summary>

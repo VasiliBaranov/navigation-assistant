@@ -5,6 +5,9 @@ using NavigationAssistant.ViewModel;
 
 namespace NavigationAssistant.Views
 {
+    /// <summary>
+    /// Defines methods for the main navigation view.
+    /// </summary>
     public interface INavigationView : IView
     {
         event EventHandler<ItemEventArgs<string>> TextChanged;

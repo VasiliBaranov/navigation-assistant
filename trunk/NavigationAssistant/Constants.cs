@@ -1,5 +1,8 @@
 ﻿namespace NavigationAssistant
 {
+    /// <summary>
+    /// Contains some application constants.
+    /// </summary>
     public class Constants
     {
         public const int MaxMatchesToDisplay = 20;

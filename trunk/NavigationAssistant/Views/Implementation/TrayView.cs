@@ -5,6 +5,9 @@ using NavigationAssistant.Properties;
 
 namespace NavigationAssistant.Views.Implementation
 {
+    /// <summary>
+    /// Implements a tray icon.
+    /// </summary>
     public class TrayView : ITrayView
     {
         #region Fields

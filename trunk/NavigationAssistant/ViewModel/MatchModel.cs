@@ -8,6 +8,9 @@ using NavigationAssistant.PresentationServices;
 
 namespace NavigationAssistant.ViewModel
 {
+    /// <summary>
+    /// Implements a view model for a single match.
+    /// </summary>
     public class MatchModel : INotifyPropertyChanged
     {
         #region Fields

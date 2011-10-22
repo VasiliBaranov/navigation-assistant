@@ -4,6 +4,9 @@ using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.ViewModel
 {
+    /// <summary>
+    /// Represents a base view model.
+    /// </summary>
     public class BaseViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
