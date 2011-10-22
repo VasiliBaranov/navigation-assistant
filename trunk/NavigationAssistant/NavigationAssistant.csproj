@@ -161,7 +161,7 @@
   <Target Name="AfterBuild">
     <PropertyGroup>
       <AppVersion>1.0.0</AppVersion>
-      <Revision>0</Revision>
+      <Revision>152</Revision>
     </PropertyGroup>
     <Exec Command="call &quot;..\Installer\InnoSetup\ISCC.exe&quot; &quot;/dAppVersion=$(AppVersion)&quot; &quot;/dRevision=$(Revision)&quot; &quot;/dSourceDir=..\NavigationAssistant\$(OutputPath)&quot; ..\Installer\Installer.iss" />
   </Target>
