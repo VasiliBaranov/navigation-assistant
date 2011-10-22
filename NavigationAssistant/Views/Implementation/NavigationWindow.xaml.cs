@@ -55,11 +55,11 @@ namespace NavigationAssistant.Views.Implementation
 
         #region Constructors
 
-        public NavigationWindow()
+        public NavigationWindow(IPresentationService presentationService)
         {
             InitializeComponent();
 
-            _presentationService = new PresentationService();
+            _presentationService = presentationService;
 
             _viewModel = new NavigationModel(_presentationService);
             _viewModel.SearchTextChanged += HandleSearchTextChanged;

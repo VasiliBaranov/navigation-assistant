@@ -106,9 +106,10 @@ namespace NavigationAssistant
             return hasDuplicates;
         }
 
+        //NOTE: Don't use IoC to avoid additional dependencies.
         private void InitializePresenters(bool isRunOnStartup)
         {
-            NavigationWindow navigationWindow = new NavigationWindow();
+            NavigationWindow navigationWindow = new NavigationWindow(new PresentationService());
             MainWindow = navigationWindow;
 
             IRegistryService registryService = new RegistryService();
@@ -118,6 +119,7 @@ namespace NavigationAssistant
                                      settingsSerializer,
                                      new KeyboardListener(),
                                      new MatchModelMapper(),
+                                     new PresentationService(),
                                      new NavigationServiceBuilder(isRunOnStartup));
 
             TrayView trayView = new TrayView();

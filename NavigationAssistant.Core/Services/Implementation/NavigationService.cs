@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using NavigationAssistant.Core.Model;
-using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
     /// <summary>
-    /// Implements a high-level navigation assistance.
+    /// Implements a high-level navigation assistance (facade).
     /// </summary>
     public class NavigationService : INavigationService
     {
@@ -83,12 +82,15 @@ namespace NavigationAssistant.Core.Services.Implementation
             }
 
             INavigator navigator = null;
-            foreach (INavigatorManager navigatorManager in _supportedNavigatorManagers)
+            if (hostWindow != null)
             {
-                if (navigatorManager.IsNavigator(hostWindow))
+                foreach (INavigatorManager navigatorManager in _supportedNavigatorManagers)
                 {
-                    navigator = navigatorManager.GetNavigator(hostWindow);
-                    break;
+                    if (navigatorManager.IsNavigator(hostWindow))
+                    {
+                        navigator = navigatorManager.GetNavigator(hostWindow);
+                        break;
+                    }
                 }
             }
 
@@ -98,14 +100,6 @@ namespace NavigationAssistant.Core.Services.Implementation
             }
 
             navigator.NavigateTo(path);
-        }
-
-        public ApplicationWindow GetActiveWindow()
-        {
-            // Obtain the handle of the active window.
-            IntPtr handle = WinApi.GetForegroundWindow();
-
-            return new ApplicationWindow(handle);
         }
 
         public void Dispose()

@@ -31,11 +31,13 @@ namespace NavigationAssistant.Presenters.Implementation
 
         private readonly IKeyboardListener _keyboardListener;
 
-        private INavigationService _navigationAssistant;
-
         private readonly INavigationServiceBuilder _navigationServiceBuilder;
 
         private readonly IMatchModelMapper _matchModelMapper;
+
+        private readonly IPresentationService _presentationService;
+
+        private INavigationService _navigationAssistant;
 
         #endregion
 
@@ -59,6 +61,7 @@ namespace NavigationAssistant.Presenters.Implementation
             ISettingsSerializer settingsSerializer,
             IKeyboardListener keyboardListener,
             IMatchModelMapper matchModelMapper,
+            IPresentationService presentationService,
             INavigationServiceBuilder navigationServiceBuilder)
         {
             _view = view;
@@ -66,6 +69,7 @@ namespace NavigationAssistant.Presenters.Implementation
             _keyboardListener = keyboardListener;
             _matchModelMapper = matchModelMapper;
             _navigationServiceBuilder = navigationServiceBuilder;
+            _presentationService = presentationService;
 
             Settings settings = _settingsSerializer.Deserialize();
 
@@ -166,10 +170,7 @@ namespace NavigationAssistant.Presenters.Implementation
         {
             lock (_syncObject)
             {
-                if (_navigationAssistant != null)
-                {
-                    _hostWindow = _navigationAssistant.GetActiveWindow();
-                }
+                _hostWindow = _presentationService.GetActiveWindow();
 
                 _view.ShowView();
             }
@@ -180,7 +181,7 @@ namespace NavigationAssistant.Presenters.Implementation
         {
             string folderPath = e.Item;
 
-            bool canNavigate = !string.IsNullOrEmpty(folderPath) && _hostWindow != null;
+            bool canNavigate = !string.IsNullOrEmpty(folderPath);
 
             if (canNavigate)
             {

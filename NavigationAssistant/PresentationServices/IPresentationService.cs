@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows;
+using NavigationAssistant.Core.Model;
 using NavigationAssistant.ViewModel;
 
 namespace NavigationAssistant.PresentationServices
@@ -21,5 +22,7 @@ namespace NavigationAssistant.PresentationServices
         bool ApplicationIsRunning(Mutex mutex);
 
         void MakeForeground(Window window);
+
+        ApplicationWindow GetActiveWindow();
     }
 }

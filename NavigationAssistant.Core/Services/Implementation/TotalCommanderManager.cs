@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using NavigationAssistant.Core.Model;
-using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Core.Services.Implementation
 {
@@ -21,7 +21,7 @@ namespace NavigationAssistant.Core.Services.Implementation
         public bool IsNavigator(ApplicationWindow hostWindow)
         {
             uint hostProcessId;
-            WinApi.GetWindowThreadProcessId(hostWindow.Handle, out hostProcessId);
+            GetWindowThreadProcessId(hostWindow.Handle, out hostProcessId);
 
             Process hostProcess = Process.GetProcessById((int)hostProcessId);
 
@@ -48,5 +48,8 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             return new TotalCommander(null, _totalCommanderPath, true);
         }
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
     }
 }
