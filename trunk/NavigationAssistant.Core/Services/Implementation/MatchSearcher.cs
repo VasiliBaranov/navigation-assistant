@@ -91,10 +91,6 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private static Regex GetSearchRegex(string searchText)
         {
-            //List<string> substrings = StringUtility.SplitStringByNonLetters(searchText)
-            //    .Select(s=>s.Trim())
-            //    .Where(substring => !string.IsNullOrEmpty(substring))
-            //    .ToList();
             IList<string> substrings = searchText.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 
             if (ListUtility.IsNullOrEmpty(substrings))
@@ -104,6 +100,8 @@ namespace NavigationAssistant.Core.Services.Implementation
 
             string[] substringTemplates = substrings.Select(GetWordStartTemplate).ToArray();
 
+            //All meaningful substrings may be separated with any amount of non-space characters (as we split by space),
+            //then followed by spaces (spaces will be specified in substringTemplates).
             string template = string.Join(@"\S*", substringTemplates);
             Regex searchRegex = new Regex(template);
 
@@ -114,6 +112,7 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             string firstLetterTemplate = GetFirstLetterTemplate(wordStart[0], wordIndex);
 
+            //(?i ) means "ignore case"
             string otherLettersTemplate = wordStart.Length > 1
                                               ? string.Format("(?i:{0})", Regex.Escape(wordStart.Substring(1)))
                                               : string.Empty;
@@ -125,12 +124,17 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             if (!char.IsLetter(firstLetter))
             {
-                //Can not use \b
-                //return @"(?:\b|\W+)" + Regex.Escape(firstLetter.ToString());
-                //return Regex.Escape(firstLetter.ToString());
+                //Can not use \b, as \b doesn't work in conjunction with non-letter characters.
+                //So we allow any amount of spaces before non-letter characters.
+                //Non-space characters will be allowed when joining substring templates.
+                //Also, there may be no preceding spaces, as non-letters should act as word boundaries.
                 return "\\s*" + Regex.Escape(firstLetter.ToString());
             }
 
+            //(?: ) means a non-capturing group.
+            //These templates allow 
+            //1. either an upper character after any character (space or non-space), so that "d" is matched in "MyDoc".
+            //2. or lower and upper character after any non-letter character (\W+) (or at the word start, \b, for the first substring).
             string template = wordIndex == 0 
                                   ? @"(?:\b[{0}{1}]|{1})"
                                   : @"(?:\W+[{0}{1}]|{1})";
