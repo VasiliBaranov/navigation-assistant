@@ -59,11 +59,14 @@ Name: "{userprograms}\{#ProductName}\{#ProductName}"; Comment: "Run Navigation A
 Name: "{userprograms}\{#ProductName}\Uninstall"; Comment: "Uninstall Navigation Assistant"; Filename: "{app}\unins000.exe"; IconFileName: {app}\unins000.exe;
 
 [Run]
+; .Net 2.0 will definetely be installed, as we require .Net 3.5 and check for it on the installer startup.
+Filename: "{dotnet20}\ngen.exe"; Parameters: "install ""{app}\NavigationAssistant.exe"" /nologo /silent"; StatusMsg: "Optimizing performance..."; Flags: runascurrentuser runhidden;
 Filename: "{app}\NavigationAssistant.exe"; Parameters: "/install"; StatusMsg: "Performing startup actions"; Flags: runascurrentuser runhidden;
 ; Add a checkbox to the success window for running the Navigation Assistant
 Filename: "{app}\NavigationAssistant.exe"; Description: "{cm:RunExecutableDescription}";  Flags: postinstall nowait;
 
 [UninstallRun]
+Filename: "{dotnet20}\ngen.exe"; Parameters: "uninstall ""{app}\NavigationAssistant.exe"" /nologo /silent"; StatusMsg: "Removing natively compiled binaries..."; Flags: runascurrentuser runhidden;
 Filename: "{app}\NavigationAssistant.exe"; Parameters: "/uninstall"; StatusMsg: "Removing cache and settings..."; Flags: runascurrentuser runhidden;
 
 [Code]
