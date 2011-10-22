@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
+using NavigationAssistant.Core.Model;
 using NavigationAssistant.Core.Utilities;
 using NavigationAssistant.ViewModel;
 using Application = System.Windows.Application;
@@ -89,6 +90,18 @@ namespace NavigationAssistant.PresentationServices.Implementations
             ReallySetForegroundWindow(window);
         }
 
+        public ApplicationWindow GetActiveWindow()
+        {
+            // Obtain the handle of the active window.
+            IntPtr handle = GetForegroundWindow();
+
+            return new ApplicationWindow(handle);
+        }
+
+        #endregion
+
+        #region Non Public Methods
+
         //The code is taken from http://forums.purebasic.com/english/viewtopic.php?f=12&t=7424&hilit=real+SetForegroundWindow
         //Other solution also exist:
         // http://stackoverflow.com/questions/46030/c-force-form-focus
@@ -124,10 +137,6 @@ namespace NavigationAssistant.PresentationServices.Implementations
             //Force our window to redraw
             InvalidateRect(hWnd, IntPtr.Zero, true);
         }
-
-        #endregion
-
-        #region Non Public Methods
 
         private Rectangle ScreenWorkingArea
         {

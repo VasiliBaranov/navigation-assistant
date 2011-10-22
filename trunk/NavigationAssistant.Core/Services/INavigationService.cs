@@ -21,8 +21,6 @@ namespace NavigationAssistant.Core.Services
 
         #endregion
 
-        ApplicationWindow GetActiveWindow();
-
         List<MatchedFileSystemItem> GetFolderMatches(string searchText);
 
         void NavigateTo(string path, ApplicationWindow hostWindow);

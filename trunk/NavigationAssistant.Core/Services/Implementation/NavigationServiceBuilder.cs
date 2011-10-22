@@ -9,7 +9,7 @@ namespace NavigationAssistant.Core.Services.Implementation
     /// Implements building and updating navigation service according to settings provided.
     /// </summary>
     /// <remarks>
-    /// TODO: Consider IoC
+    /// NOTE: Don't use IoC to avoid additional dependencies.
     /// </remarks>
     public class NavigationServiceBuilder : INavigationServiceBuilder
     {
