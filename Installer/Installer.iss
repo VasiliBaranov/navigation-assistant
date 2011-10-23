@@ -24,6 +24,7 @@ AppName={#ProductName}
 AppMutex="44F16610-EF84-47B6-8536-33C0D754F41E"
 WizardImageFile=WizardImage.bmp
 WizardSmallImageFile=WizardSmallImage.bmp
+LicenseFile={#SourceDir}\License.txt
 
 ; AppVerName and AppVersion are shown in Programs and Features in Control Panel
 AppVersion={#AppVersion}.{#Revision}

@@ -7,7 +7,6 @@ using System.Windows.Threading;
 using NavigationAssistant.Core.Model;
 using NavigationAssistant.Core.Utilities;
 using NavigationAssistant.PresentationServices;
-using NavigationAssistant.PresentationServices.Implementations;
 using NavigationAssistant.ViewModel;
 
 namespace NavigationAssistant.Views.Implementation
@@ -47,8 +46,18 @@ namespace NavigationAssistant.Views.Implementation
 
         public bool ShowInitializingScreen
         {
-            get { return _viewModel.ShowInitializingScreen; }
-            set { _viewModel.ShowInitializingScreen = value; }
+            get
+            {
+                return _viewModel.ShowInitializingScreen;
+            }
+            set
+            {
+                //If value is false, we should also set focus to the search textbox.
+                //It's hard to do it here, as this property may be set out of a non-UI thread
+                //(as initialization is performed on a different thread).
+                //So there is a special SearchTextFocused property in a NavigationModel, which is updated.
+                _viewModel.ShowInitializingScreen = value;
+            }
         }
 
         #endregion
@@ -92,15 +101,18 @@ namespace NavigationAssistant.Views.Implementation
         {
             _presentationService.MakeForeground(this);
 
-            //User could have removed the focus previously by clicking on one of the matches.
-            SearchTextBox.Focus();
+            if (!_viewModel.ShowInitializingScreen)
+            {
+                //User could have removed the focus previously by clicking on one of the matches.
+                SearchTextBox.Focus();
+            }
         }
 
         public void HideView()
         {
             Hide();
 
-            //It's better to set the text to empty here, not in activated,
+            //It's better to set the text to empty here, not in the ShowView method,
             //as the Matches list reset (thorugh NavigationModel) is invisible then.
             SearchTextBox.Text = string.Empty;
         }
@@ -188,7 +200,7 @@ namespace NavigationAssistant.Views.Implementation
         {
             Navigate();
 
-            //In case if navigation is not be performed (e.g. the user clicked "Please type a folder name" item)
+            //In case if navigation can not be performed (e.g. the user clicked "Please type a folder name" item)
             //we would like to retain focus in the search text box.
             SearchTextBox.Focus();
         }

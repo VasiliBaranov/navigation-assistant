@@ -58,13 +58,14 @@
                    Visibility="{Binding Path=InitializingScreenVisiblity}" >
             Please wait while the computer folders are being parsed. This may take several minutes.
         </TextBlock>
-        <TextBox x:Name="SearchTextBox" 
+        <TextBox x:Name="SearchTextBox"
                  Style="{StaticResource SearchTextBox}"
                  Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"
                  PreviewKeyDown="HandleSearchTextPreviewKeyDown"
                  WpfExtensions:SizeExtension.Observe="True"
                  WpfExtensions:SizeExtension.ObservedHeight="{Binding Path=SearchTextBoxHeight, Mode=OneWayToSource}"
-                 Visibility="{Binding Path=MainScreenVisiblity}"/>
+                 WpfExtensions:FocusExtension.IsFocused="{Binding Path=SearchTextFocused}"
+                 Visibility="{Binding Path=MainScreenVisiblity}" />
         <ListBox x:Name="MatchesListBox"
                  Style="{StaticResource MatchesListBox}"
                  ItemsSource="{Binding Path=Matches}"
