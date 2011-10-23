@@ -30,7 +30,7 @@ AppVersion={#AppVersion}.{#Revision}
 AppVerName={#ProductName}
 
 DefaultGroupName={#ProductName}
-OutputBaseFilename={#ProductName} {#AppVersion}
+OutputBaseFilename={#ProductName} {#AppVersion}.{#Revision}
 UninstallDisplayIcon={app}\NavigationAssistant.exe
 VersionInfoVersion={#AppVersion}.{#Revision}
 
