@@ -192,6 +192,12 @@ namespace NavigationAssistant.Core.Services.Implementation
             {
                 settings.TotalCommanderPath = GetTotalCommanderPath();
             }
+
+            if (string.IsNullOrEmpty(settings.TotalCommanderPath))
+            {
+                settings.SupportedNavigators = new List<Navigators> {Navigators.WindowsExplorer};
+                settings.PrimaryNavigator = Navigators.WindowsExplorer;
+            }
         }
 
         private Settings GetDefaultSettings()
