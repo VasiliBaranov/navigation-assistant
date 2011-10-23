@@ -63,6 +63,7 @@ namespace NavigationAssistant.ViewModel
                 OnPropertyChanged("ShowInitializingScreen");
                 OnPropertyChanged("InitializingScreenVisiblity");
                 OnPropertyChanged("MainScreenVisiblity");
+                OnPropertyChanged("SearchTextFocused");
             }
         }
 
@@ -80,6 +81,11 @@ namespace NavigationAssistant.ViewModel
             {
                 return _showInitializingScreen ? Visibility.Collapsed : Visibility.Visible;
             }
+        }
+
+        public bool SearchTextFocused
+        {
+            get { return !_showInitializingScreen; }
         }
 
         public string SearchText
