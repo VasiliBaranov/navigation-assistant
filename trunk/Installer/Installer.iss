@@ -9,7 +9,7 @@
 
 [Setup]
 AppPublisher="Vasili Baranov"
-; AppCopyright="Copyright © 2011 Vasili Baranov"
+AppCopyright="Copyright © 2011 Vasili Baranov"
 AppPublisherURL={#AppSupportURL}
 AppSupportURL={#AppSupportURL}
 AppUpdatesURL={#AppSupportURL}
@@ -49,6 +49,7 @@ Root: HKLM; Subkey: "Software\{#ProductName}"; Flags: uninsdeletekey
 Source: "{#SourceDir}\Interop.SHDocVw.dll"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#SourceDir}\NavigationAssistant.Core.dll"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#SourceDir}\NavigationAssistant.exe"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#SourceDir}\License.txt"; DestDir: "{app}"; Flags: ignoreversion;
 
 [UninstallDelete]
 ; Removing product directory if it is empty
