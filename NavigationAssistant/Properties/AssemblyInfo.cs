@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("NavigationAssistant")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyCopyright("Copyright © 2011 Vasili Baranov")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
