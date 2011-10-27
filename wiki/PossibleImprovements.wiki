@@ -14,4 +14,5 @@ Improvements may include:
   # Add numbers to the matches list, allow choosing them by Ctrl+<match number>
   # Support installation without administrative rights (for corporate environments)
   # Support slashes in the paths (e.g. by "prog fi\vis stud" find "C:\Program Files\Visual Studio")
-  # 
+  # Add support for removable drives
+  # Add support for non-local folders (e.g. if a user adds in the "Folders to parse" setting line "\\other_machine\Videos")
