@@ -1,0 +1,17 @@
+#summary This page contains possible improvements for the Navigation Assistant.
+
+= Introduction =
+
+This page contains possible improvements for the Navigation Assistant
+
+
+= Details =
+
+Improvements may include:
+  # Implement support for "Save as" and "Open" windows
+  # Implement support for FAR Manager
+  # Implement extended support for hotkeys (not only Ctrl, Alt, Shift, A-Z; but also F1-F12, ScLok, PrtSc, Break, etc)
+  # Add numbers to the matches list, allow choosing them by Ctrl+<match number>
+  # Support installation without administrative rights (for corporate environments)
+  # Support slashes in the paths (e.g. by "prog fi\vis stud" find "C:\Program Files\Visual Studio")
+  # 
