@@ -115,6 +115,12 @@ namespace NavigationAssistant.Views.Implementation
             //It's better to set the text to empty here, not in the ShowView method,
             //as the Matches list reset (thorugh NavigationModel) is invisible then.
             SearchTextBox.Text = string.Empty;
+
+            //Clear all the garbage, as search matches may consume a huge amount of memory (5-10 megabytes).
+            //Better to force garbage collection if a window is in a hidden state
+            //(to avoid performance slowdown for visible operations).
+            //TODO: Move to presenter
+            GC.Collect();
         }
 
         #endregion
