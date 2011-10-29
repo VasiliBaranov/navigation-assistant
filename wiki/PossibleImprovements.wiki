@@ -16,3 +16,6 @@ Improvements may include:
   # Support slashes in the paths (e.g. by "prog fi\vis stud" find "C:\Program Files\Visual Studio")
   # Add support for removable drives
   # Add support for non-local folders (e.g. if a user adds in the "Folders to parse" setting line "\\other_machine\Videos")
+  # Improve memory consumption (force garbage collection, optimize cache storage-don't store full cache and filtered cache, store just filtered cache and full cache changes; when serializing cache on dispose serialize just changes; on deserializing normalize the cache file and combine current changes)
+  # Improve file system parsing (use preexisting NTFS or Windows indexes, as done in [http://www.voidtools.com/ Everything]
+  # Implement Exclude Folders option (in contrast to Include Folders and Exclude Templates) (e.g. exclude just C:\Windows and parse all other folders)
