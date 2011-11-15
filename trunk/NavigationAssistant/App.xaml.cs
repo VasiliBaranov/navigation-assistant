@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using NLog;
 using NavigationAssistant.Core.Services;
 using NavigationAssistant.Core.Services.Implementation;
 using NavigationAssistant.Core.Utilities;
@@ -21,10 +22,14 @@ namespace NavigationAssistant
     {
         private IPresenterManager _presenterManager;
 
+        private static readonly Logger CurrentLogger = LogManager.GetCurrentClassLogger();
+
         private static readonly Mutex AppMutex = new Mutex(true, "44F16610-EF84-47B6-8536-33C0D754F41E");
 
         private void HandleApplicationStartup(object sender, StartupEventArgs e)
         {
+            CurrentLogger.Info("Launching with console parameters: {0}.", string.Join("; ", e.Args));
+
             bool isInstalling = IsInstalling(e.Args);
             bool isUninstalling = IsUninstalling(e.Args);
             bool isRunOnStartup = IsRunOnStartup(e.Args);
@@ -35,10 +40,10 @@ namespace NavigationAssistant
                 {
                     Install();
                 }
-                catch
+                catch (Exception ex)
                 {
                     //Should not throw errors in InnoSetup.
-                    //TODO: Add logging
+                    CurrentLogger.ErrorException("Exception during install", ex);
                 }
                 
                 Shutdown();
@@ -51,10 +56,10 @@ namespace NavigationAssistant
                 {
                     Uninstall();
                 }
-                catch
+                catch (Exception ex)
                 {
                     //Should not throw errors in InnoSetup.
-                    //TODO: Add logging
+                    CurrentLogger.ErrorException("Exception during uninstall", ex);
                 }
                 
                 Shutdown();
@@ -63,6 +68,7 @@ namespace NavigationAssistant
 
             if (HasDuplicates())
             {
+                CurrentLogger.Info("Closing application as duplicate");
                 Shutdown();
             }
             else
@@ -157,6 +163,7 @@ namespace NavigationAssistant
 
         private void HandleExited(object sender, EventArgs e)
         {
+            CurrentLogger.Info("Shutting down");
             Shutdown();
         }
     }
