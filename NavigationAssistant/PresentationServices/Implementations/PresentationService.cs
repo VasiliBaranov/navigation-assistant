@@ -184,9 +184,6 @@ namespace NavigationAssistant.PresentationServices.Implementations
         [DllImport("user32.dll")]
         private static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
 
-        [DllImport("User32.dll")]
-        public static extern IntPtr GetParent(IntPtr hWnd);
-
         #endregion
 
     }
