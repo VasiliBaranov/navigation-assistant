@@ -69,16 +69,13 @@ namespace NavigationAssistant.Core.Utilities
             return ListUtility.IsNullOrEmpty(folder.GetFiles()) && ListUtility.IsNullOrEmpty(folder.GetDirectories());
         }
 
-        public static void DeleteIfEmpty(string path, int layersCount)
+        public static void DeleteUpperFolder(string path, int layersCount)
         {
             for (int i = 0; i < layersCount; i++)
             {
-                if (IsEmpty(path))
-                {
-                    Directory.Delete(path, true);
-                }
                 path = Path.GetDirectoryName(path);
             }
+            Directory.Delete(path, true);
         }
     }
 }
