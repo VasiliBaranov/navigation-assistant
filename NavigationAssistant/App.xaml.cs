@@ -18,7 +18,7 @@ namespace NavigationAssistant
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App
     {
         private IPresenterManager _presenterManager;
 
@@ -28,41 +28,23 @@ namespace NavigationAssistant
 
         private void HandleApplicationStartup(object sender, StartupEventArgs e)
         {
-            CurrentLogger.Info("Launching with console parameters: {0}.", string.Join("; ", e.Args));
+            //See http://stackoverflow.com/questions/1472498/wpf-global-exception-handler
+            AppDomain.CurrentDomain.UnhandledException += HandleGlobalException;
 
-            bool isInstalling = IsInstalling(e.Args);
-            bool isUninstalling = IsUninstalling(e.Args);
+            string args = string.Join("; ", e.Args);
+            CurrentLogger.Info("Launching with console parameters: '{0}'", args);
+
             bool isRunOnStartup = IsRunOnStartup(e.Args);
 
-            if (isInstalling)
+            bool shouldContinue = InstallSafe(e);
+            if (!shouldContinue)
             {
-                try
-                {
-                    Install();
-                }
-                catch (Exception ex)
-                {
-                    //Should not throw errors in InnoSetup.
-                    CurrentLogger.ErrorException("Exception during install", ex);
-                }
-                
-                Shutdown();
                 return;
             }
 
-            if (isUninstalling)
+            shouldContinue = UninstallSafe(e);
+            if (!shouldContinue)
             {
-                try
-                {
-                    Uninstall();
-                }
-                catch (Exception ex)
-                {
-                    //Should not throw errors in InnoSetup.
-                    CurrentLogger.ErrorException("Exception during uninstall", ex);
-                }
-                
-                Shutdown();
                 return;
             }
 
@@ -75,6 +57,53 @@ namespace NavigationAssistant
             {
                 InitializePresenters(isRunOnStartup);
             }
+        }
+
+        private bool InstallSafe(StartupEventArgs e)
+        {
+            if (IsInstalling(e.Args))
+            {
+                try
+                {
+                    Install();
+                }
+                catch (Exception ex)
+                {
+                    //Should not throw errors in InnoSetup.
+                    CurrentLogger.ErrorException("Exception during install", ex);
+                }
+
+                Shutdown();
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool UninstallSafe(StartupEventArgs e)
+        {
+            if (IsUninstalling(e.Args))
+            {
+                try
+                {
+                    Uninstall();
+                }
+                catch (Exception ex)
+                {
+                    //Should not throw errors in InnoSetup.
+                    CurrentLogger.ErrorException("Exception during uninstall", ex);
+                }
+
+                Shutdown();
+                return false;
+            }
+
+            return true;
+        }
+
+        private static void HandleGlobalException(object sender, UnhandledExceptionEventArgs e)
+        {
+            CurrentLogger.ErrorException("Unhandled exception", e.ExceptionObject as Exception);
         }
 
         private static void Install()
@@ -157,6 +186,11 @@ namespace NavigationAssistant
 
         private static bool HasParameter(IEnumerable<string> parameters, string parameterName)
         {
+            if (string.IsNullOrEmpty(parameterName) || parameters == null)
+            {
+                return false;
+            }
+
             List<string> list = parameters.ToList();
             return !ListUtility.IsNullOrEmpty(list) && list.Contains(parameterName);
         }

@@ -114,7 +114,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                 //Default cache location is c:\Users\<User>\AppData\Local\NavigationAssistant\NavigationAssistant\1.0.0.0\
                 //So we have to delete three folders up to Local.
                 string folderPath = Path.GetDirectoryName(_settingsFilePath);
-                DirectoryUtility.DeleteIfEmpty(folderPath, 3);
+                DirectoryUtility.DeleteUpperFolder(folderPath, 2);
             }
         }
 

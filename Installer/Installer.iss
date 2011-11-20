@@ -48,9 +48,11 @@ Root: HKLM; Subkey: "Software\{#ProductName}"; Flags: uninsdeletekey
 
 [Files]
 Source: "{#SourceDir}\Interop.SHDocVw.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#SourceDir}\NLog.dll"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#SourceDir}\NavigationAssistant.Core.dll"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#SourceDir}\NavigationAssistant.exe"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#SourceDir}\License.txt"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#SourceDir}\NLog.config"; DestDir: "{app}"; Flags: ignoreversion;
 
 [UninstallDelete]
 ; Removing product directory if it is empty
