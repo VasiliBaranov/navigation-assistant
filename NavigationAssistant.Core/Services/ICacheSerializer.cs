@@ -13,6 +13,8 @@ namespace NavigationAssistant.Core.Services
 
         FileSystemCache DeserializeCache();
 
+        void SerializeCacheChanges(FileSystemChanges changes);
+
         void DeleteCache();
     }
 }

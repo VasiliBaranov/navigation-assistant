@@ -50,13 +50,13 @@ namespace NavigationAssistant.Core.Services.Implementation
         private int _updatesCount;
 
         //Should be synchronized
-        private bool _fullCacheUpToDate;
+        private bool _cacheUpToDate;
 
         //Should be synchronized
         private List<FileSystemItem> _filteredCacheItems;
 
         //Should be synchronized
-        private FileSystemCache _fullCache; 
+        private FileSystemChanges _fileSystemChanges; 
 
         #endregion
 
@@ -139,18 +139,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             _asyncFileSystemParser = asyncFileSystemParser;
             _fileSystemFilter = new FileSystemFilter();
 
-            _fullCacheUpToDate = ReadFullCache(appRunOnStartup);
-
-            //Listen to the changes in the whole system to update the fullCache.
-            //This handler should be bound just after reading the full cache to ensure that _fullCache is initialized.
-            _fileSystemListener.FolderSystemChanged += HandleFolderSystemChanged;
-            _fileSystemListener.StartListening(null);
-
-            //Parse file system fully (asynchronously).
-            if (!_fullCacheUpToDate)
-            {
-                StartFileSystemParsing();
-            }
+            Initialize(appRunOnStartup);
         }
 
         #endregion
@@ -162,14 +151,6 @@ namespace NavigationAssistant.Core.Services.Implementation
             //Use synchronization to avoid conflicts with the cache update after expiration.
             lock (_cacheSync)
             {
-                if (_filteredCacheItems == null)
-                {
-                    if (_fullCache != null && _fullCache.Items != null)
-                    {
-                        _filteredCacheItems = _fileSystemFilter.FilterItems(_fullCache.Items);
-                    }
-                }
-
                 return _filteredCacheItems;
             }
         }
@@ -189,6 +170,30 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         #region Non Public Methods
 
+        private void Initialize(bool appRunOnStartup)
+        {
+            bool cacheFolderCreated;
+            _filteredCacheItems = ReadCache(appRunOnStartup, out _cacheUpToDate, out cacheFolderCreated);
+            _fileSystemChanges = new FileSystemChanges();
+            if (cacheFolderCreated)
+            {
+                string cacheFolder = GetCacheFolder();
+                FileSystemChangeEventArgs e = new FileSystemChangeEventArgs(null, cacheFolder);
+                HandleFolderSystemChanged(this, e);
+            }
+
+            //Listen to the changes in the whole system to update the fullCache.
+            //This handler should be bound just after reading the full cache to ensure that _fullCache is initialized.
+            _fileSystemListener.FolderSystemChanged += HandleFolderSystemChanged;
+            _fileSystemListener.StartListening(null);
+
+            //Parse file system fully (asynchronously).
+            if (!_cacheUpToDate)
+            {
+                StartFileSystemParsing();
+            }
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -204,22 +209,13 @@ namespace NavigationAssistant.Core.Services.Implementation
             {
                 lock (_cacheSync)
                 {
-                    SerializeFullCache();
+                    SerializeChanges();
                 }
             }
             catch
             {
                 // no exceptions in finalizer
             }
-        }
-
-        private void SerializeFullCache()
-        {
-            if (_fullCacheUpToDate)
-            {
-                _fullCache.LastFullScanTime = DateTime.Now;
-            }
-            _cacheSerializer.SerializeCache(_fullCache);
         }
 
         private void StartFileSystemParsing()
@@ -232,11 +228,14 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             lock (_cacheSync)
             {
-                _fullCache = e.Item;
-                _fullCacheUpToDate = true;
-                SerializeFullCache();
+                FileSystemCache fullCache = e.Item;
+                fullCache.LastFullScanTime = DateTime.Now;
+                _cacheSerializer.SerializeCache(fullCache);
 
-                ResetFilteredCacheItems();
+                _filteredCacheItems = FilterCache(fullCache);
+                _fileSystemChanges = new FileSystemChanges();
+                fullCache = null;
+                GC.Collect();
 
                 _asyncFileSystemParser.ParsingFinished -= HandleParsingFinished;
             }
@@ -252,54 +251,54 @@ namespace NavigationAssistant.Core.Services.Implementation
             return cacheValid;
         }
 
-        private bool ReadFullCache(bool appRunOnStartup)
+        private List<FileSystemItem> ReadCache(bool appRunOnStartup, out bool fullCacheUpToDate, out bool cacheFolderCreated)
         {
-            bool fullCacheUpToDate;
+            cacheFolderCreated = false;
 
-            //Parse file system.
-            //We always keep the full cache in memory for the following reasons:
-            //1. not to re-read it
-            //2. the cache file may be deleted while this class is operating
-            _fullCache = _cacheSerializer.DeserializeCache();
-            if (_fullCache != null)
+            //Parse file system
+            FileSystemCache fullCache = _cacheSerializer.DeserializeCache();
+            if (fullCache != null)
             {
                 //The cache file can be up to date only if the current Navigation Assistant has been run on startup
                 //and if it had been closed just on system shutdown and the current parser is created at application start.
                 //In this case no additional folders can be created during NavAssistant being inactive.
-                fullCacheUpToDate = CacheUpToDate(_fullCache) && appRunOnStartup;
+                fullCacheUpToDate = CacheUpToDate(fullCache) && appRunOnStartup;
             }
             else
             {
                 //The application is loaded for the first time (no cache stored on disk).
-
-                string cacheFolder = Path.GetDirectoryName(_cacheSerializer.CacheFilePath);
+                string cacheFolder = GetCacheFolder();
                 bool cacheFolderExisted = Directory.Exists(cacheFolder);
 
                 //Run this method in the main thread, thus freezing it.
                 //Don't set any restrictions on this parsing, as want to grab the entire system.
-                _fullCache = new FileSystemCache(_fileSystemParser.GetSubFolders(), DateTime.Now);
-                _cacheSerializer.SerializeCache(_fullCache);
+                fullCache = new FileSystemCache(_fileSystemParser.GetSubFolders(), DateTime.Now);
+                _cacheSerializer.SerializeCache(fullCache);
 
                 //Updating the cache if cache folder has been created
                 bool cacheFolderExists = Directory.Exists(cacheFolder);
-                bool cacheFolderCreated = !cacheFolderExisted && cacheFolderExists;
-                if (cacheFolderCreated)
-                {
-                    FileSystemChangeEventArgs e = new FileSystemChangeEventArgs(null, cacheFolder);
-                    HandleFolderSystemChanged(this, e);
-                }
+                cacheFolderCreated = !cacheFolderExisted && cacheFolderExists;
 
                 fullCacheUpToDate = true;
             }
 
-            return fullCacheUpToDate;
+            List<FileSystemItem> filteredCache = FilterCache(fullCache);
+            fullCache = null;
+            GC.Collect();
+
+            return filteredCache;
+        }
+
+        private string GetCacheFolder()
+        {
+            return Path.GetDirectoryName(_cacheSerializer.CacheFilePath);
         }
 
         private void HandleFolderSystemChanged(object sender, FileSystemChangeEventArgs e)
         {
             lock (_cacheSync)
             {
-                Implementation.FileSystemParser.UpdateFolders(_fullCache.Items, e, null);
+                _fileSystemChanges.Changes.Add(e);
 
                 //Though we write the cache back to file system in finalizer,
                 //we try to write it periodically also (to minimize the effect of finalization errors,
@@ -307,15 +306,10 @@ namespace NavigationAssistant.Core.Services.Implementation
                 _updatesCount++;
                 if (_updatesCount > _updatesCountToWrite)
                 {
-                    SerializeFullCache();
+                    SerializeChanges();
                     _updatesCount = 0;
                 }
-
-                //Cache may be null if settings (FoldersToParse, etc. have been changed before this update).
-                if (_filteredCacheItems != null)
-                {
-                    Implementation.FileSystemParser.UpdateFolders(_filteredCacheItems, e, _fileSystemFilter.IsCorrect);
-                }
+                Implementation.FileSystemParser.UpdateFolders(_filteredCacheItems, e, _fileSystemFilter.IsCorrect);
             }
         }
 
@@ -323,8 +317,32 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             lock (_cacheSync)
             {
-                _filteredCacheItems = null;
+                SerializeChanges();
+
+                //_cacheUpToDate will be the same. If it's up to date, it should be up to date; otherwise, not.
+                FileSystemCache fullCache = _cacheSerializer.DeserializeCache();
+                _filteredCacheItems = FilterCache(fullCache);
+
+                fullCache = null;
+                GC.Collect();
             }
+        }
+
+        private void SerializeChanges()
+        {
+            if (_cacheUpToDate)
+            {
+                _fileSystemChanges.CurrentTime = DateTime.Now;
+                _cacheSerializer.SerializeCacheChanges(_fileSystemChanges);
+            }
+            _fileSystemChanges = new FileSystemChanges();
+        }
+
+        private List<FileSystemItem> FilterCache(FileSystemCache fullCache)
+        {
+            return (fullCache != null && fullCache.Items != null)
+                       ? _fileSystemFilter.FilterItems(fullCache.Items)
+                       : new List<FileSystemItem>();
         }
 
         #endregion
