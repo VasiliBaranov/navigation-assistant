@@ -54,6 +54,7 @@
     <Compile Include="HookManager\HookManager.Windows.cs" />
     <Compile Include="HookManager\MouseEventExtArgs.cs" />
     <Compile Include="Model\FileSystemCache.cs" />
+    <Compile Include="Model\FileSystemChanges.cs" />
     <Compile Include="Services\IAsyncFileSystemParser.cs" />
     <Compile Include="Services\IFilesSystemFilter.cs" />
     <Compile Include="Services\Implementation\FileSystemFilter.cs" />
