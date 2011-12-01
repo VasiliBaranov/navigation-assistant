@@ -46,7 +46,7 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             _cacheFolder = Path.GetDirectoryName(cacheFilePath);
             _cacheFilePath = cacheFilePath;
-            _cacheFolder = Path.Combine(_cacheFolder, "CacheChanges.txt");
+            _cacheChangesFilePath = Path.Combine(_cacheFolder, "CacheChanges.txt");
         }
 
         #endregion
@@ -128,9 +128,18 @@ namespace NavigationAssistant.Core.Services.Implementation
             lock (CacheSync)
             {
                 DirectoryUtility.EnsureFolder(Path.GetDirectoryName(_cacheFilePath));
+                string dateTime = changes.CurrentTime.ToString(CultureInfo.InvariantCulture);
 
-                List<string> lines = File.ReadAllLines(_cacheChangesFilePath).ToList();
-                lines[0] = changes.CurrentTime.ToString(CultureInfo.InvariantCulture);
+                List<string> lines;
+                if (File.Exists(_cacheChangesFilePath))
+                {
+                    lines = File.ReadAllLines(_cacheChangesFilePath).ToList();
+                    lines[0] = dateTime;
+                }
+                else
+                {
+                    lines = new List<string> { dateTime };
+                }
 
                 List<string> linesToAdd = changes.Changes.Select(GetChangeItemLine).ToList();
                 lines.AddRange(linesToAdd);
