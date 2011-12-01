@@ -20,11 +20,11 @@ namespace NavigationAssistant.Core.Model
 
         public FileSystemChangeEventArgs(string oldPath, string newPath)
         {
-            if (oldPath != null)
+            if (!string.IsNullOrEmpty(oldPath))
             {
                 _oldFullPath = Path.GetFullPath(oldPath);
             }
-            if (newPath != null)
+            if (!string.IsNullOrEmpty(newPath))
             {
                 _newFullPath = Path.GetFullPath(newPath);
             }
