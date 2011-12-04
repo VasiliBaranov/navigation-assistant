@@ -52,6 +52,8 @@ namespace NavigationAssistant.Core.Services.Implementation
         //Should be synchronized
         private bool _cacheUpToDate;
 
+        private DateTime _lastFullScanTime;
+
         //Should be synchronized
         private List<FileSystemItem> _filteredCacheItems;
 
@@ -173,7 +175,7 @@ namespace NavigationAssistant.Core.Services.Implementation
         private void Initialize(bool appRunOnStartup)
         {
             bool cacheFolderCreated;
-            _filteredCacheItems = ReadCache(appRunOnStartup, out _cacheUpToDate, out cacheFolderCreated);
+            _filteredCacheItems = ReadCache(appRunOnStartup, out _cacheUpToDate, out cacheFolderCreated, out _lastFullScanTime);
             _fileSystemChanges = new FileSystemChanges();
             if (cacheFolderCreated)
             {
@@ -232,6 +234,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                 fullCache.LastFullScanTime = DateTime.Now;
                 _cacheSerializer.SerializeCache(fullCache);
 
+                _lastFullScanTime = fullCache.LastFullScanTime;
                 _filteredCacheItems = FilterCache(fullCache);
                 _fileSystemChanges = new FileSystemChanges();
                 fullCache = null;
@@ -251,7 +254,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             return cacheValid;
         }
 
-        private List<FileSystemItem> ReadCache(bool appRunOnStartup, out bool fullCacheUpToDate, out bool cacheFolderCreated)
+        private List<FileSystemItem> ReadCache(bool appRunOnStartup, out bool fullCacheUpToDate, out bool cacheFolderCreated, out DateTime lastFullScanTime)
         {
             cacheFolderCreated = false;
 
@@ -283,6 +286,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             }
 
             List<FileSystemItem> filteredCache = FilterCache(fullCache);
+            lastFullScanTime = fullCache.LastFullScanTime;
             fullCache = null;
             GC.Collect();
 
@@ -330,11 +334,10 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private void SerializeChanges()
         {
-            if (_cacheUpToDate)
-            {
-                _fileSystemChanges.CurrentTime = DateTime.Now;
-                _cacheSerializer.SerializeCacheChanges(_fileSystemChanges);
-            }
+            //Serialize changes even if the cache is not up to date to preserve as actual version as possible.
+            _fileSystemChanges.LastFullScanTime = _cacheUpToDate ? DateTime.Now : _lastFullScanTime;
+
+            _cacheSerializer.SerializeCacheChanges(_fileSystemChanges);
             _fileSystemChanges = new FileSystemChanges();
         }
 

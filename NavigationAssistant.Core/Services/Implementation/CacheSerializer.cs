@@ -107,7 +107,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                     {
                         FileSystemParser.UpdateFolders(cache.Items, fileSystemChangeArg, null);
                     }
-                    cache.LastFullScanTime = changes.CurrentTime;
+                    cache.LastFullScanTime = changes.LastFullScanTime;
 
                     SerializeCache(cache);
                 }
@@ -128,7 +128,7 @@ namespace NavigationAssistant.Core.Services.Implementation
             lock (CacheSync)
             {
                 DirectoryUtility.EnsureFolder(Path.GetDirectoryName(_cacheFilePath));
-                string dateTime = changes.CurrentTime.ToString(CultureInfo.InvariantCulture);
+                string dateTime = changes.LastFullScanTime.ToString(CultureInfo.InvariantCulture);
 
                 List<string> lines;
                 if (File.Exists(_cacheChangesFilePath))
@@ -172,7 +172,7 @@ namespace NavigationAssistant.Core.Services.Implementation
 
             List<FileSystemChangeEventArgs> items = lines.Skip(1).Select(ParseChangeItem).ToList();
             DateTime lastFullScanTime = DateTime.Parse(lines[0], CultureInfo.InvariantCulture);
-            FileSystemChanges changes = new FileSystemChanges {Changes = items, CurrentTime = lastFullScanTime};
+            FileSystemChanges changes = new FileSystemChanges {Changes = items, LastFullScanTime = lastFullScanTime};
 
             return changes;
         }
