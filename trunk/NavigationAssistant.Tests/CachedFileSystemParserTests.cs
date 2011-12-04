@@ -10,6 +10,10 @@ using NavigationAssistant.Core.Utilities;
 
 namespace NavigationAssistant.Tests
 {
+    /// <summary>
+    /// Contains CachedFileSystemParser tests. Unfortunately, some of them may fail sometimes due to working with file system directly
+    /// (e.g. if we wait not enough to handle file system event after folder creation).
+    /// </summary>
     [TestFixture]
     public class CachedFileSystemParserTests
     {

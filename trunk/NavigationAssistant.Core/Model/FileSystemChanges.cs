@@ -7,7 +7,7 @@ namespace NavigationAssistant.Core.Model
     {
         public List<FileSystemChangeEventArgs> Changes { get; set; }
 
-        public DateTime CurrentTime { get; set; }
+        public DateTime LastFullScanTime { get; set; }
 
         public FileSystemChanges()
         {
