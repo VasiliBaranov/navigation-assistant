@@ -10,6 +10,9 @@ namespace NavigationAssistant.Core.Model
     /// </remarks>
     public class FileSystemItem
     {
+        /// <summary>
+        /// Gets or sets the name of the folder or file. This field is introduce for performance (to avoid searching folder name each time it's needed).
+        /// </summary>
         public string Name { get; set; }
 
         public string FullPath { get; set; }
