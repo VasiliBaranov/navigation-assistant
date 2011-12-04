@@ -55,8 +55,7 @@ Source: "{#SourceDir}\License.txt"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#SourceDir}\NLog.config"; DestDir: "{app}"; Flags: ignoreversion;
 
 [UninstallDelete]
-; Removing product directory if it is empty
-Type: dirifempty; Name: "{app}"
+Type: filesandordirs; Name: "{app}"
 
 [Icons]
 Name: "{userprograms}\{#ProductName}\{#ProductName}"; Comment: "Run Navigation Assistant"; Filename: "{app}\NavigationAssistant.exe"; IconFileName: {app}\NavigationAssistant.exe;
