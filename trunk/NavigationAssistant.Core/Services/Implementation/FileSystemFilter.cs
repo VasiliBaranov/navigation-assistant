@@ -175,7 +175,8 @@ namespace NavigationAssistant.Core.Services.Implementation
 
             List<string> fullPathFolders = folders
                 .Select(s => s.TrimEnd('\\') + "\\") //GetFullPath will return current path for the folder "C:", so we add a backslash manually
-                .Select(Path.GetFullPath)
+                .Select(DirectoryUtility.GetFullPathSafe)
+                .Where(s=>!string.IsNullOrEmpty(s))
                 .Select(s => s.TrimEnd('\\')) //assume in other methods of this class
                 .ToList();
 

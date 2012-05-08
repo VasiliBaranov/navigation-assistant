@@ -152,7 +152,8 @@ namespace NavigationAssistant.Core.Services.Implementation
                                            settings.SupportedNavigators.Contains(Navigators.TotalCommander);
 
             bool totalCommanderPathValid = !string.IsNullOrEmpty(settings.TotalCommanderPath) &&
-                                           File.Exists(settings.TotalCommanderPath);
+                                           File.Exists(settings.TotalCommanderPath) &&
+                                           DirectoryUtility.IsPathShort(settings.TotalCommanderPath);
 
             if (totalCommanderSupported && !totalCommanderPathValid)
             {

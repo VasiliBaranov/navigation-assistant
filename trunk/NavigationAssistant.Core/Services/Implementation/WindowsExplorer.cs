@@ -17,7 +17,15 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         public void NavigateTo(string path)
         {
-            _windowsExplorer.Navigate("file:///" + Path.GetFullPath(path));
+            try
+            {
+                string fullPath = Path.GetFullPath(path);
+                _windowsExplorer.Navigate("file:///" + fullPath);
+            }
+            catch (PathTooLongException)
+            {
+                //NOTE: may be escalate the exception?
+            }
         }
     }
 }

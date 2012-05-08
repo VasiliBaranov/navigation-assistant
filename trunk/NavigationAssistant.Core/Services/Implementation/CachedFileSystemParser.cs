@@ -153,7 +153,8 @@ namespace NavigationAssistant.Core.Services.Implementation
             //Use synchronization to avoid conflicts with the cache update after expiration.
             lock (_cacheSync)
             {
-                return _filteredCacheItems;
+                List<FileSystemItem> copy = new List<FileSystemItem>(_filteredCacheItems);
+                return copy;
             }
         }
 
@@ -180,8 +181,15 @@ namespace NavigationAssistant.Core.Services.Implementation
             if (cacheFolderCreated)
             {
                 string cacheFolder = GetCacheFolder();
-                FileSystemChangeEventArgs e = new FileSystemChangeEventArgs(null, cacheFolder);
-                HandleFolderSystemChanged(this, e);
+                try
+                {
+                    FileSystemChangeEventArgs e = new FileSystemChangeEventArgs(null, cacheFolder);
+                    HandleFolderSystemChanged(this, e);
+                }
+                catch (PathTooLongException)
+                {
+                    
+                }
             }
 
             //Listen to the changes in the whole system to update the fullCache.

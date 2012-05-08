@@ -6,6 +6,9 @@ namespace NavigationAssistant.Core.Model
     /// <summary>
     /// Provides data for the FileSystemChanged event.
     /// </summary>
+    /// <remarks>
+    /// See FileSystemItem remarks.
+    /// </remarks>
     public class FileSystemChangeEventArgs : EventArgs
     {
         #region Fields
@@ -18,6 +21,7 @@ namespace NavigationAssistant.Core.Model
 
         #region Constructors
 
+        /// <exception cref="PathTooLongException"></exception>
         public FileSystemChangeEventArgs(string oldPath, string newPath)
         {
             if (!string.IsNullOrEmpty(oldPath))
