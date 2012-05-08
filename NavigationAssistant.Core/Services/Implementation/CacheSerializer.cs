@@ -170,7 +170,7 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             string[] lines = File.ReadAllLines(_cacheChangesFilePath);
 
-            List<FileSystemChangeEventArgs> items = lines.Skip(1).Select(ParseChangeItem).ToList();
+            List<FileSystemChangeEventArgs> items = lines.Skip(1).Select(ParseChangeItem).Where(i => i != null).ToList();
             DateTime lastFullScanTime = DateTime.Parse(lines[0], CultureInfo.InvariantCulture);
             FileSystemChanges changes = new FileSystemChanges {Changes = items, LastFullScanTime = lastFullScanTime};
 
@@ -181,7 +181,7 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             string[] lines = File.ReadAllLines(_cacheFilePath);
 
-            List<FileSystemItem> items = lines.Skip(1).Select(ParseCacheItem).ToList();
+            List<FileSystemItem> items = lines.Skip(1).Select(ParseCacheItem).Where(i => i != null).ToList();
             DateTime lastFullScanTime = DateTime.Parse(lines[0], CultureInfo.InvariantCulture);
             FileSystemCache cache = new FileSystemCache(items, lastFullScanTime);
 
@@ -201,28 +201,42 @@ namespace NavigationAssistant.Core.Services.Implementation
         private static FileSystemChangeEventArgs ParseChangeItem(string line)
         {
             string[] substrings = line.Split(new[] {Separator}, StringSplitOptions.None);
-            FileSystemChangeEventArgs e = new FileSystemChangeEventArgs(substrings[0], substrings[1]);
-            return e;
+
+            try
+            {
+                return new FileSystemChangeEventArgs(substrings[0], substrings[1]);
+            }
+            catch (PathTooLongException)
+            {
+                return null;
+            }
         }
 
         private static FileSystemItem ParseCacheItem(string line)
         {
-            int separatorIndex = line.IndexOf(Separator);
-
-            if (separatorIndex < 0)
+            try
             {
-                return new FileSystemItem(string.Empty, line);
+                int separatorIndex = line.IndexOf(Separator, StringComparison.OrdinalIgnoreCase);
+
+                if (separatorIndex < 0)
+                {
+                    return new FileSystemItem(string.Empty, line);
+                }
+
+                string itemPath = line.Substring(0, separatorIndex);
+                string itemName = string.Empty;
+
+                if (line.Length > separatorIndex + 1)
+                {
+                    itemName = line.Substring(separatorIndex + 1);
+                }
+
+                return new FileSystemItem(itemName, itemPath);
             }
-
-            string itemPath = line.Substring(0, separatorIndex);
-            string itemName = string.Empty;
-
-            if (line.Length > separatorIndex + 1)
+            catch (PathTooLongException)
             {
-                itemName = line.Substring(separatorIndex + 1);
+                return null;
             }
-
-            return new FileSystemItem(itemName, itemPath);
         }
 
         #endregion

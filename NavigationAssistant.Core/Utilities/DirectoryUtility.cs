@@ -53,7 +53,14 @@ namespace NavigationAssistant.Core.Utilities
                 return new List<string>();
             }
 
-            path = Path.GetFullPath(path);
+            try
+            {
+                path = Path.GetFullPath(path);
+            }
+            catch (PathTooLongException)
+            {
+                return new List<string>();
+            }
 
             List<string> folders = path
                 .Split(new[] {Path.DirectorySeparatorChar}, StringSplitOptions.RemoveEmptyEntries)
@@ -76,6 +83,32 @@ namespace NavigationAssistant.Core.Utilities
                 path = Path.GetDirectoryName(path);
             }
             Directory.Delete(path, true);
+        }
+
+        public static string GetFullPathSafe(string path)
+        {
+            try
+            {
+                return Path.GetFullPath(path);
+            }
+            catch (PathTooLongException)
+            {
+                return null;
+            }
+        }
+
+        public static bool IsPathShort(string path)
+        {
+            try
+            {
+                Path.GetFullPath(path);
+            }
+            catch (PathTooLongException)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

@@ -47,7 +47,17 @@ namespace NavigationAssistant.Core.Services.Implementation
             foreach (string path in foldersToListen)
             {
                 FileSystemWatcher fileSystemWatcher = new FileSystemWatcher();
-                fileSystemWatcher.Path = Path.GetFullPath(path);
+                string fullPath;
+                try
+                {
+                    fullPath = Path.GetFullPath(path);
+                }
+                catch (PathTooLongException)
+                {
+                    continue;
+                }
+
+                fileSystemWatcher.Path = fullPath;
 
                 NotifyFilters filters = NotifyFilters.DirectoryName;
 
@@ -112,7 +122,15 @@ namespace NavigationAssistant.Core.Services.Implementation
         {
             if (FolderSystemChanged != null)
             {
-                FolderSystemChanged(this, new FileSystemChangeEventArgs(oldPath, newPath));
+                try
+                {
+                    FileSystemChangeEventArgs args = new FileSystemChangeEventArgs(oldPath, newPath);
+                    FolderSystemChanged(this, args);
+                }
+                catch(PathTooLongException)
+                {
+                    
+                }
             }
         }
 

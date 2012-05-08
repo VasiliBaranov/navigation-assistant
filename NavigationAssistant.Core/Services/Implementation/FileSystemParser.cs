@@ -103,7 +103,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                 return;
             }
 
-            if (!String.IsNullOrEmpty(e.OldFullPath))
+            if (!string.IsNullOrEmpty(e.OldFullPath))
             {
                 FileSystemItem deletedItem = FindItem(folders, e.OldFullPath);
                 if (deletedItem != null)
@@ -112,22 +112,32 @@ namespace NavigationAssistant.Core.Services.Implementation
                 }
             }
 
-            if (!String.IsNullOrEmpty(e.NewFullPath))
+            if (string.IsNullOrEmpty(e.NewFullPath))
             {
-                FileSystemItem addedItem = new FileSystemItem(e.NewFullPath);
+                return;
+            }
 
-                //Duplicates may appear in certain cases. Example:
-                //We store all the file system events gathered while parsing the system in a special list,
-                //and try to update the list for each of the events after parsing.
-                //But if an added folder was parsed after the event for this folder had occurred,
-                //the duplicate will be present.
-                FileSystemItem duplicate = FindItem(folders, e.NewFullPath);
+            FileSystemItem addedItem;
+            try
+            {
+                addedItem = new FileSystemItem(e.NewFullPath);
+            }
+            catch (PathTooLongException)
+            {
+                return;
+            }
 
-                bool isCorrect = (isCorrectPredicate == null) || isCorrectPredicate(addedItem);
-                if (isCorrect && duplicate == null)
-                {
-                    folders.Add(addedItem);
-                }
+            //Duplicates may appear in certain cases. Example:
+            //We store all the file system events gathered while parsing the system in a special list,
+            //and try to update the list for each of the events after parsing.
+            //But if an added folder was parsed after the event for this folder had occurred,
+            //the duplicate will be present.
+            FileSystemItem duplicate = FindItem(folders, e.NewFullPath);
+
+            bool isCorrect = (isCorrectPredicate == null) || isCorrectPredicate(addedItem);
+            if (isCorrect && duplicate == null)
+            {
+                folders.Add(addedItem);
             }
         }
 
@@ -212,7 +222,12 @@ namespace NavigationAssistant.Core.Services.Implementation
                 }
 
                 subfolders.AddRange(GetFoldersRecursively(rootFolderInfo));
-                subfolders.Add(GetFileSystemItem(rootFolderInfo));
+
+                FileSystemItem rootItem = GetFileSystemItem(rootFolderInfo);
+                if (rootItem != null)
+                {
+                    subfolders.Add(rootItem);
+                }
             }
 
             return subfolders;
@@ -220,7 +235,14 @@ namespace NavigationAssistant.Core.Services.Implementation
 
         private static FileSystemItem GetFileSystemItem(DirectoryInfo directoryInfo)
         {
-            return new FileSystemItem(directoryInfo.FullName);
+            try
+            {
+                return new FileSystemItem(directoryInfo.FullName);
+            }
+            catch (PathTooLongException)
+            {
+                return null;
+            }
         }
 
         private static FileSystemItem FindItem(List<FileSystemItem> items, string fullPath)
@@ -254,7 +276,7 @@ namespace NavigationAssistant.Core.Services.Implementation
                 //That's why we can not simply use Directory.GetDirectories(folderPath, "*", SearchOption.AllDirectories);
             }
 
-            IEnumerable<FileSystemItem> subfolderItems = subfolders.Select(GetFileSystemItem);
+            IEnumerable<FileSystemItem> subfolderItems = subfolders.Select(GetFileSystemItem).Where(i => i != null);
             folders.AddRange(subfolderItems);
 
             foreach (DirectoryInfo subfolder in subfolders)
