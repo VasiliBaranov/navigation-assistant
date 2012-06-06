@@ -9,7 +9,7 @@
 
 [Setup]
 AppPublisher="Vasili Baranov"
-AppCopyright="Copyright © 2011 Vasili Baranov"
+AppCopyright="Copyright © 2012 Vasili Baranov"
 AppPublisherURL={#AppSupportURL}
 AppSupportURL={#AppSupportURL}
 AppUpdatesURL={#AppSupportURL}
