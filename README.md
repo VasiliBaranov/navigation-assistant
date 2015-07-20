@@ -1,6 +1,6 @@
 Have you ever thought of an idea that navigation in Windows could be much more convenient? Why wouldn't one employ the technique similar to the "Navigate to class" in most common IDEs, when relevant folder matches are displayed in the popup window, brought to the foreground by a predefined key combination, like that:
 
-![https://navigation-assistant.googlecode.com/svn/wiki/Images/MatchesList.png](https://navigation-assistant.googlecode.com/svn/wiki/Images/MatchesList.png)
+![MatchesList.png](https://github.com/VasiliBaranov/navigation-assistant/blob/master/Docs/Wiki/Images/MatchesList.png)
 
 # Why needed at all #
 Here are Windows Explorer and Total Commander disadvantages which may frustrate most of the users:
@@ -27,7 +27,7 @@ Unfortunately, such an approach would be utilized at a cost of inconvenient fold
 
 To navigate quickly to the needed folder simply press a predefined key combination (Ctrl-Shift-M by default) in a Windows Explorer or Total Commander application (or at any other application, which will imply a new Windows Explorer instantiation for navigation). The main application window will appear:
 
-![https://navigation-assistant.googlecode.com/svn/wiki/Images/NavigationWindow.png](https://navigation-assistant.googlecode.com/svn/wiki/Images/NavigationWindow.png)
+![NavigationWindow.png](https://github.com/VasiliBaranov/navigation-assistant/blob/master/Docs/Wiki/Images/NavigationWindow.png)
 
 Start typing a destination folder name.
 
@@ -35,7 +35,7 @@ Start typing a destination folder name.
 
 A list of folder matches will appear due to these manipulations:
 
-![https://navigation-assistant.googlecode.com/svn/wiki/Images/MatchesList.png](https://navigation-assistant.googlecode.com/svn/wiki/Images/MatchesList.png)
+![MatchesList.png](https://github.com/VasiliBaranov/navigation-assistant/blob/master/Docs/Wiki/Images/MatchesList.png)
 
 All you have to do is to click a suitable element with mouse or use Up/Down keys to select a required path and press Enter.
 
